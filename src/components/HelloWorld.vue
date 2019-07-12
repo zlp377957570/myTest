@@ -13,90 +13,106 @@
           </div>
         </div>
         <div class="main_header_tab">
-          <div class="contentBar">
-            <div class="itemBar" index="0" @click="tabSelect($event)">
-              <span class="active">推荐</span>
+          <div class="contentBar" @change="onScrollWidth($event)">
+            <div class="itemBar" index="0" @click="tabSelect">
+              <span :class="index==0?'active':''">推荐</span>
             </div>
-            <div class="itemBar" index="1" @click="tabSelect($event)">
-              <span>手机</span>
+            <div class="itemBar" index="1" @click="tabSelect">
+              <span :class="index==1?'active':''">手机</span>
             </div>
-            <div class="itemBar" index="2" @click="tabSelect($event)">
-              <span>智能</span>
+            <div class="itemBar" index="2" @click="tabSelect">
+              <span :class="index==2?'active':''">智能</span>
             </div>
-            <div class="itemBar" index="3" @click="tabSelect($event)">
-              <span>电视</span>
+            <div class="itemBar" index="3" @click="tabSelect">
+              <span :class="index==3?'active':''">电视</span>
             </div>
-            <div class="itemBar" index="4" @click="tabSelect($event)">
-              <span>笔记本</span>
+            <div class="itemBar" index="4" @click="tabSelect">
+              <span :class="index==4?'active':''">笔记本</span>
             </div>
-            <div class="itemBar" index="5" @click="tabSelect($event)">
-              <span>家电</span>
+            <div class="itemBar" index="5" @click="tabSelect">
+              <span :class="index==5?'active':''">家电</span>
             </div>  
-            <div class="itemBar" index="6" @click="tabSelect($event)">
-              <span>生活周边</span>
+            <div class="itemBar" index="6" @click="tabSelect">
+              <span :class="index==6?'active':''">生活周边</span>
             </div>                                                          
           </div>       
-          <div class="downBar">
-            <van-icon name="arrow-down"/>    
+          <div class="downBar" @click="openBar">
+            <span :class="show?'openBar':''"></span>
           </div>     
-          <div class="showContent"></div>
+          <div :class="show?'showContent showHeight':'showContent'">
+            <p>全部</p>
+            <div class="showBody">
+              <span @click="headerBarSelect" v-for="(val,key) in ['推荐','手机','智能','电视','笔记本','家电','生活周边']" :key="key" :index="key" :class="index==key?'heHeight':''">
+                {{val}}                                                                                
+              </span>
+            </div>
+          </div>
         </div>        
       </div>
       <div class="main_bodyer">
-        <div class="bodys" v-show="index==0">
-          <van-button @click="add" type="primary">主要按钮</van-button>
-          <van-button type="info">信息按钮</van-button>
-          <h1>00000000000000000000000000</h1>
-          <p>00000000000000000000000000</p>    
-        </div>
-        <div class="bodys" v-show="index==1">
-          <van-button @click="add" type="primary">主要按钮</van-button>
-          <van-button type="info">信息按钮</van-button>
-          <h1>11111111111111111111111111</h1>
-          <p>111111111111111111111111111111</p>    
-        </div>
-        <div class="bodys" v-show="index==2">
-          <van-button @click="add" type="primary">主要按钮</van-button>
-          <van-button type="info">信息按钮</van-button>
-          <h1>2222222222222222222222</h1>
-          <p>222222222222222222222</p>    
-        </div>
-        <div class="bodys" v-show="index==3">
-          <van-button @click="add" type="primary">主要按钮</van-button>
-          <van-button type="info">信息按钮</van-button>
-          <h1>3333333333333333333333</h1>
-          <p>3333333333333333333333333</p>    
-        </div>
-        <div class="bodys" v-show="index==4">
-          <van-button @click="add" type="primary">主要按钮</van-button>
-          <van-button type="info">信息按钮</van-button>
-          <h1>444444444444444444444444</h1>
-          <p>5555555555555555555555555</p>    
-        </div>
-        <div class="bodys" v-show="index==5">
-          <van-button @click="add" type="primary">主要按钮</van-button>
-          <van-button type="info">信息按钮</van-button>
-          <h1>555555555555555555555555</h1>
-          <p>555555555555555555555555555555</p>    
-        </div>
-        <div class="bodys" v-show="index==6">
-          <van-button @click="add" type="primary">主要按钮</van-button>
-          <van-button type="info">信息按钮</van-button>
-          <h1>666666666666666666666666</h1>
-          <p>66666666666666666666666666</p>    
-        </div>                                                      
+        <transition-group :name="fades" tag="div">          
+          <div class="bodys" :key="0" v-show="index==0">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>00000000000000000000000000</h1>
+            <p>00000000000000000000000000</p>    
+          </div>
+          <div class="bodys" :key="1" v-show="index==1">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>11111111111111111111111111</h1>
+            <p>111111111111111111111111111111</p>    
+          </div>
+          <div class="bodys" :key="2" v-show="index==2">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>2222222222222222222222</h1>
+            <p>222222222222222222222</p>    
+          </div>
+          <div class="bodys" :key="3" v-show="index==3">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>3333333333333333333333</h1>
+            <p>3333333333333333333333333</p>    
+          </div>
+          <div class="bodys" :key="4" v-show="index==4">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>444444444444444444444444</h1>
+            <p>5555555555555555555555555</p>    
+          </div>
+          <div class="bodys" :key="5" v-show="index==5">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>555555555555555555555555</h1>
+            <p>555555555555555555555555555555</p>    
+          </div>
+          <div class="bodys" :key="6" v-show="index==6">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>666666666666666666666666</h1>
+            <p>66666666666666666666666666</p>    
+          </div>                                                      
+        </transition-group>  
       </div>
   </div>
 </template>
 
 <script>
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs  } from 'vant';
+import { setTimeout } from 'timers';
 export default {
   name: 'HelloWorld',
   data () {
     return {
-      index:0
+      index:0,
+      show:false,
+      scroll:'',
+      fades:''
     }
+  },
+  mounted(){
+    window.addEventListener('scroll', this.onScrollWidth)
   },
   methods:{
     add(){
@@ -112,27 +128,50 @@ export default {
           })
           .catch(error=> {
           });   
-      });
+      }); 
+    },
+    openBar(){
+      this.show = !this.show
+    },
+    headerBarSelect(e){
+      var self = this
+      setTimeout(()=>{
+        self.show = !self.show      
+      },200)
+        self.tabSelect(e)
     },
     tabSelect(e){
-      console.log(e.currentTarget)
-      // var index = this.index
       let $this = e.currentTarget
+      let $parent = $this.parentNode
       let $index = $this.getAttribute('index')
+      let width = $this.offsetWidth
+      let scrollLeft =$parent.scrollLeft
+      console.log($this)
+      console.log('width:'+width)
+      console.log('scrollLeft:'+scrollLeft)
       if($index>this.index){
-        // $this.style.animated({"tranform":"translateX(-750px)"})
-        // $this.style.left = 
-        // $this.style.animation = "onLeft"
-        // $this.style.animation = "onRight"
-        // $this.setAttribute('class','bodys onLeft')
-        $this.className = "bodys"
+        this.fades = "lefts"
+        if($index>3){
+          setTimeout(()=>{
+            $parent.scrollLeft = width*($index-3)
+          },200)
+        }
       }else{
-      //  $this.style.animation = "onLeft"
-          //  $this.setAttribute('class','bodys onRight')    
-                  $this.className = "bodys"
+        this.fades = "rights"
+        if($index<4&&$index>1){
+          setTimeout(()=>{
+            $parent.scrollLeft = width*-($index-3)
+          },200)
+        }        
       }
       this.index = $index
-      console.log(this.index)
+    },
+    onScrollWidth(e){
+      let $this = e.currentTarget  
+      this.scroll = $this.scrollLeft;
+      $this.scroll =  document.body.scrollTop;
+            console.log($this)
+            console.log(this.scroll)
     }
   }
 }
@@ -187,7 +226,7 @@ export default {
     }
     .main_header_tab{
       font-size: 0.28rem;
-      color: #666;
+      color: #747474;
       position: relative;
       background: #f2f2f2;
       .contentBar{
@@ -195,6 +234,7 @@ export default {
         overflow-x: auto;
         text-align: left;
         white-space: nowrap;
+        // transition:all 1s;
         .itemBar{
           display: inline-block;
           padding:0 10px;
@@ -212,51 +252,116 @@ export default {
         line-height: 30px;
         padding:0 15px;
         background: #f2f2f2;
-        box-shadow:-15px 0 12px 0 #f2f2f2;
+        box-shadow:-25px -5px 12px 0 #f2f2f2;
         position: absolute;
         top:0;
         right: 0;
-        i{
-          vertical-align: -3px;
+        z-index: 101;
+        span{
+          vertical-align: 5px;
+          display: inline-block;
+          width: 8px;
+          height: 8px;
+          border:1px solid #b0b0b0;
+          border-top:none;
+          border-right:none;
+          transform: rotate(-45deg);
+          transition:all .3s;
         }
+        .openBar{
+          transform: rotate(135deg);   
+          vertical-align: 0px;       
+        }
+      }
+      .showContent{
+        position: absolute;
+        padding-left: 13px;
+        top:0px;
+        z-index: -1;
+        width: 100%;
+        height: 0px;
+        background: #f2f2f2;
+        transition:all .1s;
+        opacity: 0;
+        p{
+          margin-top:15px;
+          text-align: left;
+          color: #333;
+          font-size: 0.3rem;
+        }
+        .showBody{
+          margin-top:5px;
+          width: 100%;
+          height: 83px;
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          span{
+            width: 80px;
+            line-height: 29px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            color:#333;
+            background: #fff;
+          }
+          span{
+            margin-right: 10px;
+          }
+          .heHeight{
+            border: 1px solid #ff6700;
+            color:#ff6700;
+            background: #fde0d5;
+          }
+        }
+      }
+      .showHeight{
+        opacity: 1;
+        z-index: 100;
+        transition:all .3s;
+        height: 130px;    
       }
     }    
   }
   .main_bodyer{
     width: 100%;
     height: 500px;
-    border:1px solid red;
+    // border:1px solid red;
     position: relative;
     .bodys{
-      // width: 100%;
       background: green;
       position: absolute;
       left: 0px;
       top:0px;
-      border:1px solid red;
+      // border:1px solid red;
     }
-    .onLeft{
-      animation: onLeft .5s 1 ease-in;
+    .lefts-enter{
+      @keyframes onLeft{
+        0%{
+          left:750px;
+        }
+        100%{
+          left:0px;
+        }
+      }      
     }
-    .onRight{
-      animation: onRight .5s 1 ease-in;
+    .lefts-enter-active{
+      animation:onLeft .5s 1 ease-in-out;
     }
-    @keyframes onLeft{
-      0%{
-        left:750px;
-      }
-      100%{
-        left:0px;
-      }
+    .rights-enter{
+      @keyframes onRight{
+        0%{
+          left:-750px;
+        }
+        100%{
+          left:0px;
+        }
+      }        
     }
-    @keyframes onRight{
-      0%{
-        left:0px;
-      }
-      100%{
-        left:750px;
-      }
+    .rights-enter-active{
+      animation:onRight .5s 1 ease-in-out;
     }    
+
+  
   }
 }
 </style>
