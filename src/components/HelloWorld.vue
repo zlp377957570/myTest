@@ -15,7 +15,7 @@
         <div class="main_header_tab">
           <div class="contentBar" @change="onScrollWidth($event)">
             <div class="itemBar" index="0" @click="tabSelect">
-              <span :class="index==0?'active':''">推荐</span>
+              <span :class="index==0?'active':''">推荐111</span>
             </div>
             <div class="itemBar" index="1" @click="tabSelect">
               <span :class="index==1?'active':''">手机</span>
