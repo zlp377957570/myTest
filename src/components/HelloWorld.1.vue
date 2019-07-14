@@ -15,9 +15,27 @@
           </div>
           <div class="main_header_tab">
             <div class="contentBar" @change="onScrollWidth($event)">
-              <div v-for="(item,i) in ['推荐','手机','智能','电视','笔记本','家电','生活周边']" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
-                <span :class="index==i?'active':''">{{item}}</span>
-              </div>                                                        
+              <div class="itemBar" index="0" @click="tabSelect(0)">
+                <span :class="index==0?'active':''">推荐</span>
+              </div>
+              <div class="itemBar" index="1" @click="tabSelect(1)">
+                <span :class="index==1?'active':''">手机</span>
+              </div>
+              <div class="itemBar" index="2" @click="tabSelect(2)">
+                <span :class="index==2?'active':''">智能</span>
+              </div>
+              <div class="itemBar" index="3" @click="tabSelect(3)">
+                <span :class="index==3?'active':''">电视</span>
+              </div>
+              <div class="itemBar" index="4" @click="tabSelect(4)">
+                <span :class="index==4?'active':''">笔记本</span>
+              </div>
+              <div class="itemBar" index="5" @click="tabSelect(5)">
+                <span :class="index==5?'active':''">家电</span>
+              </div>  
+              <div class="itemBar" index="6" @click="tabSelect(6)">
+                <span :class="index==6?'active':''">生活周边</span>
+              </div>                                                          
             </div>       
             <div class="downBar" @click="openBar">
               <span :class="show?'openBar':''"></span>
@@ -35,12 +53,48 @@
       </div>
       <div class="main_bodyer">
         <transition-group :name="fades" tag="div">          
-          <div v-for="(page,p) in ['aa1','aa2','aa3','aa4','aa5','aa6','aa7']" :class="show?'bodys':'bodys zindex'" :key="p" v-show="index==p">
-            <!-- <van-button @click="add" type="primary">主要按钮</van-button>
+          <div :class="show?'bodys':'bodys zindex'" :key="0" v-show="index==0">
+            <van-button @click="add" type="primary">主要按钮</van-button>
             <van-button type="info">信息按钮</van-button>
-            <h1>{{p}}</h1> -->
-            <p>{{p}}</p>    
-          </div>                                                     
+            <h1>00000000000000000000000000</h1>
+            <p>00000000000000000000000000</p>    
+          </div>
+          <div :class="show?'bodys':'bodys zindex'" :key="1" v-show="index==1">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>11111111111111111111111111</h1>
+            <p>111111111111111111111111111111</p>    
+          </div>
+          <div :class="show?'bodys':'bodys zindex'" :key="2" v-show="index==2">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>2222222222222222222222</h1>
+            <p>222222222222222222222</p>    
+          </div>
+          <div :class="show?'bodys':'bodys zindex'" :key="3" v-show="index==3">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>3333333333333333333333</h1>
+            <p>3333333333333333333333333</p>    
+          </div>
+          <div :class="show?'bodys':'bodys zindex'" :key="4" v-show="index==4">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>444444444444444444444444</h1>
+            <p>5555555555555555555555555</p>    
+          </div>
+          <div :class="show?'bodys':'bodys zindex'" :key="5" v-show="index==5">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>555555555555555555555555</h1>
+            <p>555555555555555555555555555555</p>    
+          </div>
+          <div :class="show?'bodys':'bodys zindex'" :key="6" v-show="index==6">
+            <van-button @click="add" type="primary">主要按钮</van-button>
+            <van-button type="info">信息按钮</van-button>
+            <h1>666666666666666666666666</h1>
+            <p>66666666666666666666666666</p>    
+          </div>                                                      
         </transition-group>  
       </div>
   </div>
