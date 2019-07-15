@@ -18,7 +18,7 @@
               <!-- <div v-for="(item,i) in ['推荐','手机','智能','电视','笔记本','家电','生活周边']" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
                 <span :class="index==i?'active':''">{{item}}</span>
               </div>                                                         -->
-              <div v-for="(item,i) in tabs" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
+              <div v-for="(item,i) in ['推荐','手机','智能','电视','笔记本','家电','生活周边']" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
                 <span :class="index==i?'active':''">{{item}}</span>
               </div>
             </div>       
@@ -28,7 +28,7 @@
             <div :class="show?'showContent showHeight':'showContent'">
               <p>全部</p>
               <div class="showBody">
-                <span @click="headerBarSelect(key)" v-for="(val,key) in tabs" :key="key" :index="key" :class="index==key?'heHeight':''">
+                <span @click="headerBarSelect(key)" v-for="(val,key) in ['推荐','手机','智能','电视','笔记本','家电','生活周边']" :key="key" :index="key" :class="index==key?'heHeight':''">
                   {{val}}                                                                                
                 </span>
               </div>
@@ -38,15 +38,13 @@
       </div>
       <div class="main_bodyer">
         <transition-group :name="fades" tag="div">          
-          <div v-for="(page,p) in tabs" :class="show?'bodys':'bodys zindex'" :key="p" v-show="index==p">
+          <div v-for="(page,p) in ['aa1','aa2','aa3','aa4','aa5','aa6','aa7']" :class="show?'bodys':'bodys zindex'" :key="p" v-show="index==p">
             <!-- <van-button @click="add" type="primary">主要按钮</van-button>
             <van-button type="info">信息按钮</van-button>
             <h1>{{p}}</h1> -->
             <p>{{p}}</p>    
             <keep-alive :include="'page'+p">
-              <v-touch @swipeleft="onSwipeLeft" @swiperight="onSwipeRight">
-                <component :is="'page'+p"></component>  
-              </v-touch>
+              <router-view></router-view>
             </keep-alive>
           </div>                                                     
         </transition-group>  
@@ -55,48 +53,22 @@
 </template>
 
 <script>
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs  } from 'vant'
-import { setTimeout } from 'timers'
-import page0 from './page-list/page0'
-import page1 from './page-list/page1'
-import page2 from './page-list/page2'
-import page3 from './page-list/page3'
-import page4 from './page-list/page4'
-import page5 from './page-list/page5'
-import page6 from './page-list/page6'
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs  } from 'vant';
+import { setTimeout } from 'timers';
 export default {
   name: 'HelloWorld',
   data () {
     return {
       index:0,
-      tabs:['推荐','手机','智能','电视','笔记本','家电','生活周边'],
       show:false,
       scroll:'',
       fades:''
     }
   },
-  components:{
-    page0,page1,page2,page3,page4,page5,page6,
-  },
   mounted(){
     window.addEventListener('scroll', this.onScrollWidth)
   },
   methods:{
-    onSwipeLeft(){
-      var self = this
-      var e = self.index<6?self.index:6
-      e<6?e++:e
-
-      self.tabSelect(e)
-      this.index = e
-    },
-    onSwipeRight(){
-      var self = this 
-      var e = self.index==0?0:self.index-1
-                  console.log(e)
-      self.tabSelect(e)
-      this.index = e             
-    },
     add(){
       let url = this.HOST + '/getMaindata.php'
       Dialog.alert({
@@ -124,13 +96,13 @@ export default {
     },
     tabSelect(e){
       let $this = document.getElementsByClassName('itemBar')[e]
-      console.log(this.$route.meta.isLogin)
+      // let $this = e.currentTarget
       let $parent = $this.parentNode
       let $index = $this.getAttribute('index')
       let width = $this.offsetWidth
       let scrollLeft =$parent.scrollLeft
-      console.log('$index:'+$index)
-      console.log('e:'+e)
+      console.log('width:'+width)
+      console.log('scrollLeft:'+scrollLeft)
       if($index>this.index){
         this.fades = "lefts"
         if($index>3){
@@ -149,6 +121,10 @@ export default {
         }        
       }
       this.index = $index
+      this.$router.push({
+        name:'page'+$index
+      });
+
     },
     onScrollWidth(e){
       let $this = e.currentTarget  
@@ -221,14 +197,14 @@ export default {
         position: relative;
         background: #f2f2f2;
         .contentBar{
-          width: 332px;
+          width: 322px;
           overflow-x: auto;
           text-align: left;
           white-space: nowrap;
           // transition:all 1s;
           .itemBar{
             display: inline-block;
-            padding:0 12px;
+            padding:0 10px;
             span{
               line-height: 28px;
               display: inline-block;
@@ -243,7 +219,7 @@ export default {
           line-height: 30px;
           padding:0 15px;
           background: #f2f2f2;
-          box-shadow:-15px -5px 12px 0 #f2f2f2;
+          box-shadow:-25px -5px 12px 0 #f2f2f2;
           position: absolute;
           top:0;
           right: 0;

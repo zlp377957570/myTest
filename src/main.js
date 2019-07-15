@@ -6,9 +6,11 @@ import router from './router'
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs  } from 'vant';
 import './assets/css/base.css';
 import axios from '../node_modules/axios';
+import VueTouch from 'vue-touch';
 
 // 全局注册
 Vue.prototype.$axios = axios;
+Vue.use(VueTouch,{name:'v-touch'});
 Vue.use(Dialog);
 Vue.use(Button);
 Vue.use(Icon);
