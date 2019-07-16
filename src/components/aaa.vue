@@ -33,25 +33,24 @@
           </div>        
         </div>
       </div>
-      <transition-group :class="['main_bodyer',{'noScorllLeft':noScorllLeft}]" :name="fades" tag="div" style="left:0px">          
-        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)">   
-          <!-- <keep-alive :include="'page'+p"> -->
-            <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
-              <!-- <component :is="'page'+p"></component>   -->
-              <div>
-                <div class="a">{{p}}</div>
-                <div class="b">2222222222222222222222222222</div>
-              </div>
-            <!-- </v-touch> -->
-          <!-- </keep-alive> -->
-        </div>                                                     
-      </transition-group>  
+      <div class="mainBodys">
+        <transition-group class="main_bodyer" :name="fades" tag="div">          
+          <div v-for="(page,p) in tabs" :class="show?'bodys':'bodys zindex'" :key="p" @touchstart="onTouchStart($event,p)" :style="{zIndex:tabs.length-p}">   
+            <keep-alive :include="'page'+p">
+              <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
+                <!-- <component :is="'page'+p"></component>   -->
+                <div>{{p}}p111111111111111111111111111</div>
+              <!-- </v-touch> -->
+            </keep-alive>
+          </div>                                                     
+        </transition-group>          
+      </div>
   </div>
 </template>
 
 <script>
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs  } from 'vant'
-import { setTimeout, clearTimeout, setInterval, clearInterval } from 'timers'
+import { setTimeout } from 'timers'
 import page0 from './page-list/page0'
 import page1 from './page-list/page1'
 import page2 from './page-list/page2'
@@ -59,7 +58,6 @@ import page3 from './page-list/page3'
 import page4 from './page-list/page4'
 import page5 from './page-list/page5'
 import page6 from './page-list/page6'
-import { ELOOP } from 'constants';
 export default {
   name: 'HelloWorld',
   data () {
@@ -67,8 +65,6 @@ export default {
       index:0,
       tabs:['推荐','手机','智能','电视','笔记本','家电','生活周边'],
       show:false,
-      noScorllTop:false,
-      noScorllLeft:false,
       scroll:'',
       fades:''
     }
@@ -83,75 +79,36 @@ export default {
     onTouchStart(a,p){
       var self = this
       var $i = document.querySelector('.itemBar:nth-child('+(p+1)+') .active i')
-      var offsetWidth = document.documentElement.clientWidth
-      
+      var offsetWidth = document.body.offsetWidth
       var width = offsetWidth/2
       var _this = a.currentTarget
-      var main = _this.parentNode
-      var lefts = main.style.left
         var a =a.touches[0]
         var startLeft = a.clientX
-        var startTop = a.clientY
-        var del = 0
-        setInterval(()=>{
-           del++
-        },10)
       _this.ontouchmove = function(b){
         var b = b.touches[0]
         var clientX = b.clientX
-        var clientY = b.clientY
-        // console.log('clientY:'+clientY)
-        // console.log('clientX:'+clientX)
-        // var YYY = clientY-startTop
-        // var xxx = clientX-startLeft
-        // console.log('YYY:'+YYY)
-        // console.log('xxx:'+xxx)
-        // console.log(self.noScorllLeft)
-        // console.log('xxx:'+xxx)     
-        if(self.noScorllLeft===false){
-          // console.log(1111111111111111111111)
-          if(clientX-startLeft>10 || clientX-startLeft<-10){
-             self.noScorllTop = true
-              main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-              $i.style.left = -(clientX-startLeft)/8+'px'    
-          }else{
-            if(self.noScorllTop===false){
-              if(clientY-startTop>10 || clientY-startTop<-10){
-                self.noScorllLeft = true
-               
+         _this.style.left = clientX-startLeft+'px'
+         $i.style.left = -(clientX-startLeft)/8+'px'
+        _this.ontouchend = function(c){
+          var c = c.changedTouches[0]
+          var endLeft = c.clientX
+          var offWidth = endLeft-startLeft
+          if(offWidth>0){
+            if(Number(offWidth)>=width){
+                p>0?p:0
+                p>0?p--:0
+                self.tabSelect(p)
               }
+          }
+          if(offWidth<0){
+            if(-Number(offWidth)>=width){
+              p<6?p:6
+              p<6?p++:p
+              self.tabSelect(p)
             }            
           }
-        }else{
-          // console.log(444444444444444444444444)
-        }
-
-        _this.ontouchend = function(c){
-          clearInterval()
-          console.log(del)
-          if(self.noScorllLeft===false){
-            var c = c.changedTouches[0]
-            var endLeft = c.clientX
-            var offWidth = endLeft-startLeft
-            main.style.left = lefts
-            if(offWidth>0){
-              if(Number(offWidth)>=width || Number(offWidth)>=width/4 && del<15){
-                  p>0?p:0
-                  p>0?p--:0
-                  self.tabSelect(p)
-                }
-            }
-            if(offWidth<0){
-              if(-Number(offWidth)>=width || -Number(offWidth)>=width/4 && del<15){
-                p<6?p:6
-                p<6?p++:p
-                self.tabSelect(p)
-              }            
-            }
-            $i.style.left = 0+'px'              
-          } 
-          self.noScorllTop = false
-          self.noScorllLeft = false                 
+          _this.style.left = 0+'px'
+         $i.style.left = 0+'px'          
         }
       } 
     },
@@ -189,32 +146,34 @@ export default {
     },
     headerBarSelect(e){
       var self = this
-      // setTimeout(()=>{
-      //   },500)  
       setTimeout(()=>{
         self.show = !self.show      
-        },200)
+      },200)
         self.tabSelect(e)
-    
     },
     tabSelect(e){
       let $this = document.getElementsByClassName('itemBar')[e]
-      var $main = document.getElementsByClassName('main_bodyer')[0]
       console.log(this.$route.meta.isLogin)
+      var leftBodys = document.getElementsByClassName('bodys')[this.index] 
       let $parent = $this.parentNode
-
+      let $child = $this.children
       let $index = $this.getAttribute('index')
+      var Bodys = document.getElementsByClassName('bodys')[e]      
+          Bodys.style.left = 0 + 'px' 
       let width = $this.offsetWidth
-      let clientWidth = document.documentElement.clientWidth
-
-      console.log('width:'+width)
+      let scrollLeft =$parent.scrollLeft
+      console.log('$index:'+$index)
+      console.log('e:'+e)
       if($index>this.index){
         this.fades = "lefts"
         if($index>3){
           setTimeout(()=>{
+            console.log($index)
+            console.log(this.index)
             $parent.scrollLeft = width*($index+1-this.index)
           },200)
         }
+                      leftBodys.style.left = 375 + 'px'
       }else{
         this.fades = "rights"
         if($index<4){
@@ -222,11 +181,8 @@ export default {
             $parent.scrollLeft = width*-(this.index-$index)
           },200)
         }        
+                      leftBodys.style.left = 375 + 'px'        
       }
-      console.log('$index:'+$index)
-      console.log('this.index:'+this.index)
-
-      $main.style.left = -clientWidth* $index+'px'      
       this.index = $index
     },
     onScrollWidth(e){
@@ -253,16 +209,12 @@ export default {
   }
   .header{
     position: relative;
-    // margin-bottom:74px;
-    // width: 100%;
-    height: 74px;
-    z-index: 100;
     .main_header{
       width: 375px;
       position: fixed;
       top:0px;
       left: 0px;
-      z-index:100;
+      z-index:1000;
       .main_header_top{
         display: flex;
         justify-content: space-between;
@@ -308,25 +260,27 @@ export default {
           overflow-x: auto;
           text-align: left;
           white-space: nowrap;
-          line-height: 30px;
+          height: 30px;
           .itemBar{
             display: inline-block;
             padding:0 12px;
-            line-height: 30px;
             span{
               position: relative;
+              line-height: 28px;
               display: inline-block;
+              // overflow: hidden;
             }
             .active{
               color: #FF6B00;
-              i{
+              &>i{
               width: 100%;
-              display: inline-block;
+              display: block;
               position: absolute;
               height: 0px;
               border-bottom: 2px solid #FF6B00;
-              bottom: 0px;
+              top:27px;
               padding: 0 12px;
+              z-index: 100;
               left: 0px;     
               }
             }
@@ -359,9 +313,9 @@ export default {
         }
         .showContent{
           position: absolute;
-          overflow: hidden;
           padding-left: 13px;
           top:0px;
+          overflow: hidden;
           height: 0px;
           background: #f2f2f2;
           transition:all .1s;
@@ -373,6 +327,7 @@ export default {
             font-size: 0.3rem;
           }
           .showBody{
+            /* z-index: 1000; */
             margin-top:5px;
             width: 100%;
             height: 83px;
@@ -387,6 +342,7 @@ export default {
               color:#333;
               background: #fff;
               margin-right: 10px;
+              // z-index: -1;
             }
             .heHeight{
               border: 1px solid #ff6700;
@@ -398,85 +354,68 @@ export default {
         .showHeight{
           opacity: 1;
           z-index: 100;
-          transition:all .1s;
+          transition:all .3s;
           height: 130px;    
         }
       }    
     }    
   }
-  .main_bodyer{
-    z-index: 99;
-    width: 2625px;
-    height: auto;
-    // transition: all .5s;
-    // overflow: hidden;
-    position: relative;
-    display: flex;
-    flex-wrap: nowrap;
-    top:0px;
-    left: 0px;
-    .bodys{
-      float: left;
-      background: pink;
+  .mainBodys{
+    // width: 375px;
+    // overflow: hidden;    
+    // position: relative;
+    .main_bodyer{
+      width: 375px;
+      top:74px;
+      height: 1800px;
+      display: flex;
       position: relative;
-      // border:2px solid red;
       left: 0px;
-      top:0px;
-      width: 100%;
-      // height: auto;
-      height: 590px;   
-      overflow-y: auto;
-      transition: all .3s;   
-      div{
-        width: 100%;
-        height: 1800px;  
-        // overflow: hidden;
-        background: lightblue;   
-        .a{
-          width: 100%;
-          height: 1000px;  
-          overflow: hidden;
-          background: lightsalmon;            
-        }    
+      .bodys{
+        display: block;
+        // z-index: 1000;
+        border:3px solid red;
+        background: green;
+        position: absolute;
+        width: 375px;
+        overflow: hidden;
+        height: 100%;
+        left: 0px;
+        top:0px;
+        transition: all .5s;
       }
-    }
-    .noScorllTop{
-      overflow-y: hidden;
-    }
-    .zindex{
-      z-index: 99;
-    }
-    .lefts-enter{
-      @keyframes onLeft{
-        0%{
-          left:750px;
-        }
-        100%{
-          left:0px;
-        }
-      }      
-    }
-    .lefts-enter-active{
-      animation:onLeft .5s 1 ease-in-out;
-    }
-    .rights-enter{
-      @keyframes onRight{
-        0%{
-          left:-750px;
-        }
-        100%{
-          left:0px;
-        }
-      }        
-    }
-    .rights-enter-active{
-      animation:onRight .5s 1 ease-in-out;
-    }    
+      .zindex{
+        z-index: 999;
+      }
+      .lefts-enter{
+        @keyframes onLeft{
+          0%{
+            left:750px;
+          }
+          100%{
+            left:0px;
+          }
+        }      
+      }
+      .lefts-enter-active{
+        animation:onLeft .5s 1 ease-in-out;
+      }
+      .rights-enter{
+        @keyframes onRight{
+          0%{
+            left:-750px;
+          }
+          100%{
+            left:0px;
+          }
+        }        
+      }
+      .rights-enter-active{
+        animation:onRight .5s 1 ease-in-out;
+      }    
 
-  
+    
+    }  
   }
-  .noScorllLeft{
-    overflow-x: hidden;
-  }  
 }
 </style>

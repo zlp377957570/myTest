@@ -15,11 +15,8 @@
           </div>
           <div class="main_header_tab">
             <div class="contentBar" @change="onScrollWidth($event)">
-              <!-- <div v-for="(item,i) in ['推荐','手机','智能','电视','笔记本','家电','生活周边']" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
-                <span :class="index==i?'active':''">{{item}}</span>
-              </div>                                                         -->
               <div v-for="(item,i) in tabs" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
-                <span :class="index==i?'active':''">{{item}}</span>
+                <span :class="index==i?'active':''">{{item}}<i></i></span>
               </div>
             </div>       
             <div class="downBar" @click="openBar">
@@ -36,21 +33,15 @@
           </div>        
         </div>
       </div>
-      <div class="main_bodyer">
-        <transition-group :name="fades" tag="div">          
-          <div v-for="(page,p) in tabs" :class="show?'bodys':'bodys zindex'" :key="p" v-show="index==p">
-            <!-- <van-button @click="add" type="primary">主要按钮</van-button>
-            <van-button type="info">信息按钮</van-button>
-            <h1>{{p}}</h1> -->
-            <p>{{p}}</p>    
-            <keep-alive :include="'page'+p">
-              <v-touch @swipeleft="onSwipeLeft" @swiperight="onSwipeRight">
-                <component :is="'page'+p"></component>  
-              </v-touch>
-            </keep-alive>
-          </div>                                                     
-        </transition-group>  
-      </div>
+      <transition-group class="main_bodyer" :name="fades" tag="div">          
+        <div v-for="(page,p) in tabs" :class="show?'bodys':'bodys zindex'" :key="p" v-show="index==p"  @touchstart="onTouchStart($event,p)">   
+          <keep-alive :include="'page'+p">
+            <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
+              <component :is="'page'+p"></component>  
+            <!-- </v-touch> -->
+          </keep-alive>
+        </div>                                                     
+      </transition-group>  
   </div>
 </template>
 
@@ -82,21 +73,56 @@ export default {
     window.addEventListener('scroll', this.onScrollWidth)
   },
   methods:{
-    onSwipeLeft(){
+    onTouchStart(a,p){
       var self = this
-      var e = self.index<6?self.index:6
-      e<6?e++:e
-
-      self.tabSelect(e)
-      this.index = e
+      var $i = document.querySelector('.itemBar:nth-child('+(p+1)+') .active i')
+      var offsetWidth = document.body.offsetWidth
+      var width = offsetWidth/2
+      var _this = a.currentTarget
+        var a =a.touches[0]
+        var startLeft = a.clientX
+      _this.ontouchmove = function(b){
+        var b = b.touches[0]
+        var clientX = b.clientX
+         _this.style.left = clientX-startLeft+'px'
+         $i.style.left = -(clientX-startLeft)/8+'px'
+        _this.ontouchend = function(c){
+          var c = c.changedTouches[0]
+          var endLeft = c.clientX
+          var offWidth = endLeft-startLeft
+          if(offWidth>0){
+            if(Number(offWidth)>=width){
+                p>0?p:0
+                p>0?p--:0
+                self.tabSelect(p)
+              }
+          }
+          if(offWidth<0){
+            if(-Number(offWidth)>=width){
+              p<6?p:6
+              p<6?p++:p
+              self.tabSelect(p)
+            }            
+          }
+          _this.style.left = 0+'px'
+         $i.style.left = 0+'px'          
+        }
+      } 
     },
-    onSwipeRight(){
-      var self = this 
-      var e = self.index==0?0:self.index-1
-                  console.log(e)
-      self.tabSelect(e)
-      this.index = e             
-    },
+    // onSwipeLeft(event){
+    //   var self = this
+    //   var e = self.index<6?self.index:6
+    //   e<6?e++:e
+    //   self.tabSelect(e)
+    //   this.index = e
+    // },
+    // onSwipeRight(){
+    //   var self = this 
+    //   var e = self.index==0?0:self.index-1
+    //   // console.log(e)
+    //   self.tabSelect(e)
+    //   this.index = e             
+    // },
     add(){
       let url = this.HOST + '/getMaindata.php'
       Dialog.alert({
@@ -126,6 +152,8 @@ export default {
       let $this = document.getElementsByClassName('itemBar')[e]
       console.log(this.$route.meta.isLogin)
       let $parent = $this.parentNode
+      let $child = $this.children
+      console.log($child)
       let $index = $this.getAttribute('index')
       let width = $this.offsetWidth
       let scrollLeft =$parent.scrollLeft
@@ -225,17 +253,29 @@ export default {
           overflow-x: auto;
           text-align: left;
           white-space: nowrap;
-          // transition:all 1s;
+          height: 30px;
           .itemBar{
             display: inline-block;
             padding:0 12px;
             span{
+              position: relative;
               line-height: 28px;
               display: inline-block;
+              // overflow: hidden;
             }
             .active{
               color: #FF6B00;
+              i{
+              width: 100%;
+              display: block;
+              position: absolute;
+              height: 0px;
               border-bottom: 2px solid #FF6B00;
+              top:27px;
+              padding: 0 12px;
+              z-index: 1000;
+              left: 0px;     
+              }
             }
           }
         }
