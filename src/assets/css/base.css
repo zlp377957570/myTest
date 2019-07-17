@@ -13,24 +13,47 @@ html,body,h1,h2,h3,h4,h5,h6,p,a,div,span,b,pre,dl,dd,input,li,ul,td,tr,button{
 }
 html{
 	font-family: sans-serif;
+	/* max-width: 750px; */
+	height: 100%;
+	position: fixed;
+	overflow: hidden;
 }
 body{
 	margin: 0 auto;
-	max-width: 750px;
+	/* max-width: 750px; */
+	height: 100%;
+	/* padding: 10px; */
+	/* overflow: hidden; */
 }
 /* @media screen and (max-width:321px){
     body{
 		background: red;
 	}
 } */
-
+/* @media only screen and (device-height:568px){
+	.hello .main_bodyer .bodys{
+		height: 545px;
+		background: red;
+	}	
+}
+@media only screen and (device-height: 667px){
+	.hello .main_bodyer .bodys{
+		height: 545px;
+		background: red;
+	}	
+}
+@media only screen and (device-height: 736px){
+	.hello .main_bodyer .bodys{
+		height: 545px;
+		background: red;
+	}	
+} */
 /*iPhoneX的适配*/
-@media screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
-	body{
-		background: #ff6700;
-	}
-	.hello{
-		/* height: 4rem!important; */
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+
+	.hello .main_bodyer .bodys{
+		height: 690px;
+		background: blue;
 	}
 	/*添加底部适配*/
 	.l_o_btm {

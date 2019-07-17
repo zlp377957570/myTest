@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="main_header_tab">
-            <div class="contentBar" @change="onScrollWidth($event)">
+            <div class="contentBar">
               <div v-for="(item,i) in tabs" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
                 <span :class="index==i?'active':''">{{item}}<i></i></span>
               </div>
@@ -33,24 +33,36 @@
           </div>        
         </div>
       </div>
-      <transition-group :class="['main_bodyer',{'noScorllLeft':noScorllLeft}]" :name="fades" tag="div" style="left:0px">          
-        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)">   
+      <transition-group :class="['main_bodyer',{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :name="fades" tag="div" style="left:0px">          
+        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)" @scroll="paperScroll($event)">   
           <!-- <keep-alive :include="'page'+p"> -->
             <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
               <!-- <component :is="'page'+p"></component>   -->
               <div>
                 <div class="a">{{p}}</div>
-                <div class="b">2222222222222222222222222222</div>
+                <div class="b">3333333333333333333333333333</div>
+                <div class="c">2222222222222222222222222222</div>
               </div>
             <!-- </v-touch> -->
           <!-- </keep-alive> -->
         </div>                                                     
       </transition-group>  
+      <!-- <div class="footBar"> -->
+        <van-tabbar v-model="active"
+          active-color="#07c160"
+          inactive-color="#000"
+        >
+          <van-tabbar-item name="home" icon="home-o">标签</van-tabbar-item>
+          <van-tabbar-item name="search" icon="search">标签</van-tabbar-item>
+          <van-tabbar-item name="friends" icon="friends-o">标签</van-tabbar-item>
+          <van-tabbar-item name="setting" icon="setting-o">标签</van-tabbar-item>
+        </van-tabbar>       
+      <!-- </div>     -->
   </div>
 </template>
 
 <script>
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs  } from 'vant'
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs,Tabbar, TabbarItem  } from 'vant'
 import { setTimeout, clearTimeout, setInterval, clearInterval } from 'timers'
 import page0 from './page-list/page0'
 import page1 from './page-list/page1'
@@ -69,6 +81,7 @@ export default {
       show:false,
       noScorllTop:false,
       noScorllLeft:false,
+      active:'home',
       scroll:'',
       fades:''
     }
@@ -77,18 +90,35 @@ export default {
     page0,page1,page2,page3,page4,page5,page6,
   },
   mounted(){
-    window.addEventListener('scroll', this.onScrollWidth)
+    // window.addEventListener('scroll', this.onScrollHeight)
+    window.addEventListener('resize',this.setRemUnit)
   },
   methods:{
+    setRemUnit(){
+      var deviceWidth = document.documentElement.clientWidth;
+      var deviceHeight = document.documentElement.clientHeight;
+      
+
+      console.log(deviceHeight)
+      // if(deviceWidth > 750) deviceWidth = 750;
+      var bodys = document.getElementsByClassName('main_bodyer')[0]
+            console.log(bodys)
+            bodys.style.height = deviceHeight + 'px'
+      // document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';        
+    },    
     onTouchStart(a,p){
       var self = this
       var $i = document.querySelector('.itemBar:nth-child('+(p+1)+') .active i')
       var offsetWidth = document.documentElement.clientWidth
-      
+      document.documentElement.addEventListener("touchmove", function (e) {
+              e.returnValue = true
+      });            
       var width = offsetWidth/2
       var _this = a.currentTarget
       var main = _this.parentNode
       var lefts = main.style.left
+          console.log('lefts111111:'+lefts)      
+        main.style.left = lefts.slice(0,-2) + 'px'      
         var a =a.touches[0]
         var startLeft = a.clientX
         var startTop = a.clientY
@@ -100,20 +130,26 @@ export default {
         var b = b.touches[0]
         var clientX = b.clientX
         var clientY = b.clientY
-        // console.log('clientY:'+clientY)
-        // console.log('clientX:'+clientX)
-        // var YYY = clientY-startTop
-        // var xxx = clientX-startLeft
-        // console.log('YYY:'+YYY)
-        // console.log('xxx:'+xxx)
-        // console.log(self.noScorllLeft)
-        // console.log('xxx:'+xxx)     
         if(self.noScorllLeft===false){
-          // console.log(1111111111111111111111)
           if(clientX-startLeft>10 || clientX-startLeft<-10){
+            document.documentElement.addEventListener("touchmove", function (e) {
+                    e.preventDefault();
+            });           
              self.noScorllTop = true
-              main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-              $i.style.left = -(clientX-startLeft)/8+'px'    
+            if(p==0){
+              if((clientX-startLeft)<0){
+                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+                $i.style.left = -(clientX-startLeft)/8+'px'                  
+              }
+            }else if(p==6){
+              if((clientX-startLeft)>0){
+                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+                $i.style.left = -(clientX-startLeft)/8+'px'                  
+              }
+            }else{
+                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+                $i.style.left = -(clientX-startLeft)/8+'px'                     
+            }
           }else{
             if(self.noScorllTop===false){
               if(clientY-startTop>10 || clientY-startTop<-10){
@@ -123,12 +159,46 @@ export default {
             }            
           }
         }else{
-          // console.log(444444444444444444444444)
+          self.noScorllLeft = true
         }
-
+        // if(self.noScorllTop===false){
+        //     if(clientY-startTop>10 || clientY-startTop<-10){
+        //       console.log(clientY-startTop)
+        //       self.noScorllLeft = true            
+        //     }else{
+        //       console.log(self.noScorllLeft)
+        //       self.noScorllTop===true   
+        //       self.noScorllLeft = false
+        //     }
+        // }
+        // if(self.noScorllLeft===false){
+        //                 console.log(333333333333333)
+        //   if(clientX-startLeft>0 || clientX-startLeft<0){
+        //     self.noScorllTop = true
+        //     if(p==0){
+        //       if((clientX-startLeft)<0){
+        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+        //         $i.style.left = -(clientX-startLeft)/8+'px'                  
+        //       }
+        //     }else if(p==6){
+        //       if((clientX-startLeft)>0){
+        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+        //         $i.style.left = -(clientX-startLeft)/8+'px'                  
+        //       }
+        //     }else{
+        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+        //         $i.style.left = -(clientX-startLeft)/8+'px'                     
+        //     }
+        //   }
+        // }
+ 
         _this.ontouchend = function(c){
+          document.documentElement.addEventListener("touchmove", function (e) {
+                  e.returnValue = true
+          });            
           clearInterval()
-          console.log(del)
+          console.log('lefts222222:'+lefts)
+          main.style.left = lefts.slice(0,-2) + 'px'
           if(self.noScorllLeft===false){
             var c = c.changedTouches[0]
             var endLeft = c.clientX
@@ -151,24 +221,10 @@ export default {
             $i.style.left = 0+'px'              
           } 
           self.noScorllTop = false
-          self.noScorllLeft = false                 
+          self.noScorllLeft = false               
         }
       } 
     },
-    // onSwipeLeft(event){
-    //   var self = this
-    //   var e = self.index<6?self.index:6
-    //   e<6?e++:e
-    //   self.tabSelect(e)
-    //   this.index = e
-    // },
-    // onSwipeRight(){
-    //   var self = this 
-    //   var e = self.index==0?0:self.index-1
-    //   // console.log(e)
-    //   self.tabSelect(e)
-    //   this.index = e             
-    // },
     add(){
       let url = this.HOST + '/getMaindata.php'
       Dialog.alert({
@@ -229,12 +285,11 @@ export default {
       $main.style.left = -clientWidth* $index+'px'      
       this.index = $index
     },
-    onScrollWidth(e){
-      let $this = e.currentTarget  
-      this.scroll = $this.scrollLeft;
-      $this.scroll =  document.body.scrollTop;
-            console.log($this)
-            console.log(this.scroll)
+    paperScroll(e){
+            let $this = e.currentTarget  
+            // let $this = e.target  
+            let scollTop = $this.scrollTop
+                //  console.log(scollTop)   
     }
   }
 }
@@ -244,9 +299,9 @@ export default {
 <style lang="less" scoped>
 .hello{
   margin:0 auto;
-  width: 100%;
   color: #333333;
   overflow: hidden;
+  height: 100%;
   font-size: .32rem;
 	i{
     font-size: 0.36rem;
@@ -254,8 +309,8 @@ export default {
   .header{
     position: relative;
     // margin-bottom:74px;
-    // width: 100%;
     height: 74px;
+    background: red;
     z-index: 100;
     .main_header{
       width: 375px;
@@ -303,16 +358,19 @@ export default {
         color: #747474;
         position: relative;
         background: #f2f2f2;
+        height: 30px;
+        // overflow: hidden;
+        line-height: 24px;
         .contentBar{
           width: 332px;
           overflow-x: auto;
           text-align: left;
           white-space: nowrap;
-          line-height: 30px;
+          height: 30px;
           .itemBar{
             display: inline-block;
             padding:0 12px;
-            line-height: 30px;
+            height: 30px;
             span{
               position: relative;
               display: inline-block;
@@ -325,7 +383,7 @@ export default {
               position: absolute;
               height: 0px;
               border-bottom: 2px solid #FF6B00;
-              bottom: 0px;
+              top: 27px;
               padding: 0 12px;
               left: 0px;     
               }
@@ -409,35 +467,57 @@ export default {
     width: 2625px;
     height: auto;
     // transition: all .5s;
-    // overflow: hidden;
+    overflow: hidden;
     position: relative;
     display: flex;
     flex-wrap: nowrap;
     top:0px;
     left: 0px;
+          height: 100%;  
+      padding-bottom: 120px;
     .bodys{
       float: left;
       background: pink;
       position: relative;
-      // border:2px solid red;
+        // height: 100%; 
       left: 0px;
       top:0px;
       width: 100%;
-      // height: auto;
-      height: 590px;   
-      overflow-y: auto;
+
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
       transition: all .3s;   
+      border:2px solid red;
       div{
         width: 100%;
-        height: 1800px;  
+        height: 100%;  
         // overflow: hidden;
+        position: relative;
         background: lightblue;   
         .a{
           width: 100%;
-          height: 1000px;  
+          height: 1500px;  
+          // position: absolute;
           overflow: hidden;
           background: lightsalmon;            
-        }    
+        }  
+        .b{
+          // position: absolute;
+          // bottom: 0;
+          width: 100%;
+          height: 1500px;  
+          overflow: hidden;
+          background: blueviolet;                 
+        }  
+        .c{
+          // position: absolute;
+          bottom: 0;
+          width: 100%;
+          height: 1500px;  
+          overflow: hidden;
+                border:5px solid black;
+          background: aqua;                 
+        }          
       }
     }
     .noScorllTop{
@@ -477,6 +557,16 @@ export default {
   }
   .noScorllLeft{
     overflow-x: hidden;
-  }  
+  }
+  .footBar{
+    width: 100%;
+    height: 150px;
+    // margin-top:0px;
+    background: red;
+    // position: relative;
+    position: fixed;
+                    border:5px solid yellow;
+    z-index: 100;
+  } 
 }
 </style>

@@ -3,13 +3,14 @@
   <head>
     <meta charset="utf-8">
     <!-- <meta name="viewport" content="width=device-width,initial-scale=1.0"> -->
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1, minimum-scale=1">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1, minimum-scale=1 user-scalable=0">
     <title>adada</title>
     <script>
       (function(){
         function setRemUnit(){
           var deviceWidth = document.documentElement.clientWidth;
-          console.log(deviceWidth)
+          var deviceHeight = document.documentElement.clientHeight;
+
           if(deviceWidth > 750) deviceWidth = 750;
           document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';        
         }
@@ -19,7 +20,13 @@
           if(e.persisted){
             setRemUnit()
           }
-        })        
+        })  
+        // document.body.addEventListener('touchmove', (e) => {
+        //   e.preventDefault();
+        // });     
+        document.documentElement.addEventListener('touchmove', (e) => {
+          // e.preventDefault();
+        }, { passive: false });         
       })()
     </script>
   </head>
