@@ -48,6 +48,11 @@ export default new Router({
           path: '/page6',
           name: 'page6',
           component:() => import('@/components/page-list/page6.vue')
+        },
+        {
+          path: '/carousel',
+          name: 'carousel',
+          component:() => import('@/components/page-list/carousel.vue')
         }     
       ]
     }

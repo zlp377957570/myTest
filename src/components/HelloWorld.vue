@@ -37,12 +37,7 @@
         <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)" @scroll="paperScroll($event)">   
           <!-- <keep-alive :include="'page'+p"> -->
             <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
-              <!-- <component :is="'page'+p"></component>   -->
-              <div>
-                <div class="a">{{p}}</div>
-                <div class="b">3333333333333333333333333333</div>
-                <div class="c">2222222222222222222222222222</div>
-              </div>
+              <component :is="'page'+p"></component>   
             <!-- </v-touch> -->
           <!-- </keep-alive> -->
         </div>                                                     
@@ -109,10 +104,10 @@ export default {
     onTouchStart(a,p){
       var self = this
       var $i = document.querySelector('.itemBar:nth-child('+(p+1)+') .active i')
-      var offsetWidth = document.documentElement.clientWidth
-      document.documentElement.addEventListener("touchmove", function (e) {
-              e.returnValue = true
-      });            
+      var offsetWidth = document.documentElement.clientWidth     
+      document.addEventListener("touchmove", function (e) {
+        e.returnValue = true
+      });             
       var width = offsetWidth/2
       var _this = a.currentTarget
       var main = _this.parentNode
@@ -132,23 +127,26 @@ export default {
         var clientY = b.clientY
         if(self.noScorllLeft===false){
           if(clientX-startLeft>10 || clientX-startLeft<-10){
-            document.documentElement.addEventListener("touchmove", function (e) {
-                    e.preventDefault();
-            });           
+            var mobileAgent = new Array("iphone", "ipod", "ipad", "android", "mobile", "blackberry", "webos", "incognito", "webmate", "bada", "nokia", "lg", "ucweb", "skyfire");
+              var browser = navigator.userAgent.toLowerCase(); 
+              var isMobile = false; 
+              for (var i=0; i<mobileAgent.length; i++){ 
+                  if (browser.indexOf(mobileAgent[i])!=-1){
+                      isMobile = true; 
+                      var ua = navigator.userAgent.toLowerCase();
+                      var isWeixin = ua.indexOf('micromessenger') != -1;
+                      if (!isWeixin) {
+                        document.addEventListener("touchmove", function (e) {
+                          e.preventDefault()
+                        });              
+                      }
+                  }
+              }        
              self.noScorllTop = true
-            if(p==0){
-              if((clientX-startLeft)<0){
+            var ismove =  Number(lefts.slice(0,-2))+(Number(clientX-startLeft))
+            if(ismove<0 && ismove>-2250){
                 main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-                $i.style.left = -(clientX-startLeft)/8+'px'                  
-              }
-            }else if(p==6){
-              if((clientX-startLeft)>0){
-                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-                $i.style.left = -(clientX-startLeft)/8+'px'                  
-              }
-            }else{
-                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-                $i.style.left = -(clientX-startLeft)/8+'px'                     
+                $i.style.left = -(clientX-startLeft)/8+'px'              
             }
           }else{
             if(self.noScorllTop===false){
@@ -161,41 +159,11 @@ export default {
         }else{
           self.noScorllLeft = true
         }
-        // if(self.noScorllTop===false){
-        //     if(clientY-startTop>10 || clientY-startTop<-10){
-        //       console.log(clientY-startTop)
-        //       self.noScorllLeft = true            
-        //     }else{
-        //       console.log(self.noScorllLeft)
-        //       self.noScorllTop===true   
-        //       self.noScorllLeft = false
-        //     }
-        // }
-        // if(self.noScorllLeft===false){
-        //                 console.log(333333333333333)
-        //   if(clientX-startLeft>0 || clientX-startLeft<0){
-        //     self.noScorllTop = true
-        //     if(p==0){
-        //       if((clientX-startLeft)<0){
-        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-        //         $i.style.left = -(clientX-startLeft)/8+'px'                  
-        //       }
-        //     }else if(p==6){
-        //       if((clientX-startLeft)>0){
-        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-        //         $i.style.left = -(clientX-startLeft)/8+'px'                  
-        //       }
-        //     }else{
-        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
-        //         $i.style.left = -(clientX-startLeft)/8+'px'                     
-        //     }
-        //   }
-        // }
  
         _this.ontouchend = function(c){
-          document.documentElement.addEventListener("touchmove", function (e) {
-                  e.returnValue = true
-          });            
+          document.addEventListener("touchmove", function (e) {
+            e.returnValue = true
+          });                    
           clearInterval()
           console.log('lefts222222:'+lefts)
           main.style.left = lefts.slice(0,-2) + 'px'
@@ -473,11 +441,11 @@ export default {
     flex-wrap: nowrap;
     top:0px;
     left: 0px;
-          height: 100%;  
-      padding-bottom: 120px;
+    height: 100%;  
+    padding-bottom: 120px;
     .bodys{
       float: left;
-      background: pink;
+      // background: pink;
       position: relative;
         // height: 100%; 
       left: 0px;
@@ -487,37 +455,18 @@ export default {
       overflow-y: scroll;
       -webkit-overflow-scrolling: touch;
       transition: all .3s;   
-      border:2px solid red;
+      border:2px solid black;
       div{
         width: 100%;
-        height: 100%;  
+        height: 1800px;  
         // overflow: hidden;
         position: relative;
-        background: lightblue;   
-        .a{
-          width: 100%;
-          height: 1500px;  
-          // position: absolute;
-          overflow: hidden;
-          background: lightsalmon;            
-        }  
-        .b{
-          // position: absolute;
-          // bottom: 0;
-          width: 100%;
-          height: 1500px;  
-          overflow: hidden;
-          background: blueviolet;                 
-        }  
-        .c{
-          // position: absolute;
-          bottom: 0;
-          width: 100%;
-          height: 1500px;  
-          overflow: hidden;
-                border:5px solid black;
-          background: aqua;                 
-        }          
+        .carousel{
+             width: 100%;
+            height: 300px;
+            background: #fff;
+            position: absolute;       
+        }       
       }
     }
     .noScorllTop{

@@ -14,9 +14,9 @@ export default {
 <style lang="less" scoped>
     .pages{
         width: 500px;
-        height: 500px;
-        background: red;
-        top:200px;
+        height: 100px;
+        background: orange;
+        top:0px;
         // z-index: 20000;
         position: absolute;
     }

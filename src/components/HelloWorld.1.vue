@@ -14,7 +14,7 @@
             </div>
           </div>
           <div class="main_header_tab">
-            <div class="contentBar" @change="onScrollWidth($event)">
+            <div class="contentBar">
               <div v-for="(item,i) in tabs" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
                 <span :class="index==i?'active':''">{{item}}<i></i></span>
               </div>
@@ -33,21 +33,37 @@
           </div>        
         </div>
       </div>
-      <transition-group class="main_bodyer" :name="fades" tag="div">          
-        <div v-for="(page,p) in tabs" :class="show?'bodys':'bodys zindex'" :key="p" v-show="index==p"  @touchstart="onTouchStart($event,p)">   
-          <keep-alive :include="'page'+p">
+      <transition-group :class="['main_bodyer',{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :name="fades" tag="div" style="left:0px">          
+        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)" @scroll="paperScroll($event)">   
+          <!-- <keep-alive :include="'page'+p"> -->
             <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
-              <component :is="'page'+p"></component>  
+              <!-- <component :is="'page'+p"></component>   -->
+              <div>
+                <div class="a">{{p}}</div>
+                <div class="b">3333333333333333333333333333</div>
+                <div class="c">2222222222222222222222222222</div>
+              </div>
             <!-- </v-touch> -->
-          </keep-alive>
+          <!-- </keep-alive> -->
         </div>                                                     
       </transition-group>  
+      <!-- <div class="footBar"> -->
+        <van-tabbar v-model="active"
+          active-color="#07c160"
+          inactive-color="#000"
+        >
+          <van-tabbar-item name="home" icon="home-o">标签</van-tabbar-item>
+          <van-tabbar-item name="search" icon="search">标签</van-tabbar-item>
+          <van-tabbar-item name="friends" icon="friends-o">标签</van-tabbar-item>
+          <van-tabbar-item name="setting" icon="setting-o">标签</van-tabbar-item>
+        </van-tabbar>       
+      <!-- </div>     -->
   </div>
 </template>
 
 <script>
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs  } from 'vant'
-import { setTimeout } from 'timers'
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs,Tabbar, TabbarItem  } from 'vant'
+import { setTimeout, clearTimeout, setInterval, clearInterval } from 'timers'
 import page0 from './page-list/page0'
 import page1 from './page-list/page1'
 import page2 from './page-list/page2'
@@ -55,6 +71,7 @@ import page3 from './page-list/page3'
 import page4 from './page-list/page4'
 import page5 from './page-list/page5'
 import page6 from './page-list/page6'
+import { ELOOP } from 'constants';
 export default {
   name: 'HelloWorld',
   data () {
@@ -62,6 +79,9 @@ export default {
       index:0,
       tabs:['推荐','手机','智能','电视','笔记本','家电','生活周边'],
       show:false,
+      noScorllTop:false,
+      noScorllLeft:false,
+      active:'home',
       scroll:'',
       fades:''
     }
@@ -70,59 +90,141 @@ export default {
     page0,page1,page2,page3,page4,page5,page6,
   },
   mounted(){
-    window.addEventListener('scroll', this.onScrollWidth)
+    // window.addEventListener('scroll', this.onScrollHeight)
+    window.addEventListener('resize',this.setRemUnit)
   },
   methods:{
+    setRemUnit(){
+      var deviceWidth = document.documentElement.clientWidth;
+      var deviceHeight = document.documentElement.clientHeight;
+      
+
+      console.log(deviceHeight)
+      // if(deviceWidth > 750) deviceWidth = 750;
+      var bodys = document.getElementsByClassName('main_bodyer')[0]
+            console.log(bodys)
+            bodys.style.height = deviceHeight + 'px'
+      // document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';        
+    },    
     onTouchStart(a,p){
       var self = this
       var $i = document.querySelector('.itemBar:nth-child('+(p+1)+') .active i')
-      var offsetWidth = document.body.offsetWidth
+      var offsetWidth = document.documentElement.clientWidth
+      document.documentElement.addEventListener("touchmove", function (e) {
+              e.returnValue = true
+      });            
       var width = offsetWidth/2
       var _this = a.currentTarget
+      var main = _this.parentNode
+      var lefts = main.style.left
+          console.log('lefts111111:'+lefts)      
+        main.style.left = lefts.slice(0,-2) + 'px'      
         var a =a.touches[0]
         var startLeft = a.clientX
+        var startTop = a.clientY
+        var del = 0
+        setInterval(()=>{
+           del++
+        },10)
       _this.ontouchmove = function(b){
         var b = b.touches[0]
         var clientX = b.clientX
-         _this.style.left = clientX-startLeft+'px'
-         $i.style.left = -(clientX-startLeft)/8+'px'
-        _this.ontouchend = function(c){
-          var c = c.changedTouches[0]
-          var endLeft = c.clientX
-          var offWidth = endLeft-startLeft
-          if(offWidth>0){
-            if(Number(offWidth)>=width){
-                p>0?p:0
-                p>0?p--:0
-                self.tabSelect(p)
+        var clientY = b.clientY
+        if(self.noScorllLeft===false){
+          if(clientX-startLeft>10 || clientX-startLeft<-10){
+            document.documentElement.addEventListener("touchmove", function (e) {
+                    e.preventDefault();
+            });           
+             self.noScorllTop = true
+            if(p==0){
+              if((clientX-startLeft)<0){
+                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+                $i.style.left = -(clientX-startLeft)/8+'px'                  
               }
-          }
-          if(offWidth<0){
-            if(-Number(offWidth)>=width){
-              p<6?p:6
-              p<6?p++:p
-              self.tabSelect(p)
+            }else if(p==6){
+              if((clientX-startLeft)>0){
+                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+                $i.style.left = -(clientX-startLeft)/8+'px'                  
+              }
+            }else{
+                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+                $i.style.left = -(clientX-startLeft)/8+'px'                     
+            }
+          }else{
+            if(self.noScorllTop===false){
+              if(clientY-startTop>10 || clientY-startTop<-10){
+                self.noScorllLeft = true
+               
+              }
             }            
           }
-          _this.style.left = 0+'px'
-         $i.style.left = 0+'px'          
+        }else{
+          self.noScorllLeft = true
+        }
+        // if(self.noScorllTop===false){
+        //     if(clientY-startTop>10 || clientY-startTop<-10){
+        //       console.log(clientY-startTop)
+        //       self.noScorllLeft = true            
+        //     }else{
+        //       console.log(self.noScorllLeft)
+        //       self.noScorllTop===true   
+        //       self.noScorllLeft = false
+        //     }
+        // }
+        // if(self.noScorllLeft===false){
+        //                 console.log(333333333333333)
+        //   if(clientX-startLeft>0 || clientX-startLeft<0){
+        //     self.noScorllTop = true
+        //     if(p==0){
+        //       if((clientX-startLeft)<0){
+        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+        //         $i.style.left = -(clientX-startLeft)/8+'px'                  
+        //       }
+        //     }else if(p==6){
+        //       if((clientX-startLeft)>0){
+        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+        //         $i.style.left = -(clientX-startLeft)/8+'px'                  
+        //       }
+        //     }else{
+        //         main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+        //         $i.style.left = -(clientX-startLeft)/8+'px'                     
+        //     }
+        //   }
+        // }
+ 
+        _this.ontouchend = function(c){
+          document.documentElement.addEventListener("touchmove", function (e) {
+                  e.returnValue = true
+          });            
+          clearInterval()
+          console.log('lefts222222:'+lefts)
+          main.style.left = lefts.slice(0,-2) + 'px'
+          if(self.noScorllLeft===false){
+            var c = c.changedTouches[0]
+            var endLeft = c.clientX
+            var offWidth = endLeft-startLeft
+            main.style.left = lefts
+            if(offWidth>0){
+              if(Number(offWidth)>=width || Number(offWidth)>=width/4 && del<15){
+                  p>0?p:0
+                  p>0?p--:0
+                  self.tabSelect(p)
+                }
+            }
+            if(offWidth<0){
+              if(-Number(offWidth)>=width || -Number(offWidth)>=width/4 && del<15){
+                p<6?p:6
+                p<6?p++:p
+                self.tabSelect(p)
+              }            
+            }
+            $i.style.left = 0+'px'              
+          } 
+          self.noScorllTop = false
+          self.noScorllLeft = false               
         }
       } 
     },
-    // onSwipeLeft(event){
-    //   var self = this
-    //   var e = self.index<6?self.index:6
-    //   e<6?e++:e
-    //   self.tabSelect(e)
-    //   this.index = e
-    // },
-    // onSwipeRight(){
-    //   var self = this 
-    //   var e = self.index==0?0:self.index-1
-    //   // console.log(e)
-    //   self.tabSelect(e)
-    //   this.index = e             
-    // },
     add(){
       let url = this.HOST + '/getMaindata.php'
       Dialog.alert({
@@ -143,28 +245,29 @@ export default {
     },
     headerBarSelect(e){
       var self = this
+      // setTimeout(()=>{
+      //   },500)  
       setTimeout(()=>{
         self.show = !self.show      
-      },200)
+        },200)
         self.tabSelect(e)
+    
     },
     tabSelect(e){
       let $this = document.getElementsByClassName('itemBar')[e]
+      var $main = document.getElementsByClassName('main_bodyer')[0]
       console.log(this.$route.meta.isLogin)
       let $parent = $this.parentNode
-      let $child = $this.children
-      console.log($child)
+
       let $index = $this.getAttribute('index')
       let width = $this.offsetWidth
-      let scrollLeft =$parent.scrollLeft
-      console.log('$index:'+$index)
-      console.log('e:'+e)
+      let clientWidth = document.documentElement.clientWidth
+
+      console.log('width:'+width)
       if($index>this.index){
         this.fades = "lefts"
         if($index>3){
           setTimeout(()=>{
-            console.log($index)
-            console.log(this.index)
             $parent.scrollLeft = width*($index+1-this.index)
           },200)
         }
@@ -176,14 +279,17 @@ export default {
           },200)
         }        
       }
+      console.log('$index:'+$index)
+      console.log('this.index:'+this.index)
+
+      $main.style.left = -clientWidth* $index+'px'      
       this.index = $index
     },
-    onScrollWidth(e){
-      let $this = e.currentTarget  
-      this.scroll = $this.scrollLeft;
-      $this.scroll =  document.body.scrollTop;
-            console.log($this)
-            console.log(this.scroll)
+    paperScroll(e){
+            let $this = e.currentTarget  
+            // let $this = e.target  
+            let scollTop = $this.scrollTop
+                //  console.log(scollTop)   
     }
   }
 }
@@ -193,21 +299,25 @@ export default {
 <style lang="less" scoped>
 .hello{
   margin:0 auto;
-  width: 100%;
   color: #333333;
   overflow: hidden;
+  height: 100%;
   font-size: .32rem;
 	i{
     font-size: 0.36rem;
   }
   .header{
     position: relative;
+    // margin-bottom:74px;
+    height: 74px;
+    background: red;
+    z-index: 100;
     .main_header{
       width: 375px;
       position: fixed;
       top:0px;
       left: 0px;
-      z-index:1000;
+      z-index:100;
       .main_header_top{
         display: flex;
         justify-content: space-between;
@@ -248,6 +358,9 @@ export default {
         color: #747474;
         position: relative;
         background: #f2f2f2;
+        height: 30px;
+        // overflow: hidden;
+        line-height: 24px;
         .contentBar{
           width: 332px;
           overflow-x: auto;
@@ -257,23 +370,21 @@ export default {
           .itemBar{
             display: inline-block;
             padding:0 12px;
+            height: 30px;
             span{
               position: relative;
-              line-height: 28px;
               display: inline-block;
-              // overflow: hidden;
             }
             .active{
               color: #FF6B00;
               i{
               width: 100%;
-              display: block;
+              display: inline-block;
               position: absolute;
               height: 0px;
               border-bottom: 2px solid #FF6B00;
-              top:27px;
+              top: 27px;
               padding: 0 12px;
-              z-index: 1000;
               left: 0px;     
               }
             }
@@ -306,9 +417,9 @@ export default {
         }
         .showContent{
           position: absolute;
+          overflow: hidden;
           padding-left: 13px;
           top:0px;
-          z-index: -1;
           height: 0px;
           background: #f2f2f2;
           transition:all .1s;
@@ -320,7 +431,6 @@ export default {
             font-size: 0.3rem;
           }
           .showBody{
-            /* z-index: 1000; */
             margin-top:5px;
             width: 100%;
             height: 83px;
@@ -346,25 +456,75 @@ export default {
         .showHeight{
           opacity: 1;
           z-index: 100;
-          transition:all .3s;
+          transition:all .1s;
           height: 130px;    
         }
       }    
     }    
   }
   .main_bodyer{
-    width: 100%;
-    top:74px;
-    height: 500px;
+    z-index: 99;
+    width: 2625px;
+    height: auto;
+    // transition: all .5s;
+    overflow: hidden;
     position: relative;
+    display: flex;
+    flex-wrap: nowrap;
+    top:0px;
+    left: 0px;
+          height: 100%;  
+      padding-bottom: 120px;
     .bodys{
-      background: green;
-      position: absolute;
+      float: left;
+      background: pink;
+      position: relative;
+        // height: 100%; 
       left: 0px;
       top:0px;
+      width: 100%;
+
+      overflow-y: scroll;
+      -webkit-overflow-scrolling: touch;
+      transition: all .3s;   
+      border:2px solid red;
+      div{
+        width: 100%;
+        height: 100%;  
+        // overflow: hidden;
+        position: relative;
+        background: lightblue;   
+        .a{
+          width: 100%;
+          height: 1500px;  
+          // position: absolute;
+          overflow: hidden;
+          background: lightsalmon;            
+        }  
+        .b{
+          // position: absolute;
+          // bottom: 0;
+          width: 100%;
+          height: 1500px;  
+          overflow: hidden;
+          background: blueviolet;                 
+        }  
+        .c{
+          // position: absolute;
+          bottom: 0;
+          width: 100%;
+          height: 1500px;  
+          overflow: hidden;
+                border:5px solid black;
+          background: aqua;                 
+        }          
+      }
+    }
+    .noScorllTop{
+      overflow-y: hidden;
     }
     .zindex{
-      z-index: 1000;
+      z-index: 99;
     }
     .lefts-enter{
       @keyframes onLeft{
@@ -395,5 +555,18 @@ export default {
 
   
   }
+  .noScorllLeft{
+    overflow-x: hidden;
+  }
+  .footBar{
+    width: 100%;
+    height: 150px;
+    // margin-top:0px;
+    background: red;
+    // position: relative;
+    position: fixed;
+                    border:5px solid yellow;
+    z-index: 100;
+  } 
 }
 </style>

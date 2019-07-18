@@ -1,11 +1,10 @@
 <template>
     <div class="pages">
-        <div class="aaa">
-            <button disabled="disabled">00000000000000000000000</button>
-        </div>
+        <carousel></carousel>
     </div>
 </template>
 <script>
+import carousel from './carousel.vue'
 export default {
     name:'page0',
     data(){
@@ -13,7 +12,11 @@ export default {
 
         }
     },
+    components:{
+        carousel
+    },
     methods:{
+
     }
 }
 </script>
@@ -21,7 +24,7 @@ export default {
     .pages{
         width: 375px;
         height: 500px;
-        background: red;
+        // background: red;
         top:0px;
         left: 0px;
         position: relative;
