@@ -2,7 +2,7 @@
 	padding:0;
 	margin:0;
 	box-sizing:border-box;
-	touch-action: pan-y;
+
 }
 html,body,h1,h2,h3,h4,h5,h6,p,a,div,span,b,pre,dl,dd,input,li,ul,td,tr,button{
 	padding:0;
@@ -13,6 +13,7 @@ html,body,h1,h2,h3,h4,h5,h6,p,a,div,span,b,pre,dl,dd,input,li,ul,td,tr,button{
 	/* font-size: 24px; */
 }
 html{
+	touch-action: pan-y;
 	font-family: sans-serif;
 	/* max-width: 750px; */
 	height: 100%;

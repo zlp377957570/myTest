@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem} from 'vant';
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown } from 'vant';
 import './assets/css/base.css';
 import axios from '../node_modules/axios';
 import VueTouch from 'vue-touch';
@@ -17,6 +17,9 @@ Vue.use(Icon);
 Vue.use(Row).use(Col);
 Vue.use(Tab).use(Tabs);
 Vue.use(Tabbar).use(TabbarItem);
+Vue.use(Lazyload);
+Vue.use(PullRefresh);
+Vue.use(CountDown);
 Vue.config.productionTip = false
 Vue.prototype.HOST = "/api"
 /* eslint-disable no-new */
