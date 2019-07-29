@@ -25,7 +25,12 @@ body{
 	margin: 0 auto;
 	/* max-width: 750px; */
 	height: 100%;
-	/* padding: 10px; */
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
 	overflow:auto;
 }
 /* div{

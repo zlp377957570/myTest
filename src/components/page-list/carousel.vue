@@ -162,7 +162,7 @@ export default {
         left: 0px;
         .car{
             width: 1875px;
-            transition: .3s;
+            transition:.1s;
             position: relative;
             display: flex;
             flex-wrap: nowrap;
@@ -186,10 +186,12 @@ export default {
             }
         }
         .pointer{
-            position: absolute;
+                pointer-events: none;
+                position: absolute;
                 left: 45%;
                 top:90%;
-            ul{
+                z-index: 0;
+           ul{
                 li{
                     float: left;
                     width: 6px;

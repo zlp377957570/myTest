@@ -19,7 +19,7 @@
                 </div>                         
             </div> 
         </div>
-        <div class="ceiling"><a href="javascript:void(0);" @click="ceiling"><img src="@/assets/image/icon/吸顶.png" alt=""></a></div>       
+        <div v-show="scrollTop>=300" class="ceiling"><a href="javascript:void(0);" @click="ceiling"><img src="@/assets/image/icon/吸顶.png" alt=""></a></div>       
     </div>
 </template>
 <script>
@@ -38,6 +38,7 @@ export default {
                 {src: 'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/ccda14b5cc9070911063b07affc3e38c.jpg?thumb=1&w=720&h=360'}
             ],
             count:0,
+            scrollTop:0,
             isLoadList:['true'],
             list:[] 
         }
@@ -68,6 +69,11 @@ export default {
     destroyed() { //页面离开后销毁，防止切换路由后上一个页面监听scroll滚动事件会在新页面报错问题
         // window.removeEventListener('scroll', this.onScrollHeight)
     },
+    watch:{
+        // scrollTop(e){
+        //     this.scrollTop = e
+        // }
+    },
     methods:{
         ceiling(){
             var self = this
@@ -78,9 +84,10 @@ export default {
             e.target!==undefined?e.stopPropagation():''
             // e.stopPropagation()
             let self = this
+            let $this = e.srcElement || e
+            self.scrollTop =  $this.scrollTop
             if(self.isLoadList.length>0){
                 // console.log(self.isLoadList)
-                let $this = e.srcElement || e
                 let scollTop = $this.scrollTop
                 let offsetHeight = $this.offsetHeight
                 let scrollHeight = $this.scrollHeight
