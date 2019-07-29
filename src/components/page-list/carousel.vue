@@ -1,10 +1,8 @@
 <template>
-<div class="carousel">
-    <div class="car" ref="car">
+<div class="carousel" ref="carousel">
+    <div class="car" :index="keys" ref="car">
         <div ref="ritem" v-for="(item, index) in values" @sss="images" :key="index"
         @touchstart="touchStart($event)"
-        @touchmove="touchMove($event)"
-        @touchend="touchEnd($event)"
         :style="{backgroundImage: 'url('+ item.src +')'}"  >{{index}}
         </div>
     </div>
@@ -16,6 +14,7 @@
 </div>
 </template>
 <script>
+import { setTimeout, clearTimeout, setInterval, clearInterval } from 'timers'
 export default {
     props:['images','keys'],    
     data() {
@@ -25,22 +24,19 @@ export default {
             //     {src: 'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c352beae76d56e4a98c48c8782a497b2.jpg?thumb=1&w=720&h=360'},
             //     {src: 'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/ccda14b5cc9070911063b07affc3e38c.jpg?thumb=1&w=720&h=360'}
             // ],  
-            list:[],  
+            // list:[],  
             values:[],        
             moved: 1,
-            interval:5000,
-            duration: 300,
-            timeOutEvent:0,
-            del:0,
-            delTime:0,
-            // devceWidth:375,
+            // interval:5000,
+            // duration: 300,
             timer: null,
         }
     },
-    mounted: function () {         
-        this.$nextTick(() => {    
-            this.autoMove()
-        },500)
+    mounted: function () {    
+        var self = this     
+        self.$nextTick(() => {    
+            self.autoMove()
+        })
     },
     created(){
         // console.log(this.indexs)  
@@ -67,95 +63,91 @@ export default {
     },
     methods: {
         autoMove(){
-             this.timer = setInterval(this.move,this.interval)
+            var self = this
+            //  self.timer = setInterval(self.move,5000)
+             self.timer = setInterval(()=>{
+                 self.move()
+             },5000)
         },
         move(){
-
             var _that = this
+            var devceWidth =  _that.$refs.ritem[0].clientWidth
+            // var devceWidth =  _that.$refs.carousel[0].width
             _that.moved++      
-            // if(!moveX) moveX = 0
             if(_that.moved==0){
                 _that.moved = _that.values.length-2
             }else if(_that.moved==_that.values.length-1)(
                 _that.moved = 1
             )       
-                var devceWidth =  _that.$refs.ritem[0].clientWidth
-                
-                // console.log(devceWidth)
-                this.$refs.car.style.left = _that.moved * - devceWidth + 'px'
+            _that.$refs.car.style.left = _that.moved * - devceWidth + 'px'
 
         },
         isTouch(e){
             this.timeOutEvent = 0
         },
-        touchStart (e) {
-                         console.log(this.keys) 
+        touchStart (a) {
+            a.stopPropagation()
             var _that = this
-            // console.log(e.target)
-            clearInterval(this.timer)
-            this.delTime = setInterval(()=>{
-                this.del++
+            var $that = a.currentTarget
+            var clientWidths = $that.clientWidth     
+            var width = clientWidths/2     
+            var $parent =   _that.$refs.car     
+            var t = 0                     
+            clearInterval(_that.timer)
+            _that.timer = null
+            var delTime = setInterval(()=>{
+                t++
             },10)
-            
-            this.timer = null
-            _that.startX = e.touches[0].pageX;
-            _that.timeOutEvent = setTimeout(function(){
-                _that.isTouch(e)
+            var startX = a.touches[0].pageX; 
+            var timeOutEvent = setTimeout(function(){
+                _that.isTouch(a)
             },800)
-            // return false
-        },
-        touchMove (e) {
-            e.preventDefault()
-            e.stopPropagation()
-            this.timeOutEvent=0
-            var pageX =  e.touches[0].pageX
-            this.moveX = pageX - this.startX;
-            // console.log('pageX:'+pageX)
-            // console.log('moveX:'+this.moveX)
-            // this.move(moveX)
-            e.currentTarget.parentNode.style.transform ='translate3d('+ this.moveX + 'px,0,0'+')' 
-        },
-        touchEnd (s) {
-            clearTimeout(this.timeOutEvent)
-            clearInterval(this.delTime) 
-            if(this.timeOutEvent!=0){
-                //执行点击事件
-            } 
-            s.currentTarget.parentNode.style.transform ='translate3d('+ 0 + 'px,0,0'+')'
-            var endX = s.changedTouches[0].pageX
-            var width = s.currentTarget.clientWidth/2
-            var $parent =   this.$refs.car
-            var clientWidths = s.currentTarget.clientWidth
-                        // console.log('endX:'+endX)
-                        // console.log(this.del)
-                        // console.log(clientWidths)
-            if(this.moveX>0){
-                if(Number(this.moveX)>=width || Number(this.moveX)>=width/4 && this.del<15){
-                    this.moved--
-                    if(this.moved==0){
-                        this.moved = this.values.length-2
-                    }else if(this.moved==this.values.length-1)(
-                        this.moved = 1
-                    )                      
-                    $parent.style.left = this.moved * -clientWidths + 'px'
-                }
+            $that.ontouchmove = function(b){
+                b.stopPropagation()
+                timeOutEvent = 0
+                var pageX =  b.touches[0].pageX
+                var moveX = pageX - startX;
+               $parent.style.transform ='translate3d('+ moveX + 'px,0,0'+')' 
             }
-            if(this.moveX<0){
-                if(-Number(this.moveX)>=width || -Number(this.moveX)>=width/4 && this.del<15){
-                    this.moved++
-                    if(this.moved==0){
-                        this.moved = this.values.length-2
-                    }else if(this.moved==this.values.length-1)(
-                        this.moved = 1
-                    )                      
-                    $parent.style.left = this.moved * -clientWidths + 'px'
-                }            
-            }                        
-                this.del = 0
-                // setTimeout(()=>{
-                    this.autoMove()
-                // },2000)
-        }
+            $that.ontouchend = function(c){
+                c.stopPropagation()
+                clearTimeout(timeOutEvent)
+                clearInterval(delTime) 
+                console.log(timeOutEvent)
+                if(timeOutEvent!=0){
+                    //执行点击事件
+                } 
+                $parent.style.transform ='translate3d('+ 0 + 'px,0,0'+')'
+                var endX = c.changedTouches[0].pageX
+                var moveX = endX - startX;                
+                if(moveX>0){
+                    if(Number(moveX)>=width || Number(moveX)>=width/4 && t<15){
+                        _that.moved--
+                        if(_that.moved==0){
+                            _that.moved = _that.values.length-2
+                        }else if(_that.moved==_that.values.length-1)(
+                            _that.moved = 1
+                        )                      
+                        $parent.style.left = _that.moved * -clientWidths + 'px'
+                    }
+                }
+                if(moveX<0){
+                    if(-Number(moveX)>=width || -Number(moveX)>=width/4 && t<15){
+                        _that.moved++
+                        if(_that.moved==0){
+                            _that.moved = _that.values.length-2
+                        }else if(_that.moved==_that.values.length-1)(
+                            _that.moved = 1
+                        )                      
+                        $parent.style.left = _that.moved * -clientWidths + 'px'
+                    }            
+                }                    
+                    _that.autoMove()                                       
+            }
+        },
+
+
+
 
     }
 }
@@ -170,7 +162,7 @@ export default {
         left: 0px;
         .car{
             width: 1875px;
-            overflow: auto;
+            transition: .3s;
             position: relative;
             display: flex;
             flex-wrap: nowrap;

@@ -4,7 +4,7 @@ import Vue from 'vue'
 import App from './App'
 import router from './router'
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown } from 'vant';
-import './assets/css/base.css';
+import './assets/css/myBase.css';
 import axios from '../node_modules/axios';
 import VueTouch from 'vue-touch';
 

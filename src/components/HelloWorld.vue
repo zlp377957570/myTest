@@ -37,7 +37,7 @@
         </div>
       </div>
       <transition-group :class="['main_bodyer',{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :name="fades" tag="div" style="left:0px">          
-        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)" @scroll="paperScroll($event)">   
+        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)">   
           <!-- <keep-alive :include="'page'+p"> -->
             <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
               <component :is="'page'+p" :indexs="index"></component>   
@@ -47,7 +47,7 @@
       </transition-group>  
       <!-- <div class="footBar"> -->
         <div class="footer">
-          <a v-for="(bar,index) in footbar" :key="index" @click="selectFootBar($event,index)"><i :style="{backgroundImage:actives==index?bar.src2:bar.src}"></i><span :style="actives==index?{color:'#ff6700'}:{color:'#b5b5b5'}">首页</span></a>
+          <a v-for="(bar,index) in footbar" :key="index" @click="selectFootBar($event,index)"><i :style="{backgroundImage:actives==index?bar.src2:bar.src}"></i><span :style="actives==index?{color:'#ff6700'}:{color:'#b5b5b5'}">{{bar.name}}</span></a>
         </div>       
       <!-- </div>     -->
   </div>
@@ -124,9 +124,11 @@ export default {
       var bodys = document.getElementsByClassName('main_bodyer')[0]
             // console.log(bodys)
             bodys.style.height = deviceHeight + 'px'
+            bodys.style.width = deviceWidth * 7 + 'px'
       // document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';        
     },    
     onTouchStart(a,p){
+      a.stopPropagation()
       var self = this
       var $i = document.querySelector('.itemBar:nth-child('+(p+1)+') .active i')
       var offsetWidth = document.documentElement.clientWidth     
@@ -137,7 +139,7 @@ export default {
       var _this = a.currentTarget
       var main = _this.parentNode
       var lefts = main.style.left
-          console.log('lefts111111:'+lefts)      
+          // console.log('lefts111111:'+lefts)      
         main.style.left = lefts.slice(0,-2) + 'px'      
         var a =a.touches[0]
         var startLeft = a.clientX
@@ -147,6 +149,7 @@ export default {
            del++
         },10)
       _this.ontouchmove = function(b){
+        b.stopPropagation()        
         var b = b.touches[0]
         var clientX = b.clientX
         var clientY = b.clientY
@@ -186,6 +189,7 @@ export default {
         }
  
         _this.ontouchend = function(c){
+          c.stopPropagation()          
           document.addEventListener("touchmove", function (e) {
             e.returnValue = true
           });                    
@@ -275,12 +279,13 @@ export default {
       this.lineHeight = !this.lineHeight
       this.lineHeight2 = !this.lineHeight2      
     },
-    paperScroll(e){
-      let $this = e.currentTarget  
-      // let $this = e.target  
-      let scollTop = $this.scrollTop
-      //  console.log(scollTop)   
-    }
+    // paperScroll(e){
+    //   e.stopPropagation()
+    //   let $this = e.currentTarget  
+    //   // let $this = e.target  
+    //   let scollTop = $this.scrollTop
+    //    console.log(scollTop)   
+    // }
   }
 }
 </script>
@@ -337,7 +342,7 @@ export default {
       }      
     }    
     .main_header{
-      width: 375px;
+      width: 100%;
       position: fixed;
       top:0px;
       left: 0px;
@@ -358,7 +363,7 @@ export default {
           }
         }
         .main_header_search{
-          width: 268px;
+          width: 78%;
           line-height: 32px;
           padding:0 10px;
           text-align: left;
@@ -383,11 +388,10 @@ export default {
         position: relative;
         background: #f2f2f2;
         height: 30px;
-        // overflow: hidden;
         line-height: 24px;
         .contentBar{
-          width: 332px;
-         touch-action: pan-x!important;
+          width: 88%;
+          touch-action: pan-x!important;
           overflow-x: auto;
           text-align: left;
           white-space: nowrap;
@@ -489,7 +493,7 @@ export default {
   }
   .main_bodyer{
     z-index: 99;
-    width: 2625px;
+    width: 100%;
     height: auto;
     overflow: hidden;
     position: relative;
@@ -498,25 +502,24 @@ export default {
     top:0px;
     left: 0px;
     height: 100%;  
-    padding-bottom: 120px;
+    padding-bottom: 130px;
+    transition: .3s;
     .bodys{
       float: left;
       position: relative;
       left: 0px;
       top:0px;
-      width: 100%;
-
+      width: 7.5rem;
       overflow-y: scroll;
-      -webkit-overflow-scrolling: touch;
+      // -webkit-overflow-scrolling: touch;
       transition: all .3s;   
-      // border:2px solid black;
       div{
         width: 100%;
-        height: 1800px;  
+        // height: 1800px;  
         // overflow: hidden;
         position: relative;
         .carousel{
-             width: 100%;
+            width: 100%;
             height: 300px;
             background: #fff;
             position: absolute;       
@@ -569,9 +572,13 @@ export default {
     position: fixed;
     align-items: center;
     box-shadow:0px 0px 5px 2px rgba(0,0,0,.1);
-    bottom: -5px;
+    bottom: 0px;
     height: 52px; 
+    background: #fff;
+    // margin:5px 0 3px;
     a{
+    margin:5px 0 2px;
+    display: inline-block;
     -webkit-box-flex: 1;
     -webkit-flex: 1 1 auto;
     flex: 1 1 auto;
@@ -581,7 +588,6 @@ export default {
         height: 20px;  
         background-position: center;
         // background-color: #333;
-        // color: red;
         background-size: cover; 
         margin: 0 auto;
       }

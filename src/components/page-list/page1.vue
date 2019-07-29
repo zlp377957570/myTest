@@ -28,7 +28,7 @@ export default {
 </script>
 <style lang="less" scoped>
     .pages{
-        width: 375px;
+        width: 100%;
         height: 500px;
         // background: red;
         top:0px;

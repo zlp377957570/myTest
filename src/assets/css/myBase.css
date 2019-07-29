@@ -1,0 +1,156 @@
+*{
+	padding:0;
+	margin:0;
+	box-sizing:border-box;
+
+}
+html,body,h1,h2,h3,h4,h5,h6,p,a,div,span,b,pre,dl,dd,input,li,ul,td,tr,button{
+	padding:0;
+	margin:0;
+	list-style:none;
+	outline:none;
+	border:none;
+	/* font-size: 24px; */
+}
+html{
+	touch-action: pan-y;
+	font-family: sans-serif;
+	/* max-width: 750px; */
+	height: 100%;
+	position: fixed;
+	overflow:auto;
+	/* overflow: hidden; */
+}
+body{
+	margin: 0 auto;
+	/* max-width: 750px; */
+	height: 100%;
+	/* padding: 10px; */
+	overflow:auto;
+}
+/* div{
+	display: block;
+} */
+/* @media screen and (max-width:321px){
+    body{
+		background: red;
+	}
+} */
+/* @media only screen and (device-height:568px){
+	.hello .main_bodyer .bodys{
+		height: 545px;
+		background: red;
+	}	
+}
+@media only screen and (device-height: 667px){
+	.hello .main_bodyer .bodys{
+		height: 545px;
+		background: red;
+	}	
+}
+@media only screen and (device-height: 736px){
+	.hello .main_bodyer .bodys{
+		height: 545px;
+		background: red;
+	}	
+} */
+/*iPhoneX的适配*/
+@media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
+
+	/* .hello .main_bodyer .bodys{
+		height: 690px;
+		background: blue;
+	} */
+	/*添加底部适配*/
+	.l_o_btm {
+		padding-bottom: 1.7rem;
+	}
+
+	/*增加头部适配层*/
+	.has-topbar {
+		height: 100%;
+		box-sizing: border-box;
+		padding-top: 44px;
+	}
+
+	.has-topbar:before {
+		content: '';
+		position: fixed;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 44px;
+		background-color: #000000;
+		z-index: 9998;
+	}
+}
+
+.lf{
+	float:left;
+}
+.rt{
+	float:right;
+}
+a{
+	text-decoration:none;
+	color:#b0b0b0;
+}
+a:hover{
+	color:#ff6700;
+	text-decoration: none;
+}
+a:focus{
+	outline: none;
+	text-decoration: none;
+}
+img{
+	vertical-align:middle;
+}
+.container{
+	width: 1226px;
+	/* overflow: hidden; */
+    *zoom: 1;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.container:before, .container:after {
+    content: " ";
+    display: table;
+}
+
+.container:after {
+    clear: both;
+}
+.container:before, .container:after {
+    content: " ";
+    display: table;
+}
+.clearfix:before{
+	content:'';
+	display:table;
+}
+.clearfix:after{
+	content:"";
+	display:block;
+	clear:both;
+}
+.home-main{
+	margin-top:0px;
+}
+.van_all{
+	font-size: 36px;
+}
+.van_all .van-button--normal{
+    border-radius: 4px;
+    width: 176px;
+    height: 88px;
+	font-size: 28px;	
+	padding: 0 30px;
+	margin-right: 0px;
+}
+.van_all .van-icon{
+	/* margin: 40px 0 20px; */
+	color: #323233;
+	font-size: 64px;
+}

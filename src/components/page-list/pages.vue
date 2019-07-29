@@ -1,7 +1,13 @@
 <template>
-    <div id="page0" class="pages" ref="pages" @scroll="paperScroll($event)">
+    <div class="pages" ref="pages" @scroll="paperScroll($event)">
         <carousel :images="srcList" :keys="0"></carousel>
         <div class="contents">
+            <!-- <div v-for="(line,index) in list" :key="index" :class="line.p_line"></div>
+            <div v-for="(item,index) in list" :key="index" :class="`items`+' '+item.style_type" >
+                <a ref="val" href="#" v-for="(val,v) in item.values" :key="v">
+                    <img :src="val.p_src+val.p_name+val.img_type" alt="">
+                </a>
+            </div> -->
             <div class="block" ref="block" v-for="(item,is) in list" :key="is">
                 <div :class="`line`+' '+item.p_line"></div>
                 <div :class="`items`+' '+item.style_type" >
@@ -14,12 +20,10 @@
                             <p><span>¥{{val.p_price}}</span><s v-show="val.p_originalPrice!='0'">¥{{val.p_originalPrice}}</s></p>
                             <div>立即购买</div>
                         </div>
-                        <p v-show="val.data_type==='more'">{{val.p_name}} &gt;</p>
                     </a>
                 </div>                         
-            </div> 
+            </div>        
         </div>
-        <div class="ceiling"><a href="javascript:void(0);" @click="ceiling"><img src="@/assets/image/icon/吸顶.png" alt=""></a></div>       
     </div>
 </template>
 <script>
@@ -61,25 +65,38 @@ export default {
         })
         .catch(error=> {
         });       
+        // window.addEventListener('scroll', this.onScrollHeight)
     },   
     mounted(){
+        // setTimeout(() => {
+        //     let _this = this
+        //     let e = _this.$refs.pages
+        //     console.log(e)
+        //     _this.paperScroll(e)
+        // },500)        
         // window.addEventListener('scroll', this.onScrollHeight,true)    
     }, 
     destroyed() { //页面离开后销毁，防止切换路由后上一个页面监听scroll滚动事件会在新页面报错问题
         // window.removeEventListener('scroll', this.onScrollHeight)
     },
     methods:{
-        ceiling(){
-            var self = this
-            var pages = self.$refs.pages
-            pages.scrollTop = 0
+        isLoad(e){
+            // setTimeout(()=>{
+            // let blocks = this.$refs.block
+            // for(let b in blocks){
+            //     console.log(blocks[b])
+            //     let offsetTop = blocks[b].offsetTop
+            //     console.log(offsetTop)
+            // }
+            console.log(e.target)
+            // },500)
         },
         paperScroll(e){
             e.target!==undefined?e.stopPropagation():''
             // e.stopPropagation()
             let self = this
+            console.log(self.isLoadList)
             if(self.isLoadList.length>0){
-                // console.log(self.isLoadList)
                 let $this = e.srcElement || e
                 let scollTop = $this.scrollTop
                 let offsetHeight = $this.offsetHeight
@@ -87,25 +104,31 @@ export default {
                 let imgs = self.$refs.imgs
                 for(let m in imgs){
                     let offsetTop = imgs[m].offsetTop
-                    let isload = imgs[m].getAttribute('isLoad')
-                    let src = imgs[m].getAttribute('data-src')
-                    self.isLoadList = []
-                    if(isload==='false'){
-                        self.isLoadList.push('true')
-                        if(offsetTop<=scollTop+offsetHeight){
+                    if(offsetTop<=scollTop+offsetHeight){
+                        let isload = imgs[m].getAttribute('isLoad')
+                        let src = imgs[m].getAttribute('data-src')
+                        self.isLoadList = []
+                        if(isload==='false'){
                             setTimeout(()=>{
                                 imgs[m].setAttribute('src',src)
                                 imgs[m].setAttribute('isLoad',"true")
-                                imgs[m].setAttribute('style',"")
-                            },100)
+                                self.isLoadList.push('true')
+                            },500)
                         }
+                        console.log(self.isLoadList)
                     }
                 }                  
             }      
         },      
         onScrollHeight(){
+            // var scr = this.$refs.block
+            // for(var i=0;i<scr.length;i++){
+            //              console.log(scr[i])   
+            // }
             // var top = this.$refs.page0.$el.scrollTop
+                    // console.log(document.body.scrollTop)   
             // let scrollTop =window.clientX || window.scrollHeight || window.pageY || window.pageYOffset || document.body.scrollTop || document.body.scrollHeight;
+
         } 
     }
 }
@@ -113,6 +136,7 @@ export default {
 <style lang="less" scoped>
     .pages{
         width: 7.5rem;
+        // position: relative;
         overflow-x: hidden;
         // overflow-y: scroll;
         // -webkit-overflow-scrolling: touch;
@@ -143,12 +167,9 @@ export default {
                 }
                 .ccc{
                     height:5px;   
-                    background: #fff;                            
+                    background: #fff; 
+                    // border-bottom: 2px solid red;                             
                 }
-                .ddd{
-                    height:1px;   
-                    background: #aaa;                            
-                }                
                 .items{
                     width: 100%;      
                     // position: relative;              
@@ -195,10 +216,7 @@ export default {
                             div:active{
                                 background: rgb(243, 44, 37);     
                             }
-                        } 
-                        p:active{
-                            color: #FF6B00;                            
-                        }                                                     
+                        }                                                      
                     }
                 }
                 .style_b{
@@ -247,30 +265,8 @@ export default {
                         width: 49%;
                         height: 20%;
                     }
-                } 
-                .style_f{
-                    display: flex;                       
-                    a{
-                        width: 100%;
-                        height: 20%;
-                        p{
-                            padding: 15px 0px;
-                            color: rgba(0,0,0,.7);
-                        }
-                    }
-                }                                                                                                
+                }                                                                                
             }            
-        }
-        .ceiling{
-            position: fixed;
-            right:10px;
-            bottom:70px;
-            a{
-                img{
-                    width: 36.5px;
-                    height: 36.5px;
-                }
-            }
         }
     }
 </style>

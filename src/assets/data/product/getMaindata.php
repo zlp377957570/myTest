@@ -48,7 +48,14 @@ for($i=1;$i<=$count;$i++){
     $values=mysqli_fetch_all($result,1);
     // $values = mysqli_fetch_row($result)[0];
     // $i['index'] = $values;
-    array_push($output["products"],$values);
+    // array_push($output["products"],$values);
+    $obj = new StdClass;
+    $obj->style_type = $values[0]["style_type"];
+    $obj->p_line = $values[0]["p_line"];
+    $obj->values = $values;
+    array_push($output["products"],$obj);
+        // print_r($values);
+
 } 
 // print_r($values);
 // }
