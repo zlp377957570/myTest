@@ -5,7 +5,7 @@
             <div class="block" ref="block" v-for="(item,is) in list" :key="is">
                 <div :class="`line`+' '+item.p_line"></div>
                 <div :class="`items`+' '+item.style_type" >
-                    <a ref="val" href="#" v-for="(val,vs) in item.values" :key="vs">
+                    <a ref="val" @click="routerSelect(item.p_name)" v-for="(val,vs) in item.values" :key="vs">
                         <img ref="imgs" isLoad="false" :style="val.img_style" :data-src="val.p_src+val.p_name+val.img_type" 
                         src="http://www.zlpones.com/imgs/mi/img/默认背景.png" alt="">
                         <div class="info" v-show="val.p_title!==''">
@@ -23,7 +23,8 @@
     </div>
 </template>
 <script>
-import { CountDown } from 'vant';
+import ls from '../../assets/js/ls.js'
+import { CountDown} from 'vant';
 import carousel from './carousel.vue'
 import { setTimeout } from 'timers';
 export default {
@@ -49,8 +50,8 @@ export default {
     created(){
         this.$axios.get(this.HOST+'./getMaindata.php', {})
         .then(response=> {
-            console.log(response.data.products)
-            console.log(response.data)
+            // console.log(response.data.products)
+            // console.log(response.data)
             let self = this
             self.list = response.data.products;
             self.$nextTick(() => {
@@ -68,13 +69,21 @@ export default {
     }, 
     destroyed() { //页面离开后销毁，防止切换路由后上一个页面监听scroll滚动事件会在新页面报错问题
         // window.removeEventListener('scroll', this.onScrollHeight)
-    },
+    },   
     watch:{
         // scrollTop(e){
         //     this.scrollTop = e
         // }
     },
     methods:{
+        routerSelect(item){
+            console.log(item)
+            this.$router.push({name:'product_detail',params:{item:item}})
+            ls.setItem('item',item)
+            ls.setItem('routerName','product_detail')
+            // this.$router.push({path:'/product_detail',query:{item:item}})
+            // this.$router.go({name:'product_detail',params:{item:item}})
+        },
         ceiling(){
             var self = this
             var pages = self.$refs.pages

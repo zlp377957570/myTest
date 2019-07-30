@@ -61,6 +61,10 @@ export default {
                 return values          
         } 
     },
+    beforeDestroy() {
+        clearInterval(this.timer);        
+        this.timer = null;
+    },     
     methods: {
         autoMove(){
             var self = this

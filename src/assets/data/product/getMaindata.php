@@ -50,6 +50,7 @@ for($i=1;$i<=$count;$i++){
     // $i['index'] = $values;
     // array_push($output["products"],$values);
     $obj = new StdClass;
+    $obj->p_name = $values[0]["p_name"];
     $obj->style_type = $values[0]["style_type"];
     $obj->p_line = $values[0]["p_line"];
     $obj->values = $values;

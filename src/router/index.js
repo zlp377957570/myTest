@@ -8,6 +8,7 @@ export default new Router({
   routes: [
     {
       path: '/',
+      // redirect:{name: 'HelloWorld'},
       name: 'HelloWorld',
       component: HelloWorld,
       children:[
@@ -53,8 +54,17 @@ export default new Router({
           path: '/carousel',
           name: 'carousel',
           component:() => import('@/components/page-list/carousel.vue')
-        }     
+        }   
       ]
-    }
+    },
+    {
+      path: '/product_detail',
+      name: 'product_detail',
+      component:() => import('@/components/page-list/product_detail.vue')
+    },
+    // {
+    //   path: "*",
+    //   redirect: "/"
+    // }
   ]
 })

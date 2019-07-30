@@ -114,6 +114,14 @@ export default {
   mounted(){
     // window.addEventListener('scroll', this.onScrollHeight)
     window.addEventListener('resize',this.setRemUnit)
+    // window.addEventListener('pageshow',function(e){
+    //   if(e.persisted){
+    //     this.setRemUnit()
+    //   }
+    // })      
+  },
+  destroyed(){
+        window.removeEventListener('resize',this.setRemUnit)
   },
   methods:{
     setRemUnit(){
@@ -122,11 +130,10 @@ export default {
 
       // if(deviceWidth > 750) deviceWidth = 750;
       var bodys = document.getElementsByClassName('main_bodyer')[0]
-            // console.log(bodys)
             bodys.style.height = deviceHeight + 'px'
             bodys.style.width = deviceWidth * 7 + 'px'
       // document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';        
-    },    
+    },  
     onTouchStart(a,p){
       a.stopPropagation()
       var self = this
