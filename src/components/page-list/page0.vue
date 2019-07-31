@@ -113,7 +113,7 @@ export default {
                                 imgs[m].setAttribute('src',src)
                                 imgs[m].setAttribute('isLoad',"true")
                                 imgs[m].setAttribute('style',"")
-                            },100)
+                            },20)
                         }
                     }
                 }                  

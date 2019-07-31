@@ -19,7 +19,7 @@
           <div class="main_header_tab">
             <div class="contentBar">
               <div v-for="(item,i) in tabs" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
-                <span :class="index==i?'active':''">{{item}}<i></i></span>
+                <span :class="index==i?'active':''">{{item}}<i style="left:0px"></i></span>
               </div>
             </div>       
             <div class="downBar" @click="openBar">
@@ -36,15 +36,15 @@
           </div>        
         </div>
       </div>
-      <transition-group :class="['main_bodyer',{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :name="fades" tag="div" style="left:0px">          
+      <div :class="['main_bodyer',{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :name="fades" tag="div" style="left:0px">          
         <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)">   
           <!-- <keep-alive :include="'page'+p"> -->
             <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
-              <component :is="'page'+p" :indexs="index"></component>   
+              <component :is="'page'+p" :indexs="index" :class="{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}"></component>   
             <!-- </v-touch> -->
           <!-- </keep-alive> -->
         </div>                                                     
-      </transition-group>  
+      </div>  
       <!-- <div class="footBar"> -->
         <div class="footer">
           <a v-for="(bar,index) in footbar" :key="index" @click="selectFootBar($event,index)"><i :style="{backgroundImage:actives==index?bar.src2:bar.src}"></i><span :style="actives==index?{color:'#ff6700'}:{color:'#b5b5b5'}">{{bar.name}}</span></a>
@@ -137,62 +137,58 @@ export default {
     onTouchStart(a,p){
       a.stopPropagation()
       var self = this
+      var startX = 0
+      var startY = 0
+      var isTouch = true
       var $i = document.querySelector('.itemBar:nth-child('+(p+1)+') .active i')
+      $i.style.left = 0+'px'    
       var offsetWidth = document.documentElement.clientWidth     
       document.addEventListener("touchmove", function (e) {
         e.returnValue = true
       });             
-      var width = offsetWidth/2
+      var width = offsetWidth/1.8
       var _this = a.currentTarget
+
       var main = _this.parentNode
-      var lefts = main.style.left
-          // console.log('lefts111111:'+lefts)      
-        main.style.left = lefts.slice(0,-2) + 'px'      
-        var a =a.touches[0]
-        var startLeft = a.clientX
-        var startTop = a.clientY
-        var del = 0
-        setInterval(()=>{
-           del++
-        },10)
+      var lefts = main.style.left 
+      main.style.left = lefts.slice(0,-2) + 'px'      
+      var a =a.touches[0]
+      var startLeft = a.clientX
+      var startTop = a.clientY
+      var del = 0
+      setInterval(()=>{
+          del++
+      },10)
       _this.ontouchmove = function(b){
-        b.stopPropagation()        
+        // b.stopPropagation()        
         var b = b.touches[0]
         var clientX = b.clientX
         var clientY = b.clientY
-        if(self.noScorllLeft===false){
-          if(clientX-startLeft>10 || clientX-startLeft<-10){
-            var mobileAgent = new Array("iphone", "ipod", "ipad", "android", "mobile", "blackberry", "webos", "incognito", "webmate", "bada", "nokia", "lg", "ucweb", "skyfire");
-              var browser = navigator.userAgent.toLowerCase(); 
-              var isMobile = false; 
-              for (var i=0; i<mobileAgent.length; i++){ 
-                  if (browser.indexOf(mobileAgent[i])!=-1){
-                      isMobile = true; 
-                      var ua = navigator.userAgent.toLowerCase();
-                      var isWeixin = ua.indexOf('micromessenger') != -1;
-                      if (!isWeixin) {
-                        document.addEventListener("touchmove", function (e) {
-                          e.preventDefault()
-                        });              
-                      }
-                  }
-              }        
-             self.noScorllTop = true
+        startX = Math.abs(clientX-startLeft)
+        startY = Math.abs(clientY-startTop)
+        if(isTouch){
+          isTouch = false
+          if(startX>=startY){
+            self.noScorllTop = true     
+            var nu = navigator.userAgent.toLowerCase();
+            var isWeixin = nu.indexOf('micromessenger') != -1;
+            if (!isWeixin) {
+              document.addEventListener("touchmove", function (e) {
+                // e.preventDefault()
+              });              
+            }  
+                  console.log(11111111111111111)                  
+          }else{
+                  console.log(222222222222222)
+            self.noScorllLeft = true       
+          }          
+        }
+        if(!self.noScorllLeft){
             var ismove =  Number(lefts.slice(0,-2))+(Number(clientX-startLeft))
-            if(ismove<0 && ismove>-2250){
+            if(ismove<=0 && ismove>-2250){
                 main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
                 $i.style.left = -(clientX-startLeft)/8+'px'              
-            }
-          }else{
-            if(self.noScorllTop===false){
-              if(clientY-startTop>10 || clientY-startTop<-10){
-                self.noScorllLeft = true
-               
-              }
-            }            
-          }
-        }else{
-          self.noScorllLeft = true
+            }                 
         }
  
         _this.ontouchend = function(c){
@@ -201,12 +197,14 @@ export default {
             e.returnValue = true
           });                    
           clearInterval()
-          main.style.left = lefts.slice(0,-2) + 'px'
+          // main.style.left = lefts.slice(0,-2) + 'px'
+          $i.style.left = 0+'px'      
+          main.style.left = -offsetWidth*p + 'px'
           if(self.noScorllLeft===false){
             var c = c.changedTouches[0]
             var endLeft = c.clientX
             var offWidth = endLeft-startLeft
-            main.style.left = lefts
+            // main.style.left = lefts
             if(offWidth>0){
               if(Number(offWidth)>=width || Number(offWidth)>=width/4 && del<15){
                   p>0?p:0
@@ -220,8 +218,7 @@ export default {
                 p<6?p++:p
                 self.tabSelect(p)
               }            
-            }
-            $i.style.left = 0+'px'              
+            }        
           } 
           self.noScorllTop = false
           self.noScorllLeft = false               
@@ -402,7 +399,7 @@ export default {
           overflow-x: auto;
           text-align: left;
           white-space: nowrap;
-          height: 30px;
+          // height: 30px;
           .itemBar{
             display: inline-block;
             padding:0 12px;
@@ -510,20 +507,19 @@ export default {
     left: 0px;
     height: 100%;  
     padding-bottom: 130px;
-    transition: .3s;
+    // transition: all .1s ease;
+    touch-action:pan-y!important;
     .bodys{
       float: left;
       position: relative;
       left: 0px;
       top:0px;
       width: 7.5rem;
-      overflow-y: scroll;
-      // -webkit-overflow-scrolling: touch;
-      transition: all .3s;   
+      overflow-y:scroll;
       div{
         width: 100%;
-        // height: 1800px;  
-        // overflow: hidden;
+        touch-action:pan-y!important;
+        overflow-y:scroll;
         position: relative;
         .carousel{
             width: 100%;
@@ -534,7 +530,7 @@ export default {
       }
     }
     .noScorllTop{
-      overflow-y: hidden;
+      overflow-y: hidden!important;
     }
     .zindex{
       z-index: 99;

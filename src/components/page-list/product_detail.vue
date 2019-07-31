@@ -32,7 +32,7 @@
                 <s>3599</s>
             </div>
         </div>
-        <div class="detail_icon_list">
+        <div class="detail_icon_list" style="touch-action: pan-x">
             <div v-for="(val,v) in 10" :key="v">
                 <img src="https://cdn.cnbj0.fds.api.mi-img.com/b2c-mimall-media/f0c04e138bfed2b1ebb589de615236d1.png" alt="">
                 <p>CPU</p>
@@ -86,7 +86,19 @@
                     <span><i>¥</i>59</span>
                 </div>
             </div>
-        </div>            
+        </div> 
+        <div class="swipe_comment">
+            <van-swipe>
+                <van-swipe-item>
+                    <div class="block">
+                        div
+                    </div>
+                </van-swipe-item>
+                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-2.jpg" alt=""></van-swipe-item>
+                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-1.jpg" alt=""></van-swipe-item>
+                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-2.jpg" alt=""></van-swipe-item>
+            </van-swipe>               
+        </div>           
     </div>
 </template>
 <script>
@@ -137,6 +149,7 @@ export default {
         margin: 0 auto;
         height: 2000px;
         overflow-x: hidden;
+        // overflow-y: scroll;
         font-size: .24rem;                
         top:0px;
         left: 0px;
@@ -374,7 +387,15 @@ export default {
                     }
                 }
             }
-        }               
+        }
+        .swipe_comment{
+            width: 80%;
+            img{
+                display: block;
+                width: 100%;
+                height: 412px;
+            }                        
+        }                       
     }
 </style>
 

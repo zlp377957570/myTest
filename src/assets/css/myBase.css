@@ -2,7 +2,10 @@
 	padding:0;
 	margin:0;
 	box-sizing:border-box;
-
+	/* touch-action: manipulation; */
+	/* touch-action:none; */
+	/* touch-action: pan-y; */
+	/* overflow-y: scroll;	 */
 }
 html,body,h1,h2,h3,h4,h5,h6,p,a,div,span,b,pre,dl,dd,input,li,ul,td,tr,button{
 	padding:0;
@@ -13,7 +16,9 @@ html,body,h1,h2,h3,h4,h5,h6,p,a,div,span,b,pre,dl,dd,input,li,ul,td,tr,button{
 	/* font-size: 24px; */
 }
 html{
-	touch-action: pan-y;
+	/* touch-action: manipulation!important;	
+	touch-action:none!important;	
+	touch-action: pan-y!important;	 */
 	font-family: sans-serif;
 	/* max-width: 750px; */
 	height: 100%;
@@ -22,16 +27,19 @@ html{
 	/* overflow: hidden; */
 }
 body{
+	/* touch-action: manipulation!important;	
+	touch-action:none!important;	
+	touch-action: pan-y!important;		 */
 	margin: 0 auto;
 	/* max-width: 750px; */
 	height: 100%;
-	-webkit-touch-callout: none;
+	/* -webkit-touch-callout: none;
 	-webkit-user-select: none;
 	-khtml-user-select: none;
 	-moz-user-select: none;
 	-ms-user-select: none;
 	user-select: none;
-	overflow:auto;
+	overflow:auto; */
 }
 i{
 	font-style: normal;

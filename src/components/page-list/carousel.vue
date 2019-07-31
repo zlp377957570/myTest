@@ -107,6 +107,7 @@ export default {
                 _that.isTouch(a)
             },800)
             $that.ontouchmove = function(b){
+                // a.preventDefault();
                 b.stopPropagation()
                 timeOutEvent = 0
                 var pageX =  b.touches[0].pageX
@@ -166,7 +167,7 @@ export default {
         left: 0px;
         .car{
             width: 1875px;
-            transition:.1s;
+            // transition:.1s;
             position: relative;
             display: flex;
             flex-wrap: nowrap;
