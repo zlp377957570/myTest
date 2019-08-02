@@ -5,7 +5,7 @@
             <div class="block" ref="block" v-for="(item,is) in list" :key="is">
                 <div :class="`line`+' '+item.p_line"></div>
                 <div :class="`items`+' '+item.style_type" >
-                    <a ref="val" @click="routerSelect(item.p_name)" v-for="(val,vs) in item.values" :key="vs">
+                    <a ref="val" @click="routerSelect(val.p_info)" v-for="(val,vs) in item.values" :key="vs">
                         <img ref="imgs" isLoad="false" :style="val.img_style" :data-src="val.p_src+val.p_name+val.img_type" 
                         src="http://www.zlpones.com/imgs/mi/img/默认背景.png" alt="">
                         <div class="info" v-show="val.p_title!==''">
@@ -27,6 +27,7 @@ import ls from '../../assets/js/ls.js'
 import { CountDown} from 'vant';
 import carousel from './carousel.vue'
 import { setTimeout } from 'timers';
+import { ELOOP } from 'constants';
 export default {
     name:'page0',
     props:['indexs'],
@@ -78,9 +79,14 @@ export default {
     methods:{
         routerSelect(item){
             console.log(item)
-            this.$router.push({name:'product_detail',params:{item:item}})
-            ls.setItem('item',item)
-            ls.setItem('routerName','product_detail')
+            if(item!==''){
+                this.$router.push({name:'product_detail',params:{item:item}})
+                ls.setItem('item',item)
+                ls.setItem('routerName','product_detail')
+
+            }else{
+                alert('无内容')
+            }
             // this.$router.push({path:'/product_detail',query:{item:item}})
             // this.$router.go({name:'product_detail',params:{item:item}})
         },
@@ -281,6 +287,8 @@ export default {
             position: fixed;
             right:10px;
             bottom:70px;
+            border-radius: 50%;
+            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .1);                   
             a{
                 img{
                     width: 36.5px;

@@ -6,7 +6,7 @@
             <a class="right"><van-icon name="ellipsis" /></a>
         </div>
         <div class="swipe_top">
-            <van-swipe :autoplay="10000">
+            <van-swipe>
                 <van-swipe-item><img src="https://i8.mifile.cn/v1/a1/a9dbff6a-8844-6641-6979-bf220da15cb7.webp" alt=""></van-swipe-item>
                 <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-2.jpg" alt=""></van-swipe-item>
                 <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-1.jpg" alt=""></van-swipe-item>
@@ -132,7 +132,7 @@
             </div>
             <div class="carouselAll">
                 <div ref="carousel" :class="['carousel',heCarousel.name]" v-for="(heCarousel,hc) in heightCarouselAll" :key="hc">
-                    <van-swipe :autoplay="5000" indicator-color="#eee">
+                    <van-swipe :autoplay="3000" indicator-color="#eee">
                         <van-swipe-item v-for="(hcItem,hi) in heCarousel.value" :key="hi">
                             <img :src="hcItem.d_h_src+hcItem.d_h_name+'_'+hcItem.d_h_id+'_'+hcItem.is_carousel+hcItem.img_type" alt="">
                         </van-swipe-item>                                        
@@ -140,37 +140,6 @@
                 </div>
             </div>
         </div> 
-        <div class="forYouRecommend">
-            <div class="title">
-                <span>为你推荐</span>
-            </div>
-            <div class="content">
-                <div class="block" v-for="(f_y_r,fi) in 10" :key="fi">
-                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c451fe88be0c6a382d3dc8f03814c274.jpg?thumb=1&w=360&h=360" alt="">
-                    <div class="name">全面屏电视E65A</div>
-                    <div class="price">
-                        <span>2999</span>
-                        <s>3999</s>                        
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="detailFoot">
-            <div class="detailFootBar">
-                <div class="home">
-                    <img src="@/assets/image/icon/首页.png" alt="">
-                    <span>首页</span>
-                </div>
-                <div class="shopp">
-                    <i>1</i>
-                    <img src="@/assets/image/icon/购物车.png" alt="">
-                    <span>购物车</span>
-                </div>
-                <div class="addShopp">
-                    <span>加入购物车</span>
-                </div>                        
-            </div>            
-        </div>
     </div>
 </template>
 <script>
@@ -219,15 +188,9 @@ export default {
     methods:{
         init(){
             let itemName = ls.getItem('item')
-            // console.log(itemName)
             let routerName = ls.getItem('routerName')
             let url = this.HOST + '/detail/getDetailHeightImgs.php'            
-            let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
             if(itemName){
-                this.$axios.post(url2,itemName).then(response=> {
-                    console.log(response.data)
-                }).catch(error=> {
-                });                 
                 this.$axios.get(url, {}).then(response=> {
                     // console.log(response.data)
                     this.heightImgList = response.data.imgList;
@@ -682,140 +645,11 @@ export default {
                 }                                                
             // }
         }
-        .forYouRecommend{
-            padding: 70px 20px;
-            background: #fafafa;
-            .title{
-                text-align: left;
-                span{
-                    font-size: .48rem;
-                    color: rgba(0,0,0,.87);
-                }
-            }
-            .content{
-                width: 100%;
-                display: flex;
-                justify-content: space-between;
-                flex-wrap: wrap;
-                text-align: left;
-                .block{
-                    width: 46%;
-                    height: 200px;
-                    margin-top: 20px;
-                    img{
-                        border-radius: 18px;
-                        width: 100%;
-                        height: 150px;                        
-                    }
-                    .name{
-                        margin-left: 15px;                        
-                        line-height: 30px;
-                        font-size: .28rem;
-                        color: rgba(0,0,0,.87);                      
-                    }
-                    .price{
-                        margin-left: 15px;
-                        span{
-                            color: #f56600;
-                            font-size: .32rem;
-                            margin-right: 3px;
-                        }
-                        span:before{
-                            content: '\A5';
-                            display: inline-block;
-                            // margin-top: -2px;
-                            vertical-align: middle;
-                            padding-bottom: 5px;
-                            padding-right: 3px;
-                            font-size: .2rem;        
-                        }
-                        s{
-                            color: rgba(0,0,0,.54);
-                        }
-                        s:before{
-                            content: 'Y';
-                            font-size: .14rem;        
-                        }                        
-                    }
-                }
-            }
-        }
-        .detailFoot{
-            width: 95%;
-            margin:  140px auto 10px;
-            .detailFootBar{
-                background: #fff;            
-                position: fixed;
-                bottom:10px;
-                z-index: 1000;
-                height: 52px;
-                border: 1px solid #fafafa;
-                border-radius: 10px;
-                box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .3); 
-                padding: 6px 10px;
-                display: flex;
-                overflow: hidden;
-                div{
-                    height: 25px;                  
-                    display: inline-block;
-                    img{
-                        margin: 0 auto;                         
-                        display: block;
-                    }
-                    span{
-                        color:rgba(0,0,0,.54);
-                    }
-                }
-                .home{
-                    width: 50px;
-                    img{
-                        width: 21px;
-                        height: 23px;  
-                        margin-bottom: 1px;       
-                    }
-                }
-                .shopp{
-                    position: relative;
-                    i{
-                        position: absolute;
-                        background: #ed4d41;
-                        color: #fff;
-                        border-radius: 50%;
-                        font-size: .10rem;
-                        width: 15px;
-                        height: 15px;       
-                        top:-2px;
-                        right: 2px;                  
-                    }
-                    img{
-                        width: 24px;
-                        height: 24px;          
-                    }
-                }
-                .addShopp{
-                    height: 100%;
-                    margin-left: 120px;
-                    display: inline-flex;
-                    align-items:center;
-                    span{
-                        box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                
-                        background: #f56600;
-                        color: #fff;
-                        font-size: .3rem;
-                        border-radius: 15px;
-                        width: 125px;
-                        line-height: 34px; 
-                    }
-                }
-            }            
-        }
         .ceiling2{
             position: fixed;
-            right:15px;
-            bottom:80px;
+            right:10px;
+            bottom:70px;
             z-index: 10000;
-            border-radius: 50%;
-            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .1);            
             a{
                 img{
                     width: 36.5px;

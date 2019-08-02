@@ -27,10 +27,7 @@ export default {
                 {src: 'https://i8.mifile.cn/v1/a1/fe08cdfd-5a9c-0c44-ac75-924ea7494207.webp'}
             ],             
             isLoading: false,
-            imageList: [
-                // 'https://img.yzcdn.cn/vant/apple-1.jpg',
-                // 'https://img.yzcdn.cn/vant/apple-2.jpg'
-            ]
+            imageList: []
         }
     },
     components:{
