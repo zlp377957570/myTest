@@ -7,56 +7,50 @@
         </div>
         <div class="swipe_top">
             <van-swipe :autoplay="10000">
-                <van-swipe-item><img src="https://i8.mifile.cn/v1/a1/a9dbff6a-8844-6641-6979-bf220da15cb7.webp" alt=""></van-swipe-item>
-                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-2.jpg" alt=""></van-swipe-item>
-                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-1.jpg" alt=""></van-swipe-item>
-                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-2.jpg" alt=""></van-swipe-item>
+                <van-swipe-item v-for="(imgs,im) in inforList.imgsList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
             </van-swipe>               
         </div>
         <div class="details_info">
             <div class="detail_seckill">
                 <span class="seckill_price">
-                    秒杀价<i>2999</i>
+                    秒杀价<i>{{details.d_style_price}}</i>
                 </span>
                 <span class="seckill_time">
                     距结束 <i>07:46:50</i>
                 </span>
             </div>
             <div class="detail_name">
-                小米MIX3
+               {{details.p_name}}
             </div>
             <div class="detail_title">
-                <i>「8GB+128GB美拍套装，立省1158元」</i><span>DxOMark拍照108分 / 磁动力滑盖全面屏 / 四曲面陶瓷机身 / 骁龙845旗舰处理器 / 包装盒内附赠10W无线充电器</span>
+                <i>{{details.d_style_high_title}}</i><span>{{details.d_style_iconList_nameList}}</span>
             </div>
             <div class="detail_price">
-                <span><i>￥</i>2999</span>
-                <s>3599</s>
+                <span><i>￥</i>{{details.d_style_price}}</span>
+                <s>{{details.d_style_original_price}}</s>
             </div>
         </div>
         <div class="detail_icon_list" style="touch-action: pan-x">
-            <div v-for="(val,v) in 10" :key="v">
-                <img src="https://cdn.cnbj0.fds.api.mi-img.com/b2c-mimall-media/f0c04e138bfed2b1ebb589de615236d1.png" alt="">
-                <p>CPU</p>
-                <span>骁龙845八核</span>
+            <div v-for="(icons,ic) in inforList.iconList" :key="ic">
+                <img :src="icons.src" alt="">
+                <p>{{icons.name}}</p>
+                <span>{{icons.val}}</span>
             </div>
         </div>
         <div class="detail_promotion detail_options">
             <div class="name">促销</div>
             <div class="content">
-                <div>
-                    <i class="zp">赠品</i><span>送米家照片打印机相纸（40张）</span>
-                </div>
-                <div>
-                    <i class="zp">赠品</i><span>送米家照片打印机相纸（40张）</span>
-                </div>                
+                <div v-for="(gifs,gi) in inforList.giftList" :key="gi">
+                    <i class="zp">赠品</i><span>{{gifs}}</span>
+                </div>             
             </div>
             <div class="btn"><i></i></div>
         </div>
-        <div class="detail_options detail_option_item">
+        <div class="detail_options detail_option_item" @click="showPopup">
             <div class="name">已选</div>
             <div class="content">
                 <div>
-                    <span>小米MIX 3 全网通版 8GB+128GB 黑色<i> x 1</i></span>
+                    <span>{{details.p_info}}<i> x 1</i></span>
                 </div>            
             </div>
             <div class="btn"><i></i></div>
@@ -65,7 +59,7 @@
             <div class="name">送至</div>
             <div class="content">
                 <div>
-                    <span>北京市 东城区</span><i class="zt">有现货</i>
+                    <span>北京市 东城区</span><i class="zt">{{details.d_style_status}}</i>
                 </div>            
             </div>
             <div class="btn"><i></i></div>
@@ -162,7 +156,7 @@
                     <span>首页</span>
                 </div>
                 <div class="shopp">
-                    <i>1</i>
+                    <i>{{count}}</i>
                     <img src="@/assets/image/icon/购物车.png" alt="">
                     <span>购物车</span>
                 </div>
@@ -171,25 +165,113 @@
                 </div>                        
             </div>            
         </div>
+        <div class="showPage">
+            <van-popup v-model="show"
+            position="bottom" round
+            :style="{height:'82%'}"
+            >
+                <div class="header">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="pro_info">
+                        <div class="src"><img :src="details.d_style_src" alt=""></div>
+                        <div class="info">
+                            <p class="price"><span>{{details.d_style_price}}</span><s>{{details.d_style_original_price}}</s></p>
+                            <span class="title">{{details.p_info}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="blocks">
+                        <p class="name">版本</p>
+                        <div class="val">
+                            <span @click="selectVersion(ver.d_style_version)" :v-model="ver.d_style_version" :class="ver.d_style_version==version?'selectActive':''" v-for="(ver,vi) in inforList.versionList" :key="vi">{{ver.d_style_version}}</span>
+                        </div>
+                    </div>
+                    <div class="blocks">
+                        <p class="name">颜色</p>
+                        <div class="val">
+                            <span @click="selectColor(col.d_style_color)" :v-model="col.d_style_color" :class="col.d_style_color==color?'selectActive':''" v-for="(col,ci) in inforList.colorList" :key="ci">{{col.d_style_color}}</span>
+                        </div>
+                    </div> 
+                    <div class="addCount">
+                        <span>购买数量</span>
+                        <div class="compute">
+                            <span @click="minus" :class="['minus',count<2?'disabled':'']">－</span>
+                            <span class="val" :v-model="count">{{count}}</span>
+                            <span @click="add" class="add">＋</span>
+                        </div>
+                    </div>
+                    <div class="accident_protection">
+                        <div class="title">
+                            <span class="name">意外保护<van-icon name="question-o" /></span>
+                            <span class="val" v-show="server" v-if="accidented">手机意外碎屏/进水/碾压等损坏</span>
+                            <span class="val" v-show="server" v-if="brokened">手机意外碎屏</span>
+                        </div>
+                        <div :class="['block',accidented?'selectActive':'']" @click="accident">
+                            <span class="name">意外保障服务</span>
+                            <span class="val">299元</span>
+                        </div>
+                        <div :class="['block',brokened?'selectActive':'']" @click="broken">
+                            <span class="name">碎屏保障服务</span>
+                            <span class="val">159元</span>
+                        </div>  
+                        <div class="info" v-show="server">
+                            <span class="affirm"><van-icon name="checked" />我已阅读</span>
+                            <span class="clause">服务条款 | </span>
+                            <span class="issue">常见问题</span>
+                        </div>                  
+                    </div>    
+                    <div class="accident_protection">
+                        <div class="title">
+                            <span class="name">延长保修<van-icon name="question-o" /></span>
+                            <span class="val" v-show="warrantyed">厂保延一年，性能故障免费维修</span>
+                        </div>
+                        <div :class="['block',warrantyed?'selectActive':'']" @click="warranty">
+                            <span class="name">延长保修服务</span>
+                            <span class="val">99元</span>
+                        </div>
+                        <div class="info" v-show="warrantyed">
+                            <span class="affirm"><van-icon name="checked" />我已阅读</span>
+                            <span class="clause">服务条款 | </span>
+                            <span class="issue">常见问题</span>
+                        </div>                  
+                    </div>                   
+                </div> 
+                <div class="footer">
+                    <div class="addShopp">加入购物车</div>
+                </div>                        
+            </van-popup>            
+        </div>
     </div>
 </template>
 <script>
 import ls from '../../assets/js/ls.js'
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem } from 'vant';
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup } from 'vant';
 export default {
     name:'product_detail',
     props:[],    
     data(){
         return{
+            show:false,
+            server:false,
+            accidented:false,
+            brokened:false,
+            warrantyed:false,
             scrollTop2:0,
             scrollBtn2:true,
             imgList_isMove:true,
             heightImgList: [],
-            heightCarouselAll:[]
+            heightCarouselAll:[],
+            inforList:{},
+            details:{},
+            version:'',
+            color:'',
+            name:'',
+            model:'',
+            count:1
         }
     },
     components:{
-
     },
     beforeRouteUpdate (to, from, next) {
         // just use `this`
@@ -215,17 +297,88 @@ export default {
         //     }
         //     return this.imageList
         // }
+      
     },    
     methods:{
-        init(){
-            let itemName = ls.getItem('item')
+        selectVersion(newVersion){//选择规格款式
+            this.version = newVersion
+            let newItemName = this.name+' '+this.model+' '+this.version+' '+this.color
+            // console.log(newItemName)
+            this.init(newItemName)
+        },
+        selectColor(newColor){//选择颜色款式
+            this.color = newColor  
+            let newItemName = this.name+' '+this.model+' '+this.version+' '+this.color
+            // console.log(newItemName)
+            this.init(newItemName)                      
+        },
+        minus(){//购买数量--
+            this.count>1?this.count--:1
+        },
+        add(){//购买数量++
+            this.count++
+        },  
+        closeShowPage(){//关闭下拉页面
+            this.show = false
+        },
+        showPopup(){//展开下拉页面
+            this.show = !this.show
+        },        
+        warranty(){//点击保修服务
+            this.warrantyed = !this.warrantyed             
+        },
+        accident(){//点击意外
+            this.server = true
+            if(this.server){
+                this.accidented = !this.accidented
+                this.brokened = false
+            }else{
+                this.server = !this.server       
+            }
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }
+        },
+        broken(){//点击碎屏
+            this.server = true
+            if(this.server){
+                this.brokened = !this.brokened
+                this.accidented = false
+            }else{
+                this.server = !this.server       
+            }    
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }            
+        },
+        init(newItemName){
+            let itemName = null
+            if(newItemName){
+                itemName = newItemName
+            }else{
+                itemName = ls.getItem('item')
+            }
+            // let itemName = ls.getItem('item') || newItemName
             // console.log(itemName)
             let routerName = ls.getItem('routerName')
             let url = this.HOST + '/detail/getDetailHeightImgs.php'            
             let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
             if(itemName){
                 this.$axios.post(url2,itemName).then(response=> {
-                    console.log(response.data)
+                    // console.log(response.data)
+                    // let valuesList = response.data
+                    this.inforList.colorList = response.data.colorList
+                    this.details = response.data.detail
+                    this.version = response.data.detail.d_style_version
+                    this.color = response.data.detail.d_style_color
+                    this.name = response.data.detail.p_name
+                    this.model = response.data.detail.d_style_model
+                    this.inforList.giftList = response.data.giftList
+                    this.inforList.iconList = response.data.iconList
+                    this.inforList.imgsList = response.data.imgsList
+                    this.inforList.versionList = response.data.versionList
+                    console.log(this.inforList)
+                    console.log(this.details)
                 }).catch(error=> {
                 });                 
                 this.$axios.get(url, {}).then(response=> {
@@ -809,11 +962,213 @@ export default {
                 }
             }            
         }
+        .showPage{
+            overflow: hidden;
+            .selectActive{
+                border-color: #f566009d!important;
+                color:#f56600;
+            }                
+            .header{
+                position: fixed;
+                background: #fff;
+                .close{
+                    padding: 10px 15px 0px 0px;       
+                    text-align: right;
+                    font-size: .44rem;    
+                    color: #aaa;
+                    i{
+                        vertical-align: bottom;
+                    } 
+                }        
+                .pro_info{
+                    padding: 0px 20px 20px;
+                    align-items: center;
+                    display: flex;
+                    .src{
+                        width: 104px;
+                        height: 104px;          
+                        border: 1px solid #f0f0f0;               
+                        display: inline-block;
+                        img{
+                            width: 100%;
+                            height: 100%;                  
+                            display: block;
+                        }
+                    }
+                    .info{
+                            text-align: left;
+                            margin-left: 15px;
+                        .price{
+                            span{
+                                color: #f56600;
+                                font-size: .49rem;
+                                margin-right: 10px;
+                            }
+                            span:before{
+                                content: '\A5';
+                                display: inline-block;
+                                // margin-top: -2px;
+                                vertical-align: middle;
+                                padding-bottom: 5px;
+                                padding-right: 3px;
+                                font-size: .29rem;        
+                            }
+                            s{
+                                color: rgba(0,0,0,.54);
+                            }
+                            s:before{
+                                content: 'Y';
+                                font-size: .25rem;        
+                            }                        
+                        }
+                        .title{
+                            font-size: .29rem;
+                        }
+                    }
+                }                
+            }
+            .content{
+                margin-top: 155px;
+                margin-bottom: 55px;
+                padding: 0px 20px;                
+                overflow-y: auto;
+                .blocks{
+                    border-top:1px solid #f8f8f8;                    
+                    padding: 0px 0px 20px;
+                    text-align: left;
+                    .name{
+                        font-size: .25rem;
+                        padding: 15px 0px;
+                    }
+                    .val{
+                        font-size: .23rem;
+                        span{
+                            display: inline-block;
+                            padding: 9.5px 0px;
+                            text-align: center;
+                            width: 76.5px;
+                            border: 1px solid #f0f0f0;
+                            margin-left: 8px;
+                        }
+                    }
+                }
+                .addCount{
+                    border-top:1px solid #f8f8f8;
+                    padding: 20px 0 0px;       
+                    display: flex;
+                    justify-content: space-between;  
+                    align-items:center;           
+                    span{
+                        font-size: .25rem;
+                    }
+                    .compute{
+                        border: 1px solid #f0f0f0;
+                        overflow: hidden;
+                        span{
+                            display: inline-block;
+                            font-size: .48rem;
+                            background: #f0f0f0;
+                            color: #676767;
+                            width: 28px;
+                            margin-left: -2.5px;
+                            padding-left: 0px;
+                            line-height: 28px;
+                            vertical-align: middle;
+                            padding: 0px 3px;
+                        }
+                        .val{
+                            font-size: .36rem;        
+                            background: #fff;
+                            color: rgba(0,0,0,.87);
+                        }
+                        .disabled{
+                            background: #fafafa;
+                            color: #ccc;
+                        }
+                    }
+                }
+                .accident_protection{
+                    font-size: .25rem;
+                    display: flex;
+                    padding: 20px 0;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    text-align: left;                
+                    .title{
+                        padding: 25px 0 15px;
+                        border-top:1px solid #f8f8f8;
+                        width: 100%;
+                        .name{
+                            i::before{
+                                font-size: .32rem;
+                                display: inline-block;
+                                margin: 0 5px; 
+                                vertical-align: middle;                         
+                            }
+                        }
+                        .val{
+                            color: rgba(0,0,0,.54);
+                        }
+                    }
+                    .block{
+                        width: 162px;
+                        display: inline-block;
+                        border: 1px solid #f0f0f0;
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 9.5px 10px;
+                        .name{
+                            text-align: left;
+                        }
+                        .val{
+                            text-align: right;
+
+                        }
+                    }
+                    .info{
+                        padding: 10px 0; 
+                        .affirm{
+                            i::before{
+                                font-size: .32rem;
+                                display: inline-block;
+                                margin: -3px 5px 0; 
+                                color:#f56600;
+                                vertical-align: middle;                       
+                            }
+                        } 
+                        .clause{
+                            color:#f56600;
+                        }  
+                        .issue{
+                            color:#f56600;
+                        }   
+                    }
+                }                
+            }
+            .footer{
+                position: fixed;
+                bottom: 0px;
+                width: 100%;
+                background: #fff;
+                padding: 10px 0;
+                box-shadow: 0px 5px 15px 1px rgba(0, 0, 0, .1);                          
+                .addShopp{
+                    width: 91%;
+                    margin: 0 auto;
+                    padding: 7.5px 0;
+                    color: #fff;
+                    font-size: .29rem;
+                    border-radius: 15px;
+                    background: #f56600;
+                    box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                       
+                }
+            }
+        }
         .ceiling2{
             position: fixed;
             right:15px;
             bottom:80px;
-            z-index: 10000;
+            z-index: 1000;
             border-radius: 50%;
             box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .1);            
             a{
