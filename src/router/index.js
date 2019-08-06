@@ -60,7 +60,14 @@ export default new Router({
     {
       path: '/product_detail',
       name: 'product_detail',
-      component:() => import('@/components/page-list/product_detail.vue')
+      component:() => import('@/components/page-list/product_detail.vue'),
+      children:[
+        {
+          path: '/review',
+          name: 'review',
+          component:() => import('@/components/page-list/review.vue')
+        }        
+      ]
     },
     // {
     //   path: "*",

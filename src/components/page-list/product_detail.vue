@@ -11,12 +11,12 @@
             </van-swipe>               
         </div>
         <div class="details_info">
-            <div class="detail_seckill">
+            <div v-show="isSeckill" class="detail_seckill">
                 <span class="seckill_price">
                     秒杀价<i>{{details.d_style_price}}</i>
                 </span>
                 <span class="seckill_time">
-                    距结束 <i>07:46:50</i>
+                    距结束 <i><van-count-down :time="time" @finish="overTime"/></i>
                 </span>
             </div>
             <div class="detail_name">
@@ -27,17 +27,17 @@
             </div>
             <div class="detail_price">
                 <span><i>￥</i>{{details.d_style_price}}</span>
-                <s>{{details.d_style_original_price}}</s>
+                <s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s>
             </div>
         </div>
         <div class="detail_icon_list" style="touch-action: pan-x">
-            <div v-for="(icons,ic) in inforList.iconList" :key="ic">
+            <div v-for="(icons,ic) in inforList.iconList" :key="ic" @click="lookIconList">
                 <img :src="icons.src" alt="">
                 <p>{{icons.name}}</p>
                 <span>{{icons.val}}</span>
             </div>
         </div>
-        <div class="detail_promotion detail_options">
+        <div class="detail_promotion detail_options" @click="lookGiftList">
             <div class="name">促销</div>
             <div class="content">
                 <div v-for="(gifs,gi) in inforList.giftList" :key="gi">
@@ -64,7 +64,7 @@
             </div>
             <div class="btn"><i></i></div>
         </div>    
-        <div class="detail_options detail_option_item">
+        <div class="detail_options detail_option_item" @click="lookServerList">
             <div class="service">    
                 <span><i>✔</i>小米自营</span>     
                 <span><i>✔</i>小米发货</span>     
@@ -75,16 +75,16 @@
         <div class="detail_recommend">
             <div class="title">相关推荐</div>
             <div class="content">
-                <div class="inline_block" v-for="(block,b) in 10" :key="b">
-                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/23f42bfa929531ac7da9a4ca6dbe7c20.jpg" alt="">
-                    <p>Redmi充电宝</p>
-                    <span><i>¥</i>59</span>
+                <div class="inline_block" v-for="(recom,rc) in inforList.recommend" :key="rc">
+                    <img :src="recom.d_recommend_src" alt="">
+                    <p>{{recom.d_recommend_name}}</p>
+                    <span><i>¥</i>{{recom.d_recommend_price}}</span>
                 </div>
             </div>
         </div> 
         <div class="swipe_comment">
             <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="false" :width="320">
-                <van-swipe-item v-for="(block,b) in 4" :key="b">
+                <van-swipe-item v-for="(revw,rv) in inforList.review" :key="rv" @click="lookReview(block)">
                     <div class="block">
                         <div class="info">
                             <span class="icon">
@@ -175,7 +175,7 @@
                     <div class="pro_info">
                         <div class="src"><img :src="details.d_style_src" alt=""></div>
                         <div class="info">
-                            <p class="price"><span>{{details.d_style_price}}</span><s>{{details.d_style_original_price}}</s></p>
+                            <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s></p>
                             <span class="title">{{details.p_info}}</span>
                         </div>
                     </div>
@@ -242,17 +242,86 @@
                 </div>                        
             </van-popup>            
         </div>
+        <div class="showPageList">
+            <van-popup
+            v-model="iconListShow"
+            round
+            position="bottom"
+            :style="{ height: '80%' }"
+            >       
+                <div class="iconList showPopupPage">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="header">
+                        <span>关键参数</span>
+                    </div>    
+                    <div class="content">
+                        <p class="itemLine" v-for="(sss,s) in 15" :key="s">
+                            <span class="name">后置摄像头</span>
+                            <span class="val">4800万+1200万+1600万像素</span>
+                        </p>
+                    </div>
+                    <div class="footer">
+                        <div class="achieve">完成</div>                    
+                    </div>
+                </div>     
+            </van-popup>
+            <van-popup
+            v-model="giftListShow"
+            round
+            position="bottom"
+            :style="{ height: '80%' }"
+            >       
+                <div class="giftList showPopupPage">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="header">
+                        <span>促销</span>
+                    </div>    
+                    <div class="content">
+                        <div class="itmeBlock" v-for="(sss,s) in 2" :key="s">
+                            <p class="name"><span>赠品</span></p>
+                            <p class="val">无线车充或无线充电宝（赠品二选一）</p>
+                        </div>
+                    </div>
+                </div>     
+            </van-popup>      
+            <van-popup
+            v-model="serverListShow"
+            round
+            position="bottom"
+            :style="{ height: '80%' }"
+            >       
+                <div class="serverList showPopupPage">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="header">
+                        <span>服务说明</span>
+                    </div>    
+                    <div class="content">
+                        <div class="serverBlock" v-for="(sss,s) in 4" :key="s">
+                            <p class="name"><van-icon name="passed"/><span>赠品</span></p>
+                            <p class="val">由小米发货的商品，单笔满150元免运费;
+                            由第三方商家发货的商品，免运费;
+                            特殊商品需要单独收取运费，具体以实际结算金额为准；优惠券等不能抵扣运费金额;
+                            </p>
+                        </div>
+                    </div>
+                </div>     
+            </van-popup>                   
+        </div>
     </div>
 </template>
 <script>
 import ls from '../../assets/js/ls.js'
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup } from 'vant';
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet } from 'vant';
 export default {
     name:'product_detail',
     props:[],    
     data(){
         return{
             show:false,
+            iconListShow:false,
+            giftListShow:false,
+            serverListShow:false,
+            isSeckill:true,
             server:false,
             accidented:false,
             brokened:false,
@@ -263,7 +332,8 @@ export default {
             heightImgList: [],
             heightCarouselAll:[],
             inforList:{},
-            details:{},
+            time:100000,
+            details:'',
             version:'',
             color:'',
             name:'',
@@ -300,16 +370,31 @@ export default {
       
     },    
     methods:{
+        lookReview(review){
+            console.log(review)
+        },
+        lookIconList(){
+            this.iconListShow = true
+        },
+        lookGiftList(){
+            this.giftListShow = true
+        },
+        lookServerList(){
+            this.serverListShow = true
+        },        
+        overTime(){//倒计时结束
+            this.isSeckill = false
+        },
         selectVersion(newVersion){//选择规格款式
             this.version = newVersion
             let newItemName = this.name+' '+this.model+' '+this.version+' '+this.color
-            // console.log(newItemName)
+            console.log(newItemName)
             this.init(newItemName)
         },
         selectColor(newColor){//选择颜色款式
             this.color = newColor  
             let newItemName = this.name+' '+this.model+' '+this.version+' '+this.color
-            // console.log(newItemName)
+            console.log(newItemName)
             this.init(newItemName)                      
         },
         minus(){//购买数量--
@@ -320,6 +405,9 @@ export default {
         },  
         closeShowPage(){//关闭下拉页面
             this.show = false
+            this.iconListShow = false
+            this.giftListShow = false
+            this.serverListShow = false
         },
         showPopup(){//展开下拉页面
             this.show = !this.show
@@ -359,26 +447,33 @@ export default {
                 itemName = ls.getItem('item')
             }
             // let itemName = ls.getItem('item') || newItemName
-            // console.log(itemName)
+            console.log(itemName)
             let routerName = ls.getItem('routerName')
             let url = this.HOST + '/detail/getDetailHeightImgs.php'            
             let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
             if(itemName){
                 this.$axios.post(url2,itemName).then(response=> {
-                    // console.log(response.data)
+                    console.log(response.data)
                     // let valuesList = response.data
-                    this.inforList.colorList = response.data.colorList
-                    this.details = response.data.detail
-                    this.version = response.data.detail.d_style_version
-                    this.color = response.data.detail.d_style_color
-                    this.name = response.data.detail.p_name
-                    this.model = response.data.detail.d_style_model
-                    this.inforList.giftList = response.data.giftList
-                    this.inforList.iconList = response.data.iconList
-                    this.inforList.imgsList = response.data.imgsList
-                    this.inforList.versionList = response.data.versionList
-                    console.log(this.inforList)
-                    console.log(this.details)
+                    if(response.data){
+                        this.inforList.colorList = response.data.colorList
+                        this.details = response.data.detail
+                        this.version = response.data.detail.d_style_version
+                        this.color = response.data.detail.d_style_color
+                        this.name = response.data.detail.p_name
+                        this.model = response.data.detail.d_style_model
+                        let stime = response.data.detail.d_seckill_time
+                        this.time = Number(stime)
+                        // this.time = 10000
+                        this.inforList.giftList = response.data.giftList
+                        this.inforList.iconList = response.data.iconList
+                        this.inforList.imgsList = response.data.imgsList
+                        this.inforList.versionList = response.data.versionList
+                        this.inforList.review = response.data.review
+                        this.inforList.recommend = response.data.recommend
+                        // console.log(this.inforList)
+                        // console.log(this.details)                        
+                    }
                 }).catch(error=> {
                 });                 
                 this.$axios.get(url, {}).then(response=> {
@@ -504,7 +599,9 @@ export default {
                 }
                 .seckill_time{
                     font-size: .28rem;      
-                    i{
+                    .van-count-down{
+                        color: #fff;
+                        display: inline-block;
                         font-size: .24rem;                              
                     }                   
                 }
@@ -565,7 +662,11 @@ export default {
 
                 }
                 span{
+                    width: 95%;
+                    display: inline-block;
                     color: #676767;      
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
             div:not(:first-child){
@@ -1162,6 +1263,105 @@ export default {
                     background: #f56600;
                     box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                       
                 }
+            }
+        }
+        .showPopupPage{
+            overflow: hidden;
+            .close{
+                padding: 10px 15px 0px 0px;   
+                position: fixed;
+                right: 0;
+                z-index: 100;
+                font-size: .44rem;    
+                color: #aaa;
+                i{
+                    vertical-align: bottom;
+                } 
+            }               
+            .header{
+                position: fixed;
+                background: #fff;                             
+                width: 100%;
+                line-height: 55px;
+                padding: 0px 20px;    
+                span{
+                    width: 100%;
+                    display: block;
+                    border-bottom: 1px solid #f0f0f0;
+                    font-size: .36rem;
+                }
+            }
+            .content{
+                margin-top: 70px;
+                margin-bottom: 45px;
+                padding: 0px 20px;                
+                overflow-y: scroll;
+                text-align: left;
+                font-size: .29rem;
+                .itemLine{
+                    padding: 15px 0;
+                    .name{
+                        color: rgba(0,0,0,.54); 
+                        width: 200px;
+                        margin-right: 50px;
+                    }
+                }
+                .itmeBlock{
+                    padding: 10px 0;
+                    margin-bottom: 10px;
+                    border-bottom: 1px solid #f9f9f9;
+                    .name{
+                        span{
+                            font-size: .1rem;
+                            padding: 0px 2px;
+                            vertical-align: bottom;
+                            color: #f56600;
+                            border:1px solid #e4a97fa6;
+                        }
+                    }
+                    .val{
+                        padding: 10px 0;
+                        color: #000;
+                    }
+                }
+                .serverBlock{
+                    padding: 10px 0;
+                    .name{
+                        color: #000;
+                        i{
+                            color: #f56600;
+                            font-size: .36rem;
+                            vertical-align: -3px;
+                            width: 35px;
+                        }
+                        span{
+                        }
+                    }
+                    .val{
+                        color: rgba(0,0,0,.54);
+                        font-size: .25rem;
+                        margin-left: 35px;
+                        padding: 3px 0;
+                    }
+                }
+            }
+            .footer{
+                position: fixed;
+                bottom: 0px;
+                width: 100%;
+                background: #fff;
+                padding: 10px 0;
+                box-shadow: 0px 5px 15px 1px rgba(0, 0, 0, .1);                          
+                .achieve{
+                    width: 91%;
+                    margin: 0 auto;
+                    padding: 7.5px 0;
+                    color: #fff;
+                    font-size: .29rem;
+                    border-radius: 15px;
+                    background: #f56600;
+                    box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                       
+                }                
             }
         }
         .ceiling2{

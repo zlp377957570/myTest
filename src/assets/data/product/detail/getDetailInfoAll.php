@@ -7,11 +7,34 @@ $getData = file_get_contents('php://input');
 // $requests = !empty($postData) ? json_decode($postData, true) : array();
 
 // var_dump($getData);
+// $getData = "小米9 全网通版 8GB+256GB 全息幻彩紫";
+// $getData = "小米9 全网通版 6GB+128GB";
+// $getData = "小米9 全网通版 8GB+128GB 透明版";
+$getDataList = explode(" ",$getData);
+// print_r($getDataList);
+$oname = $getDataList[0];
+$omodel = $getDataList[1];
+$oversion = $getDataList[2];
+// echo $oname;
+// echo $omodel;
+// echo $oversion;
 $output=[];
 if($getData!=''){
-    $sql = "select * from mimi_details_style where p_info = '$getData'";
+    $sql = "select count(p_name) from mimi_details_style where p_info = '$getData'";
     $result=mysqli_query($conn,$sql);
-    $only = mysqli_fetch_all($result,1)[0];
+    $count = mysqli_fetch_row($result)[0];
+    // echo $count;   
+    if($count==0){
+        // echo '11111';
+        $sql = "select * from mimi_details_style where p_name = '$oname' and d_style_model = '$omodel' and d_style_version = '$oversion'";
+        $result=mysqli_query($conn,$sql);
+        $only = mysqli_fetch_all($result,1)[0];
+        // print_r($only);  
+    }else{
+        $sql = "select * from mimi_details_style where p_info = '$getData'";
+        $result=mysqli_query($conn,$sql);
+        $only = mysqli_fetch_all($result,1)[0];
+    }
     // print_r($only);  
 
 
@@ -24,10 +47,18 @@ if($getData!=''){
     $giftList = explode("~~~",$gifts);
 
     //获取手机规格组
-    $color = $only["d_style_color"];
-    $sql = "select d_style_version from mimi_details_style where d_style_color = '$color'";
+    $name = $only["p_name"];
+    $sql = "select d_style_version from mimi_details_style where p_name = '$name'";
     $result = mysqli_query($conn,$sql);
-    $versionList = mysqli_fetch_all($result,1);
+    $ver = mysqli_fetch_all($result,1);
+    $versionList = array_unique($ver,SORT_REGULAR);
+    // print_r($versionList);
+
+    //获取手机规格组
+    // $color = $only["d_style_color"];
+    // $sql = "select d_style_version from mimi_details_style where d_style_color = '$color'";
+    // $result = mysqli_query($conn,$sql);
+    // $versionList = mysqli_fetch_all($result,1);
     // print_r($versionList);
 
     //获取手机款式组
@@ -62,6 +93,19 @@ if($getData!=''){
     }
     // print_r($arr);
 
+    //获取相关推荐
+    // $name = $only["p_name"];
+    $sql = "select d_recommend_src,d_recommend_name,d_recommend_price from mimi_details_recommend where p_name = '$name'";
+    $result = mysqli_query($conn,$sql);
+    $recommend = mysqli_fetch_all($result,1);
+    // print_r($recommend);
+
+    //获取5条评论
+    // $name = $only["p_name"];
+    $sql = "select * from mimi_details_review where p_name = '$name' limit 0,5";
+    $result = mysqli_query($conn,$sql);
+    $review = mysqli_fetch_all($result,1);
+    // print_r($recommend);
 
     // print_r($giftList);  
     // print_r($srcList);  
@@ -75,6 +119,8 @@ if($getData!=''){
     $output["colorList"] = $colorList;      
     $output["versionList"] = $versionList;      
     $output["detail"] = $only;      
+    $output["recommend"] = $recommend;      
+    $output["review"] = $review;      
 }
 
 
