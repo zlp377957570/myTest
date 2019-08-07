@@ -94,17 +94,17 @@ if($getData!=''){
     // print_r($arr);
 
     //获取相关推荐
-    // $name = $only["p_name"];
-    $sql = "select d_recommend_src,d_recommend_name,d_recommend_price from mimi_details_recommend where p_name = '$name'";
-    $result = mysqli_query($conn,$sql);
-    $recommend = mysqli_fetch_all($result,1);
+    // // $name = $only["p_name"];
+    // $sql = "select d_recommend_src,d_recommend_name,d_recommend_price from mimi_details_recommend where p_name = '$name'";
+    // $result = mysqli_query($conn,$sql);
+    // $recommend = mysqli_fetch_all($result,1);
     // print_r($recommend);
 
     //获取5条评论
     // $name = $only["p_name"];
-    $sql = "select * from mimi_details_review where p_name = '$name' limit 0,5";
-    $result = mysqli_query($conn,$sql);
-    $review = mysqli_fetch_all($result,1);
+    // $sql = "select * from mimi_details_review where p_name = '$name' limit 0,5";
+    // $result = mysqli_query($conn,$sql);
+    // $review = mysqli_fetch_all($result,1);
     // print_r($recommend);
 
     // print_r($giftList);  
@@ -119,8 +119,8 @@ if($getData!=''){
     $output["colorList"] = $colorList;      
     $output["versionList"] = $versionList;      
     $output["detail"] = $only;      
-    $output["recommend"] = $recommend;      
-    $output["review"] = $review;      
+    // $output["recommend"] = $recommend;      
+    // $output["review"] = $review;      
 }
 
 

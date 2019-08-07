@@ -75,7 +75,7 @@
         <div class="detail_recommend">
             <div class="title">相关推荐</div>
             <div class="content">
-                <div class="inline_block" v-for="(recom,rc) in inforList.recommend" :key="rc">
+                <div class="inline_block" v-for="(recom,rc) in staticList.recommend" :key="rc">
                     <img :src="recom.d_recommend_src" alt="">
                     <p>{{recom.d_recommend_name}}</p>
                     <span><i>¥</i>{{recom.d_recommend_price}}</span>
@@ -84,29 +84,28 @@
         </div> 
         <div class="swipe_comment">
             <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="false" :width="320">
-                <van-swipe-item v-for="(revw,rv) in inforList.review" :key="rv" @click="lookReview(block)">
+                <van-swipe-item v-for="(revw,rv) in staticList.reviewList" :key="rv" @click="lookReview(revw)">
                     <div class="block">
                         <div class="info">
                             <span class="icon">
-                                <img src="https://s1.mi-img.com/mfsv2/avatar/fdsc3/p01Byfmf3rk9/6NbsupoljsIpDD.jpg" alt="">
+                                <img :src="revw.reviewOnly.d_review_icon" alt="">
                             </span>
                             <span class="name">
-                                <p>シ华灯初上ミ旧人可安°</p>
-                                <span>2019-06-21</span>
+                                <p>{{revw.reviewOnly.d_review_name}}</p>
+                                <span>{{revw.reviewOnly.d_review_time}}</span>
                             </span>
                             <span class="zan">
-                                <img src="@/assets/image/icon/zan.png" alt=""><i></i>65
+                                <img src="@/assets/image/icon/zan.png" alt=""><i></i>{{revw.reviewOnly.d_review_zan}}
                             </span>
                         </div>
                         <div class="text">
-                            完美！<br>
-                            画质太清晰了，玩和平精英下面的书一目了然
+                            {{revw.reviewOnly.d_review_text}}
                         </div>
                         <div class="imgList" @touchmove="imgListmove" @touchend="imgListend">
-                            <img v-for="(img,i) in 4" :key="i" src="https://i1.mifile.cn/a2/1561084401_2972019_s750_1000wh!540x5400.jpg" alt="">
+                            <img v-for="(img,i) in revw.imgList" :key="i" :src="img" alt="">
                         </div>
                         <div class="reply">
-                            <i>官方回复：</i>越过山林，穿过薄雾，我愿意陪你等在湖海之畔，看月亮升起~感谢您对小米的...
+                            <i>{{revw.reviewOnly.d_review_reply_name}}</i>{{revw.reviewOnly.d_review_reply_val | sliceString}}
                         </div>
                     </div>
                 </van-swipe-item>
@@ -332,6 +331,7 @@ export default {
             heightImgList: [],
             heightCarouselAll:[],
             inforList:{},
+            staticList:{},
             time:100000,
             details:'',
             version:'',
@@ -341,14 +341,49 @@ export default {
             count:1
         }
     },
+　　filters: {
+　　　　sliceString(value) {
+    // console.log(value)
+　　　　　　return value.substring(0,35)+'...'
+　　　　}
+　　},    
     components:{
     },
+    // beforeRouteUpdate (to, from, next) {
+    //     // just use `this`
+    //     this.name = to.params.name
+    //     console.log(this.name)
+    //     next()
+    // },
     beforeRouteUpdate (to, from, next) {
-        // just use `this`
-        this.name = to.params.name
-        console.log(this.name)
-        next()
+      console.log(to,from,next)
+        if(this.$route.path!='/home') //假设name为home的路由都使用`slide-left`,其它的路由都为`slider-right`
+        {
+            this.$router.isBack=true;
+        }
+      let isBack = this.$router.isBack
+      if (isBack) {
+        this.transitionName = 'slide-right'
+      } else {
+        this.transitionName = 'slide-left'
+      }
+      this.$router.isBack = false
+      next()
     },
+　  watch: {
+    　　'$route' (to, from) {
+        console.log(to)
+        console.log(from)        
+        console.log(111111111111111111111111111)        
+    　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
+    　　　　　　if(isBack) {
+    　　　　　　　　this.transitionName = 'slide-right'
+    　　　　　　} else {
+    　　　　　　       this.transitionName = 'slide-left'
+    　　　　　}
+    　　    this.$router.isBack = false
+    　　}
+　  },     
     created(){
 
     },
@@ -357,6 +392,7 @@ export default {
     },
     mounted(){
         this.init()
+        this.initStaticData()           
         // window.addEventListener('resize',this.setRemUnits)    
     },
     computed:{
@@ -370,8 +406,10 @@ export default {
       
     },    
     methods:{
-        lookReview(review){
-            console.log(review)
+        lookReview(data){
+            console.log(data)
+            this.$router.push({name:'review',params:data})
+            // this.$router.push({name:'review',params:data})
         },
         lookIconList(){
             this.iconListShow = true
@@ -387,15 +425,15 @@ export default {
         },
         selectVersion(newVersion){//选择规格款式
             this.version = newVersion
-            let newItemName = this.name+' '+this.model+' '+this.version+' '+this.color
-            console.log(newItemName)
-            this.init(newItemName)
+            let newItemInfo = this.name+' '+this.model+' '+this.version+' '+this.color
+            console.log(newItemInfo)
+            this.init(newItemInfo)
         },
         selectColor(newColor){//选择颜色款式
             this.color = newColor  
-            let newItemName = this.name+' '+this.model+' '+this.version+' '+this.color
-            console.log(newItemName)
-            this.init(newItemName)                      
+            let newItemInfo = this.name+' '+this.model+' '+this.version+' '+this.color
+            console.log(newItemInfo)
+            this.init(newItemInfo)                      
         },
         minus(){//购买数量--
             this.count>1?this.count--:1
@@ -439,21 +477,20 @@ export default {
                 this.server = false           
             }            
         },
-        init(newItemName){
-            let itemName = null
-            if(newItemName){
-                itemName = newItemName
+        init(newItemInfo){
+            let itemInfo = null
+            if(newItemInfo){
+                itemInfo = newItemInfo
             }else{
-                itemName = ls.getItem('item')
+                itemInfo = ls.getItem('info')
             }
-            // let itemName = ls.getItem('item') || newItemName
-            console.log(itemName)
-            let routerName = ls.getItem('routerName')
-            let url = this.HOST + '/detail/getDetailHeightImgs.php'            
+            // let itemInfo = ls.getItem('info') || newItemInfo
+            console.log(itemInfo)
+            let routerName = ls.getItem('routerName')       
             let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
-            if(itemName){
-                this.$axios.post(url2,itemName).then(response=> {
-                    console.log(response.data)
+            if(itemInfo){
+                this.$axios.post(url2,itemInfo).then(response=> {
+
                     // let valuesList = response.data
                     if(response.data){
                         this.inforList.colorList = response.data.colorList
@@ -469,18 +506,33 @@ export default {
                         this.inforList.iconList = response.data.iconList
                         this.inforList.imgsList = response.data.imgsList
                         this.inforList.versionList = response.data.versionList
-                        this.inforList.review = response.data.review
-                        this.inforList.recommend = response.data.recommend
                         // console.log(this.inforList)
                         // console.log(this.details)                        
                     }
                 }).catch(error=> {
                 });                 
-                this.$axios.get(url, {}).then(response=> {
+ 
+            }               
+        },
+        initStaticData(){
+            let itemName = ls.getItem('name')
+            console.log(itemName)
+            let url = this.HOST + '/detail/getDetailReview.php'                 
+            let url2 = this.HOST + '/detail/getDetailHeightImgs.php'                 
+            if(itemName){
+                this.$axios.post(url,itemName).then(response=> {
+                    console.log(response.data)
+                        this.staticList.reviewList = response.data.reviewList
+                        this.staticList.recommend = response.data.recommend     
+                        console.log(this.staticList)               
+                })
+                .catch(error=> {
+                });                     
+                this.$axios.post(url2,itemName).then(response=> {
                     // console.log(response.data)
                     this.heightImgList = response.data.imgList;
                     this.heightCarouselAll = response.data.carouselAll;
-                    // console.log(this.heightImgList)       
+                    console.log(this.heightImgList)       
                         this.$nextTick(()=>{
                             let carousel =  this.$refs.carousel
                             let imgBlock =  document.getElementsByClassName('style_carousel')
@@ -493,13 +545,9 @@ export default {
                     })                
                 })
                 .catch(error=> {
-                });   
-            }               
+                });                 
+            }
         },
-        // setRemUnits(){
-        //     var deviceWidth = document.documentElement.clientWidth;
-        //         console.log(deviceWidth)
-        // },
         ceiling2(){
             var self = this
             var detail = self.$refs.detail

@@ -5,7 +5,7 @@
             <div class="block" ref="block" v-for="(item,is) in list" :key="is">
                 <div :class="`line`+' '+item.p_line"></div>
                 <div :class="`items`+' '+item.style_type" >
-                    <a ref="val" @click="routerSelect(val.p_info)" v-for="(val,vs) in item.values" :key="vs">
+                    <a ref="val" @click="routerSelect(val.p_info,val.p_name)" v-for="(val,vs) in item.values" :key="vs">
                         <img ref="imgs" isLoad="false" :style="val.img_style" :data-src="val.p_src+val.p_name+val.img_type" 
                         src="http://www.zlpones.com/imgs/mi/img/默认背景.png" alt="">
                         <div class="info" v-show="val.p_title!==''">
@@ -77,11 +77,14 @@ export default {
         // }
     },
     methods:{
-        routerSelect(item){
-            console.log(item)
-            if(item!==''){
-                this.$router.push({name:'product_detail',params:{item:item}})
-                ls.setItem('item',item)
+        routerSelect(info,name){
+            name = '小米9'
+            info = '小米9 全网通版 6GB+128GB 全息幻彩紫'
+            console.log(info)
+            if(info!==''){
+                this.$router.push({name:'product_detail',params:{info:info,name:name}})
+                ls.setItem('info',info)
+                ls.setItem('name',name)
                 ls.setItem('routerName','product_detail')
 
             }else{

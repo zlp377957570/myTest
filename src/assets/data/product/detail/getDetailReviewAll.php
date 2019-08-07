@@ -14,50 +14,30 @@ if($name!=''){
     $sql = "select d_recommend_src,d_recommend_name,d_recommend_price from mimi_details_recommend where p_name = '$name'";
     $result = mysqli_query($conn,$sql);
     $recommend = mysqli_fetch_all($result,1);
+    // print_r($recommend);
 
 
     //获取5条评论
     $sql = "select * from mimi_details_review where p_name = '$name' limit 0,5";
     $result = mysqli_query($conn,$sql);
     $review = mysqli_fetch_all($result,1);
-
+    // print_r($recommend);
     $reviewList = array();
-    function nameOnlys(&$nn, $record) {
-
-        // echo '********';
-        // return $ids . ',' . $record['id'];
-        return $record;
-    };
-    function valOnlys(&$vv, $record) {
-        return $record;
-    };   
     for($i=0;$i<count($review);$i++){
         $obj = new StdClass;
         // $obj->src = $srcLists[$i];
         // $obj->name = $nameLists[$i];
         // $obj->val = $valLists[$i];
 
-       
         $img = $review[$i]["d_review_imgList"];
         $icon = $review[$i]["d_review_reply_icon"];
         $names = $review[$i]["d_review_reply_name"];
         $val = $review[$i]["d_review_reply_val"];
-        $imgListAll = explode('~~~',$img);
+        $imgList = explode('~~~',$img);
         $iconList = explode('~~~',$icon);
         $nameList = explode('|',$names);
         $valList = explode('|',$val);
-        $imgList = array_slice($imgListAll,0,4);
-        $names = array_slice($nameList,0,1);
-        $val = array_slice($valList,0,1);
-        $nn = array_reduce($names,'nameOnlys');
-        $vv = array_reduce($val,'valOnlys');
-        $review[$i]["d_review_reply_name"] = $nn;
-        $review[$i]["d_review_reply_val"] = $vv;
-        // print_r($nn);
-        // print_r($vv);
-        $obj->reviewOnly = $review[$i];
         $obj->imgList = $imgList;
-        $obj->imgListAll = $imgListAll;
         $obj->iconList = $iconList;
         $obj->nameList = $nameList;
         $obj->valList = $valList;
@@ -71,7 +51,7 @@ if($name!=''){
     // print_r($review);
 
    
-    // $output["review"] = $review;      
+    $output["review"] = $review;      
     $output["reviewList"] = $reviewList;      
     $output["recommend"] = $recommend;      
 }

@@ -60,15 +60,18 @@ export default new Router({
     {
       path: '/product_detail',
       name: 'product_detail',
-      component:() => import('@/components/page-list/product_detail.vue'),
-      children:[
-        {
-          path: '/review',
-          name: 'review',
-          component:() => import('@/components/page-list/review.vue')
-        }        
-      ]
+      component:() => import('@/components/page-list/product_detail.vue')
     },
+    {
+      path: '/review',
+      name: 'review',
+      component:() => import('@/components/page-list/review.vue')
+    },
+    {
+      path: '/detailHead',
+      name: 'detailHead',
+      component:() => import('@/components/page-list/detailHead.vue')
+    }      
     // {
     //   path: "*",
     //   redirect: "/"

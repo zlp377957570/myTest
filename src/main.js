@@ -7,6 +7,7 @@ import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,Pull
 import './assets/css/myBase.css';
 import axios from '../node_modules/axios';
 import VueTouch from 'vue-touch';
+import {store} from './store/store';
 
 // 全局注册
 Vue.prototype.$axios = axios;
@@ -26,7 +27,15 @@ Vue.use(ActionSheet );
 Vue.config.productionTip = false
 Vue.prototype.HOST = "/api"
 /* eslint-disable no-new */
+window.addEventListener('popstate', function (e) {
+  router.isBack = true
+},false)
+// VueRouter.prototype.goBack = function () { 
+//   　　this.isBack = true
+//   　　window.history.go(-1)
+// }
 new Vue({
+  store:store,//使用store
   el: '#app',
   router,
   axios,

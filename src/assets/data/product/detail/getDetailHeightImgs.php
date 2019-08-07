@@ -3,16 +3,16 @@
 //1:修改响应头格式为json
 header("Content-Type:application/json;charset=utf-8");
 require_once("../../init.php");
-
+$name = file_get_contents('php://input');
 $output=[];
 
-$sql = "select * from mimi_detail_height_imgList where is_carousel !='无'";
+$sql = "select * from mimi_detail_height_imgList where d_h_name = '$name' and is_carousel !='无'";
 $result=mysqli_query($conn,$sql);
 $carouselAll = mysqli_fetch_all($result,1);
 
 
 
-$sql = "select * from mimi_detail_height_imgList where is_carousel ='无'";
+$sql = "select * from mimi_detail_height_imgList where d_h_name = '$name' and is_carousel ='无'";
 $result=mysqli_query($conn,$sql);
 $imgList = mysqli_fetch_all($result,1);
 // print_r($imgList);
