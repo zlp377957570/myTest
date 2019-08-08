@@ -8,6 +8,8 @@ import './assets/css/myBase.css';
 import axios from '../node_modules/axios';
 import VueTouch from 'vue-touch';
 import {store} from './store/store';
+import Loading from './components/publicComponent/loading' 
+Vue.use(Loading)
 
 // 全局注册
 Vue.prototype.$axios = axios;

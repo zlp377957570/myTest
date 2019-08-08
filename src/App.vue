@@ -5,22 +5,47 @@
 </template>
 
 <script>
+import {mapGetters, mapMutations} from 'vuex'
+import { setTimeout } from 'timers';
 export default {
   name: 'App',
+  computed:{
+    ...mapGetters(['detailHeaderUp'])
+  },
 　  watch: {
-    　　'$route' (to, from,next) {
+  　　'$route' (to, from,next) {
         console.log(to)
         console.log(from)        
         console.log(next)        
-    　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
-    　　　　　　if(isBack) {
-    　　　　　　　　this.transitionName = 'slide-right'
-    　　　　　　} else {
-    　　　　　　       this.transitionName = 'slide-left'
-    　　　　　}
-    　　    this.$router.isBack = false
-    　　}
-　  },      
+// 　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
+// 　　　　　　if(isBack) {
+// 　　　　　　　　this.transitionName = 'slide-right'
+// 　　　　　　} else {
+// 　　　　　　       this.transitionName = 'slide-left'
+// 　　　　　}
+// 　　    this.$router.isBack = false
+            // console.log(this.$store.getters.detailHeaderUp)
+        // if(to.name!=='review'){
+        //   setTimeout(()=>{
+        //     this.$store.commit('chDetailHeaderUp',false)
+        //   },500)
+        // }else{
+        //   setTimeout(()=>{
+        //     this.$store.commit('chDetailHeaderUp',true)
+        //   },500)
+        // }
+        // if(to.name==='review'){
+        //   setTimeout(()=>{
+        //     this.$store.commit('chDetailHeaderUp',true)
+        //   },500)
+        // }        
+  　　}
+　  },   
+  mounted(){
+    // window.onclick = function(){
+    //   // console.log()
+    // }
+  }   
 }
 </script>
 

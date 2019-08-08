@@ -1,8 +1,6 @@
 <template>
     <div class="detailHead">
-
-            <div class="content">55555555555555555555</div>
-
+        <div class="content">55555555555555555555</div>
     </div>
 </template>
 <script>

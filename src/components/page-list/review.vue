@@ -2,13 +2,15 @@
     <div class="review">
         <div class="sss" @click="changeFade">111111111</div>
         <transition :name="fadeName" tag="div" class="aaa">
-            <!-- <detailHead></detailHead> -->
-            <div class="vvv" v-if="show">2222222222222</div>
+            <detailHead  v-if="$store.getters.detailHeaderUp"></detailHead>
+            <!-- <div class="vvv" >2222222222222</div> -->
         </transition>        
     </div>
 </template>
 <script>
+import {mapGetters, mapMutations} from 'vuex'
 import detailHead from './detailHead.vue'
+import { setTimeout } from 'timers';
 export default {
     name:'review',
     data(){
@@ -20,58 +22,72 @@ export default {
     components:{
         detailHead
     },
-    created(){
 
+    created(){
+         console.log(this.$store.getters.detailHeaderUp)
+        // window.addEventListener("popstate", function(e) { 
+        //     setTimeout(()=>{
+        //         this.$store.commit('chDetailHeaderUp',false)   
+        //     },500)
+        //                 return false
+        // alert("我监听到了浏览器的返回按钮事件啦");//根据自己的需求实现自己的功能 
+        // }, false);
+        // console.log(history.popstate)
+        // history.pushState(null, null, document.URL);
+        // window.addEventListener('popstate', function () {
+        // history.pushState(null, null, document.URL);
+        // });        
+    },
+    mounted(){
+        setTimeout(()=>{
+        this.$store.commit('chDetailHeaderUp',true)   
+        },300)
     },
     destroyed(){
-        // this.show = false
+        this.show = false
+    },
+    beforeRouteEnter (to, from, next) {
+        next()
+
+    },
+    beforeRouteLeave (to, from, next) {
+        this.$store.commit('chDetailHeaderUp',false)   
+        setTimeout(()=>{
+            next()
+        },300)
     },
     beforeRouteUpdate (to, from, next) {
-      console.log(to,from,next)
-        if(this.$route.path!='/home') //假设name为home的路由都使用`slide-left`,其它的路由都为`slider-right`
-        {
-            this.$router.isBack=true;
-        }
-      let isBack = this.$router.isBack
-      if (isBack) {
-        this.transitionName = 'slide-right'
-      } else {
-        this.transitionName = 'slide-left'
-      }
-      this.$router.isBack = false
-      next()
+                next()
+
     },    
-    // watch: {
-    //   $route(to, from) {
-    //     // 切换动画
-    //     let isBack = this.$router.isBack // 监听路由变化时的状态为前进还是后退
-    //     console.log(isBack)
-    //     console.log(to)
-    //     console.log(from)
-    //     if (isBack) {
-    //       this.transitionName = 'slide-left'
-    //     } else {
-    //       this.transitionName = 'slide-right'
-    //     }
-    //     this.$router.isBack = false
-    //   }
-    // },
 　  watch: {
-    　　'$route' (to, from) {
-        console.log(to)
-        console.log(from)        
-    　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
-    　　　　　　if(isBack) {
-    　　　　　　　　this.transitionName = 'slide-right'
-    　　　　　　} else {
-    　　　　　　       this.transitionName = 'slide-left'
-    　　　　　}
-    　　    this.$router.isBack = false
-    　　}
+    // 　　'$route' (to, from) {
+    //     console.log(to)
+    //     console.log(from)        
+    // 　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
+    // 　　　　　　if(isBack) {
+    // 　　　　　　　　this.transitionName = 'slide-right'
+    // 　　　　　　} else {
+    // 　　　　　　       this.transitionName = 'slide-left'
+    // 　　　　　}
+    // 　　    this.$router.isBack = false
+    // 　　}
 　  },    
     methods:{
         changeFade(){
+            console.log(this.$store.getters.detailHeaderUp)
             this.show = !this.show
+            console.log(this.show)
+            if(this.show == false){
+                this.$loading.show()
+            }else{
+                this.$loading.hide()
+
+            }
+            // this.$loading.show({
+            //     size: 10,
+            //     text: '加载中'
+            // })            
         }
     }
 }
@@ -80,7 +96,7 @@ export default {
     .review{
         width: 7.5rem;
         height: 500px;
-        background: red;
+        // background: red;
         top:0px;
         left: 0px;
         position: relative;
