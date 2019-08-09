@@ -1,14 +1,15 @@
 <template>
     <div class="review">
-        <div class="sss" @click="changeFade">111111111</div>
+        <div class="sss" @click="changeFade">发射</div>
         <transition :name="fadeName" tag="div" class="aaa">
             <detailHead  v-if="$store.getters.detailHeaderUp"></detailHead>
-            <!-- <div class="vvv" >2222222222222</div> -->
         </transition>        
+         <yinyue1></yinyue1>
     </div>
 </template>
 <script>
 import {mapGetters, mapMutations} from 'vuex'
+import yinyue1 from '../publicComponent/yinyue1.vue'
 import detailHead from './detailHead.vue'
 import { setTimeout } from 'timers';
 export default {
@@ -20,7 +21,8 @@ export default {
         }
     },
     components:{
-        detailHead
+        detailHead,
+        yinyue1
     },
 
     created(){
@@ -95,8 +97,9 @@ export default {
 <style lang="less" scoped>
     .review{
         width: 7.5rem;
-        height: 500px;
-        // background: red;
+        height: 1000px;
+        // background: rgb(218, 38, 32);
+                    background: #aaa;    
         top:0px;
         left: 0px;
         position: relative;
@@ -104,7 +107,11 @@ export default {
             position: absolute;
             z-index: 999;
             width: 150px;  
-            background: #fff;                     
+            background: transparent;          
+            font-size: .48rem;           
+            // margin-right: -20px;
+            left: -40px;
+            top:10px;
         }
         .vvv{
             height: 80px; 

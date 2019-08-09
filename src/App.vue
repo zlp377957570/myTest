@@ -57,6 +57,9 @@ export default {
   text-align: center;
   color: #2c3e50;
   /* margin-top: 60px; */
+  position: relative;
+  top:0px;
+  left: 0px;
   width: 100%;
   height: 100%;
   margin: 0 auto;
