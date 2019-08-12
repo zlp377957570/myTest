@@ -68,9 +68,24 @@ export default new Router({
       component:() => import('@/components/page-list/review.vue')
     },
     {
+      path: '/reviewAll',
+      name: 'reviewAll',
+      component:() => import('@/components/page-list/reviewAll.vue')
+    },
+    {
       path: '/detailHead',
       name: 'detailHead',
       component:() => import('@/components/page-list/detailHead.vue')
+    },
+    {
+      path: '/reviewBody',
+      name: 'reviewBody',
+      component:() => import('@/components/page-list/reviewBody.vue')
+    },
+    {
+      path: '/reviewAllBody',
+      name: 'reviewAllBody',
+      component:() => import('@/components/page-list/reviewAllBody.vue')
     }      
     // {
     //   path: "*",

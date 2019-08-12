@@ -101,7 +101,7 @@
                         <div class="text">
                             {{revw.reviewOnly.d_review_text}}
                         </div>
-                        <div class="imgList" @touchmove="imgListmove" @touchend="imgListend">
+                        <div class="imgList">
                             <img v-for="(img,i) in revw.imgList" :key="i" :src="img" alt="">
                         </div>
                         <div class="reply">
@@ -111,7 +111,7 @@
                 </van-swipe-item>
             </van-swipe>               
         </div>      
-        <div class="comment_all">
+        <div class="comment_all" @click="lookReviewAll">
             <a href="#">更多评论</a>
         </div>    
         <div class="height_imgListALL">
@@ -406,6 +406,9 @@ export default {
       
     },    
     methods:{
+        lookReviewAll(){
+            this.$router.push({name:'reviewAll',params:this.name})
+        },
         lookReview(data){
             console.log(data)
             this.$router.push({name:'review',params:data})

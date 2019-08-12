@@ -1,30 +1,26 @@
 <template>
     <div class="review">
-        <div class="sss" @click="changeFade">发射</div>
-        <transition :name="fadeName" tag="div" class="aaa">
-            <detailHead  v-if="$store.getters.detailHeaderUp"></detailHead>
-        </transition>        
-         <yinyue1></yinyue1>
+        <detailHead :title="'评论详情'"></detailHead>
+        <reviewBody :reviewBody="$route.params"></reviewBody>
     </div>
 </template>
 <script>
 import {mapGetters, mapMutations} from 'vuex'
-import yinyue1 from '../publicComponent/yinyue1.vue'
+// import yinyue1 from '../publicComponent/yinyue1.vue'
 import detailHead from './detailHead.vue'
+import reviewBody from './reviewBody.vue'
 import { setTimeout } from 'timers';
 export default {
     name:'review',
     data(){
         return{
             show:true,
-            fadeName:'rights'
         }
     },
     components:{
         detailHead,
-        yinyue1
+        reviewBody
     },
-
     created(){
          console.log(this.$store.getters.detailHeaderUp)
         // window.addEventListener("popstate", function(e) { 
@@ -41,9 +37,6 @@ export default {
         // });        
     },
     mounted(){
-        setTimeout(()=>{
-        this.$store.commit('chDetailHeaderUp',true)   
-        },300)
     },
     destroyed(){
         this.show = false
@@ -80,12 +73,12 @@ export default {
             console.log(this.$store.getters.detailHeaderUp)
             this.show = !this.show
             console.log(this.show)
-            if(this.show == false){
-                this.$loading.show()
-            }else{
-                this.$loading.hide()
+            // if(this.show == false){
+            //     this.$loading.show()
+            // }else{
+            //     this.$loading.hide()
 
-            }
+            // }
             // this.$loading.show({
             //     size: 10,
             //     text: '加载中'
@@ -97,37 +90,11 @@ export default {
 <style lang="less" scoped>
     .review{
         width: 7.5rem;
-        height: 1000px;
-        // background: rgb(218, 38, 32);
-                    background: #aaa;    
+        height: 100%;
+        background: #fff;    
         top:0px;
         left: 0px;
-        position: relative;
-        .sss{
-            position: absolute;
-            z-index: 999;
-            width: 150px;  
-            background: transparent;          
-            font-size: .48rem;           
-            // margin-right: -20px;
-            left: -40px;
-            top:10px;
-        }
-        .vvv{
-            height: 80px; 
-            background: #eee;    
-        }
-
-        .rights-enter,.rights-leave-to{
-            transform:  translateY(-80px);     
-        }
-        .rights-leave{
-            // transform:  translateX(0px);
-        }          
-        .rights-enter-active,.rights-leave-active{
-            transition: all .3s;
-        }      
-   
+        position: relative;   
 }
 </style>
 

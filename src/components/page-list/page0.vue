@@ -5,7 +5,7 @@
             <div class="block" ref="block" v-for="(item,is) in list" :key="is">
                 <div :class="`line`+' '+item.p_line"></div>
                 <div :class="`items`+' '+item.style_type" >
-                    <a ref="val" @click="routerSelect(val.p_info,val.p_name)" v-for="(val,vs) in item.values" :key="vs">
+                    <a ref="val" @click.stop="routerSelect(val.p_info,val.p_name)" v-for="(val,vs) in item.values" :key="vs">
                         <img ref="imgs" isLoad="false" :style="val.img_style" :data-src="val.p_src+val.p_name+val.img_type" 
                         src="http://www.zlpones.com/imgs/mi/img/默认背景.png" alt="">
                         <div class="info" v-show="val.p_title!==''">

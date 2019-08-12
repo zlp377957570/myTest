@@ -37,7 +37,7 @@ if($name!=''){
         // $obj->name = $nameLists[$i];
         // $obj->val = $valLists[$i];
 
-       
+       $reply = array();
         $img = $review[$i]["d_review_imgList"];
         $icon = $review[$i]["d_review_reply_icon"];
         $names = $review[$i]["d_review_reply_name"];
@@ -46,7 +46,7 @@ if($name!=''){
         $iconList = explode('~~~',$icon);
         $nameList = explode('|',$names);
         $valList = explode('|',$val);
-        $imgList = array_slice($imgListAll,0,4);
+        $imgList = array_slice($imgListAll,0,3);
         $names = array_slice($nameList,0,1);
         $val = array_slice($valList,0,1);
         $nn = array_reduce($names,'nameOnlys');
@@ -55,12 +55,22 @@ if($name!=''){
         $review[$i]["d_review_reply_val"] = $vv;
         // print_r($nn);
         // print_r($vv);
+        for($j=0;$j<count($nameList);$j++){
+            $vals = new StdClass;
+            $vals->icon = $iconList[$j];
+            $vals->name = $nameList[$j];
+            $vals->val = $valList[$j];
+            array_push($reply,$vals);
+        }
         $obj->reviewOnly = $review[$i];
         $obj->imgList = $imgList;
         $obj->imgListAll = $imgListAll;
-        $obj->iconList = $iconList;
-        $obj->nameList = $nameList;
-        $obj->valList = $valList;
+        $obj->replyList = $reply;
+        // $obj->iconList = $iconList;
+        // $obj->nameList = $nameList;
+        // $obj->valList = $valList;
+
+
         // print_r($obj);
         // var_dump("</br>");
         // var_dump("</br>");

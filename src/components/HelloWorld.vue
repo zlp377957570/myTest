@@ -18,7 +18,7 @@
           </div>
           <div class="main_header_tab">
             <div class="contentBar">
-              <div v-for="(item,i) in tabs" :key="i" class="itemBar" :index="i" @click="tabSelect(i)">
+              <div v-for="(item,i) in tabs" :key="i" class="itemBar" :index="i" @click.stop="tabSelect(i)">
                 <span :class="index==i?'active':''">{{item}}<i style="left:0px"></i></span>
               </div>
             </div>       
@@ -28,7 +28,7 @@
             <div :class="show?'showContent showHeight':'showContent'">
               <p>全部</p>
               <div class="showBody">
-                <span @click="headerBarSelect(key)" v-for="(val,key) in tabs" :key="key" :index="key" :class="index==key?'heHeight':''">
+                <span @click.stop="headerBarSelect(key)" v-for="(val,key) in tabs" :key="key" :index="key" :class="index==key?'heHeight':''">
                   {{val}}                                                                                
                 </span>
               </div>
@@ -37,7 +37,7 @@
         </div>
       </div>
       <div :class="['main_bodyer',{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :name="fades" tag="div" style="left:0px">          
-        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart="onTouchStart($event,p)">   
+        <div v-for="(page,p) in tabs" :class="['bodys',{'zIndex':!show,'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}]" :key="p" @touchstart.stop="onTouchStart($event,p)">   
           <!-- <keep-alive :include="'page'+p"> -->
             <!-- <v-touch @swipeleft="onSwipeLeft($event)" @swiperight="onSwipeRight($event)"> -->
               <component :is="'page'+p" :indexs="index" :class="{'noScorllLeft':noScorllLeft,'noScorllTop':noScorllTop}"></component>   
@@ -47,7 +47,7 @@
       </div>  
       <!-- <div class="footBar"> -->
         <div class="footer">
-          <a v-for="(bar,index) in footbar" :key="index" @click="selectFootBar($event,index)"><i :style="{backgroundImage:actives==index?bar.src2:bar.src}"></i><span :style="actives==index?{color:'#ff6700'}:{color:'#b5b5b5'}">{{bar.name}}</span></a>
+          <a v-for="(bar,index) in footbar" :key="index" @click.stop="selectFootBar($event,index)"><i :style="{backgroundImage:actives==index?bar.src2:bar.src}"></i><span :style="actives==index?{color:'#ff6700'}:{color:'#b5b5b5'}">{{bar.name}}</span></a>
         </div>       
       <!-- </div>     -->
   </div>
@@ -104,6 +104,7 @@ export default {
       noScorllTop:false,
       noScorllLeft:false,
       active:'home',
+      timeout:null,
       scroll:'',
       fades:''
     }
@@ -114,15 +115,21 @@ export default {
   mounted(){
     // window.addEventListener('scroll', this.onScrollHeight)
     window.addEventListener('resize',this.setRemUnit)
-    // window.addEventListener('pageshow',function(e){
-    //   if(e.persisted){
-    //     this.setRemUnit()
-    //   }
-    // })      
+    window.addEventListener('pageshow',function(e){
+      if(e.persisted){
+        this.setRemUnit()
+      }
+    })      
   },
   destroyed(){
         window.removeEventListener('resize',this.setRemUnit)
+              clearInterval(this.timeout);        
+      this.timeout = null;
   },
+  beforeDestroy() {
+      clearInterval(this.timeout);        
+      this.timeout = null;
+  },    
   methods:{
     setRemUnit(){
       var deviceWidth = document.documentElement.clientWidth;
@@ -134,6 +141,9 @@ export default {
             bodys.style.width = deviceWidth * 7 + 'px'
       // document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';        
     },  
+    isTouch(){
+        this.timeOutEvent = 0      
+    },
     onTouchStart(a,p){
       a.stopPropagation()
       var self = this
@@ -156,11 +166,15 @@ export default {
       var startLeft = a.clientX
       var startTop = a.clientY
       var del = 0
+      self.timeout = setTimeout(function(){
+          self.isTouch(a)
+      },800)      
       setInterval(()=>{
           del++
       },10)
       _this.ontouchmove = function(b){
         // b.stopPropagation()        
+        self.timeout = 0
         var b = b.touches[0]
         var clientX = b.clientX
         var clientY = b.clientY
@@ -173,52 +187,51 @@ export default {
             var nu = navigator.userAgent.toLowerCase();
             var isWeixin = nu.indexOf('micromessenger') != -1;
             if (!isWeixin) {
-              document.addEventListener("touchmove", function (e) {
-                // e.preventDefault()
-              });              
-            }  
-                  console.log(11111111111111111)                  
+              // document.addEventListener("touchmove", function (e) {
+              //   e.preventDefault()
+              // });              
+            }              
           }else{
-                  console.log(222222222222222)
             self.noScorllLeft = true       
           }          
         }
         if(!self.noScorllLeft){
             var ismove =  Number(lefts.slice(0,-2))+(Number(clientX-startLeft))
             if(ismove<=0 && ismove>-2250){
-                main.style.left = Number(lefts.slice(0,-2))+(Number(clientX-startLeft))+'px'
+                main.style.left = ismove +'px'
                 $i.style.left = -(clientX-startLeft)/8+'px'              
             }                 
         }
  
         _this.ontouchend = function(c){
           c.stopPropagation()          
+          clearTimeout(self.timeout)
           document.addEventListener("touchmove", function (e) {
             e.returnValue = true
           });                    
           clearInterval()
-          // main.style.left = lefts.slice(0,-2) + 'px'
           $i.style.left = 0+'px'      
-          main.style.left = -offsetWidth*p + 'px'
           if(self.noScorllLeft===false){
             var c = c.changedTouches[0]
             var endLeft = c.clientX
             var offWidth = endLeft-startLeft
-            // main.style.left = lefts
-            if(offWidth>0){
-              if(Number(offWidth)>=width || Number(offWidth)>=width/4 && del<15){
-                  p>0?p:0
-                  p>0?p--:0
+            if(self.timeout === 0){
+              main.style.left = -offsetWidth*p + 'px'
+              if(offWidth>0){
+                if(Number(offWidth)>=width || Number(offWidth)>=width/4 && del<15){
+                    p>0?p:0
+                    p>0?p--:0
+                    self.tabSelect(p)
+                  }
+              }
+              if(offWidth<0){
+                if(-Number(offWidth)>=width || -Number(offWidth)>=width/4 && del<15){
+                  p<6?p:6
+                  p<6?p++:p
                   self.tabSelect(p)
-                }
+                }            
+              }               
             }
-            if(offWidth<0){
-              if(-Number(offWidth)>=width || -Number(offWidth)>=width/4 && del<15){
-                p<6?p:6
-                p<6?p++:p
-                self.tabSelect(p)
-              }            
-            }        
           } 
           self.noScorllTop = false
           self.noScorllLeft = false               
@@ -259,21 +272,21 @@ export default {
       let width = $this.offsetWidth
       let clientWidth = document.documentElement.clientWidth
       if($index>this.index){
-        this.fades = "lefts"
+        // this.fades = "lefts"
         if($index>3){
           setTimeout(()=>{
             $parent.scrollLeft = width*($index+1-this.index)
           },200)
         }
       }else{
-        this.fades = "rights"
+        // this.fades = "rights"
         if($index<4){
           setTimeout(()=>{
             $parent.scrollLeft = width*-(this.index-$index)
           },200)
         }        
       }
-      $main.style.left = -clientWidth* $index+'px'      
+      $main.style.left = -clientWidth* $index+'px'    
       this.index = $index
       this.lineHeight = !this.lineHeight
       this.lineHeight2 = !this.lineHeight2
@@ -515,7 +528,7 @@ export default {
       left: 0px;
       top:0px;
       width: 7.5rem;
-      overflow-y:scroll;
+      // overflow-y:scroll;
       div{
         width: 100%;
         touch-action:pan-y!important;

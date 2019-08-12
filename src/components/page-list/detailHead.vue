@@ -1,36 +1,89 @@
 <template>
-    <div class="detailHead">
-        <div class="content">国产直9</div>
-    </div>
+    <transition name="rights" tag="div" class="aaa">
+        <div class="detailHead" v-if="$store.getters.detailHeaderUp">
+            <div class="content">
+                <van-icon name="arrow-left" @click="detailBack"/>
+                <span>{{title}}</span>
+                <van-icon name="search" />
+            </div>
+        </div>
+    </transition>    
 </template>
 <script>
+import {mapGetters, mapMutations} from 'vuex'
+import { setTimeout } from 'timers';
 export default {
     name:'detailHead',
+    props:['title'],
     data(){
         return{
 
         }
-    }
+    },
+    mounted(){
+        console.log(this.$store.getters.detailHeaderUp)
+        setTimeout(()=>{
+            this.$store.commit('chDetailHeaderUp',true)   
+        },300)
+    },    
+    beforeRouteEnter (to, from, next) {
+        next()
+
+    },
+    // beforeRouteLeave (to, from, next) {
+    //     this.$store.commit('chDetailHeaderUp',false)   
+    //     setTimeout(()=>{
+    //         next()
+    //     },300)
+    // },
+    beforeRouteUpdate (to, from, next) {
+        next()
+    },      
+    methods:{
+        detailBack(){
+            console.log(111111111111)
+            this.$router.push({name:'product_detail'})
+            // this.$router.go(-1)
+        }
+    },    
 }
 </script>
 <style lang="less" scoped>
     .detailHead{
         position: fixed;
-        // z-index: 9999;
         top: 0;
         left: 0;
         width: 100%;
-        height: 80px;
+        height: 50px;
         background: #f2f2f2;
         color: #666;  
+        font-size: .32rem;
+        z-index: 1000;
         .content{
-            // width: 100%;
-            // height: 80px;
-            // background: #f2f2f2;
-            // color: #666;   
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            padding: 0 12px;
+            align-items: center;
+            i{
+                color: #acacac;
+                font-weight: 100;
+            }
+            .van-icon-arrow-left{
+                font-size: .49rem;
+            }
+            .van-icon-search{
+                font-size: .52rem;
+            }
         }
-
     }
+    .rights-enter,.rights-leave-to{
+        transform:  translateY(-50px);     
+    }       
+    .rights-enter-active,.rights-leave-active{
+        transition: all .3s;
+    }       
 </style>
 
 
