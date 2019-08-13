@@ -10,8 +10,10 @@
     </transition>    
 </template>
 <script>
+import ls from '../../assets/js/ls.js'
 import {mapGetters, mapMutations} from 'vuex'
 import { setTimeout } from 'timers';
+import { ELOOP } from 'constants';
 export default {
     name:'detailHead',
     props:['title'],
@@ -30,20 +32,31 @@ export default {
         next()
 
     },
-    // beforeRouteLeave (to, from, next) {
-    //     this.$store.commit('chDetailHeaderUp',false)   
-    //     setTimeout(()=>{
-    //         next()
-    //     },300)
-    // },
+    beforeRouteLeave (to, from, next) {
+        console.log(to)
+        console.log(from)
+        // this.$store.commit('chDetailHeaderUp',false)   
+        // setTimeout(()=>{
+            next()
+        // },300)
+    },
     beforeRouteUpdate (to, from, next) {
         next()
     },      
     methods:{
         detailBack(){
-            console.log(111111111111)
-            this.$router.push({name:'product_detail'})
-            // this.$router.go(-1)
+            let type = ls.getItem('reviewType')
+            if(type=='A'){
+                this.$router.push({name:'reviewAll'})
+                ls.setItem('reviewType','B')
+            }else if(type=='B'){
+                this.$router.push({name:'product_detail'})
+                // this.$router.go(-1)
+            }else{
+                // this.$router.push({name:'product_detail'})
+                this.$router.go(-1)
+            }
+            
         }
     },    
 }

@@ -1,7 +1,7 @@
 <template>
     <div class="review">
         <detailHead :title="'评论详情'"></detailHead>
-        <reviewBody :reviewBody="$route.params"></reviewBody>
+        <reviewBody :reviewVal="$route.params"></reviewBody>
     </div>
 </template>
 <script>
@@ -43,17 +43,20 @@ export default {
     },
     beforeRouteEnter (to, from, next) {
         next()
-
     },
     beforeRouteLeave (to, from, next) {
+        console.log(to)
+        console.log(from)          
+        // if(to.name=='reivewAll'){
+        //     ls.setItem('reviewType','B')
+        // } 
         this.$store.commit('chDetailHeaderUp',false)   
         setTimeout(()=>{
             next()
         },300)
     },
     beforeRouteUpdate (to, from, next) {
-                next()
-
+        next()
     },    
 　  watch: {
     // 　　'$route' (to, from) {

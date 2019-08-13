@@ -83,7 +83,7 @@
             </div>
         </div> 
         <div class="swipe_comment">
-            <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="false" :width="320">
+            <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="true" :width="320">
                 <van-swipe-item v-for="(revw,rv) in staticList.reviewList" :key="rv" @click="lookReview(revw)">
                     <div class="block">
                         <div class="info">
@@ -99,7 +99,7 @@
                             </span>
                         </div>
                         <div class="text">
-                            {{revw.reviewOnly.d_review_text}}
+                            {{revw.reviewOnly.d_review_text | sliceString | lineFeed}}
                         </div>
                         <div class="imgList">
                             <img v-for="(img,i) in revw.imgList" :key="i" :src="img" alt="">
@@ -115,7 +115,7 @@
             <a href="#">更多评论</a>
         </div>    
         <div class="height_imgListALL">
-            <div class="height_infoAdd">
+            <div class="height_infoAdd" @click="zengzhi=!zengzhi,zengzhiIndex=4">
                 <span>查看全部参数</span>
             </div>
             <div  class="heightImgList">
@@ -138,12 +138,12 @@
                 <span>为你推荐</span>
             </div>
             <div class="content">
-                <div class="block" v-for="(f_y_r,fi) in 10" :key="fi">
-                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c451fe88be0c6a382d3dc8f03814c274.jpg?thumb=1&w=360&h=360" alt="">
-                    <div class="name">全面屏电视E65A</div>
+                <div class="block" v-for="(fourd,fr) in staticList.foryouRecommend" :key="fr">
+                    <img :src="fourd.df_r_src" alt="">
+                    <div class="name">{{fourd.df_r_name}}</div>
                     <div class="price">
-                        <span>2999</span>
-                        <s>3999</s>                        
+                        <span>{{fourd.df_r_price}}</span>
+                        <s v-show="fourd.df_r_original_price!=0">{{fourd.df_r_original_price}}</s>                        
                     </div>
                 </div>
             </div>
@@ -155,7 +155,7 @@
                     <span>首页</span>
                 </div>
                 <div class="shopp">
-                    <i>{{count}}</i>
+                    <i v-show="count>0">{{count}}</i>
                     <img src="@/assets/image/icon/购物车.png" alt="">
                     <span>购物车</span>
                 </div>
@@ -165,6 +165,16 @@
             </div>            
         </div>
         <div class="showPage">
+            <van-image-preview
+                :startPosition="0"
+                :showIndex="false"
+                :showIndicators="true"
+                v-model="imgLsitShow"
+                :images="images"
+                @change="onChange"
+                >
+                <template v-slot:index>第{{ index }}页</template>
+            </van-image-preview>                  
             <van-popup v-model="show"
             position="bottom" round
             :style="{height:'82%'}"
@@ -172,7 +182,7 @@
                 <div class="header">
                     <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
                     <div class="pro_info">
-                        <div class="src"><img :src="details.d_style_src" alt=""></div>
+                        <div class="src" @click="lookAllImg(inforList.imgsList)"><img :src="details.d_style_src" alt=""></div>
                         <div class="info">
                             <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s></p>
                             <span class="title">{{details.p_info}}</span>
@@ -202,7 +212,7 @@
                     </div>
                     <div class="accident_protection">
                         <div class="title">
-                            <span class="name">意外保护<van-icon name="question-o" /></span>
+                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=0">意外保护<van-icon name="question-o" /></span>
                             <span class="val" v-show="server" v-if="accidented">手机意外碎屏/进水/碾压等损坏</span>
                             <span class="val" v-show="server" v-if="brokened">手机意外碎屏</span>
                         </div>
@@ -216,13 +226,13 @@
                         </div>  
                         <div class="info" v-show="server">
                             <span class="affirm"><van-icon name="checked" />我已阅读</span>
-                            <span class="clause">服务条款 | </span>
-                            <span class="issue">常见问题</span>
+                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=1">服务条款 | </span>
+                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=2">常见问题</span>
                         </div>                  
                     </div>    
                     <div class="accident_protection">
                         <div class="title">
-                            <span class="name">延长保修<van-icon name="question-o" /></span>
+                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=3">延长保修<van-icon name="question-o" /></span>
                             <span class="val" v-show="warrantyed">厂保延一年，性能故障免费维修</span>
                         </div>
                         <div :class="['block',warrantyed?'selectActive':'']" @click="warranty">
@@ -231,16 +241,17 @@
                         </div>
                         <div class="info" v-show="warrantyed">
                             <span class="affirm"><van-icon name="checked" />我已阅读</span>
-                            <span class="clause">服务条款 | </span>
-                            <span class="issue">常见问题</span>
+                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=1">服务条款 | </span>
+                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=2">常见问题</span>
                         </div>                  
-                    </div>                   
+                    </div>  
                 </div> 
-                <div class="footer">
+                <div class="footer" @click="getProductShopping">
                     <div class="addShopp">加入购物车</div>
                 </div>                        
             </van-popup>            
-        </div>
+        </div>                                                                  
+        <van-popup v-model="zengzhi"><div class="zengzhi"><van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/><img @click="zengzhi=!zengzhi" :src="zengzhiImgList[zengzhiIndex]" alt=""></div></van-popup>                  
         <div class="showPageList">
             <van-popup
             v-model="iconListShow"
@@ -254,9 +265,9 @@
                         <span>关键参数</span>
                     </div>    
                     <div class="content">
-                        <p class="itemLine" v-for="(sss,s) in 15" :key="s">
-                            <span class="name">后置摄像头</span>
-                            <span class="val">4800万+1200万+1600万像素</span>
+                        <p class="itemLine" v-for="(iconl,il) in iconAllList" :key="il">
+                            <span class="name">{{iconl.d_icon_min_name}}</span>
+                            <span class="val">{{iconl.d_icon_min_title}}</span>
                         </p>
                     </div>
                     <div class="footer">
@@ -276,9 +287,9 @@
                         <span>促销</span>
                     </div>    
                     <div class="content">
-                        <div class="itmeBlock" v-for="(sss,s) in 2" :key="s">
+                        <div class="itmeBlock" v-for="(gifl,gl) in inforList.giftList" :key="gl">
                             <p class="name"><span>赠品</span></p>
-                            <p class="val">无线车充或无线充电宝（赠品二选一）</p>
+                            <p class="val">{{gifl}}</p>
                         </div>
                     </div>
                 </div>     
@@ -295,28 +306,79 @@
                         <span>服务说明</span>
                     </div>    
                     <div class="content">
-                        <div class="serverBlock" v-for="(sss,s) in 4" :key="s">
-                            <p class="name"><van-icon name="passed"/><span>赠品</span></p>
-                            <p class="val">由小米发货的商品，单笔满150元免运费;
-                            由第三方商家发货的商品，免运费;
-                            特殊商品需要单独收取运费，具体以实际结算金额为准；优惠券等不能抵扣运费金额;
+                        <div class="serverBlock" v-for="(serl,sl) in inforList.serviceList" :key="sl">
+                            <p class="name"><van-icon name="passed"/><span>{{serl.d_s_name}}</span></p>
+                            <p class="val">
+                                {{serl.d_s_text}}
                             </p>
                         </div>
                     </div>
                 </div>     
             </van-popup>                   
-        </div>
+        </div>          
     </div>
 </template>
 <script>
 import ls from '../../assets/js/ls.js'
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet } from 'vant';
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview } from 'vant';
 export default {
     name:'product_detail',
     props:[],    
     data(){
         return{
+            getProductShoppInfo:{
+                product:{
+                    info:'小米9 SE 6GB 全息幻彩紫128GB 128GB',
+                    src:'https://i1.mifile.cn/a1/pms_1550572227.36038081.jpg',
+                    count:1,
+                    price:1999,
+                    isAdd:true,
+                    isShow:true,                    
+                    state:true
+                },
+                accident:{
+                    info:'小米9 SE 意外保障服务',
+                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
+                    count:1,
+                    price:179,
+                    isAdd:false,
+                    isShow:true,                    
+                    state:true
+                },   
+                broken:{
+                    info:'小米9 SE 碎屏保障服务',
+                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
+                    count:1,
+                    price:99,
+                    isAdd:false,
+                    isShow:true,                    
+                    state:true
+                },                   
+                Warranty:{
+                    info:'小米9 SE 延长保修服务',
+                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
+                    count:1,
+                    price:49,
+                    isAdd:false,
+                    isShow:true,
+                    state:true
+                }                             
+            },
             show:false,
+            imgLsitShow:false,
+            index: 0,
+            images: [
+            ],   
+            zengzhiColor:'color:#ddd',
+            zengzhi:false,    
+            zengzhiIndex:0,
+            zengzhiImgList:[
+                "../../static/image/qita/意外保护.png",
+                "../../static/image/qita/服务条款.png",
+                "../../static/image/qita/常见问题.png",
+                "../../static/image/qita/延迟保修.png",
+                "../../static/image/qita/更多参数.png"
+            ],     
             iconListShow:false,
             giftListShow:false,
             serverListShow:false,
@@ -330,6 +392,7 @@ export default {
             imgList_isMove:true,
             heightImgList: [],
             heightCarouselAll:[],
+            iconAllList:[],
             inforList:{},
             staticList:{},
             time:100000,
@@ -338,51 +401,27 @@ export default {
             color:'',
             name:'',
             model:'',
-            count:1
+            count:0
         }
     },
 　　filters: {
 　　　　sliceString(value) {
-    // console.log(value)
-　　　　　　return value.substring(0,35)+'...'
+            if(value.length<35){
+                return value
+            }else{
+                return value.substring(0,35)+'...'
+            }
+　　　　},
+        lineFeed(value) {
+            let str = value.replace(/<br>/g," \r\n ")
+            return str
 　　　　}
 　　},    
     components:{
     },
-    // beforeRouteUpdate (to, from, next) {
-    //     // just use `this`
-    //     this.name = to.params.name
-    //     console.log(this.name)
-    //     next()
-    // },
     beforeRouteUpdate (to, from, next) {
-      console.log(to,from,next)
-        if(this.$route.path!='/home') //假设name为home的路由都使用`slide-left`,其它的路由都为`slider-right`
-        {
-            this.$router.isBack=true;
-        }
-      let isBack = this.$router.isBack
-      if (isBack) {
-        this.transitionName = 'slide-right'
-      } else {
-        this.transitionName = 'slide-left'
-      }
-      this.$router.isBack = false
-      next()
     },
 　  watch: {
-    　　'$route' (to, from) {
-        console.log(to)
-        console.log(from)        
-        console.log(111111111111111111111111111)        
-    　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
-    　　　　　　if(isBack) {
-    　　　　　　　　this.transitionName = 'slide-right'
-    　　　　　　} else {
-    　　　　　　       this.transitionName = 'slide-left'
-    　　　　　}
-    　　    this.$router.isBack = false
-    　　}
 　  },     
     created(){
 
@@ -393,29 +432,73 @@ export default {
     mounted(){
         this.init()
         this.initStaticData()           
-        // window.addEventListener('resize',this.setRemUnits)    
     },
     computed:{
-        // imgList:function(){
-        //     var src = './static/image/linshi/dianshi_'
-        //     for(var i=0;i<17;i++){
-        //         this.imageList.push(src+(i+1)+'.png')
-        //     }
-        //     return this.imageList
-        // }
       
     },    
     methods:{
+        getProductShopping(){
+            let gpsi = this.getProductShoppInfo
+            gpsi.product.info = this.details.p_info
+            gpsi.product.src = this.details.d_style_src
+            gpsi.product.price = this.details.d_style_price
+            console.log(gpsi)
+        },
+        warranty(){//点击保修服务
+            this.warrantyed = !this.warrantyed             
+        },
+        accident(){//点击意外
+            this.server = true
+            if(this.server){
+                this.accidented = !this.accidented
+                this.brokened = false
+            }else{
+                this.server = !this.server       
+            }
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }
+        },
+        broken(){//点击碎屏
+            this.server = true
+            if(this.server){
+                this.brokened = !this.brokened
+                this.accidented = false
+            }else{
+                this.server = !this.server       
+            }    
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }            
+        },        
+        onChange(index) {
+            this.index = index;
+        },        
+        lookAllImg(imgList){
+            this.images = imgList
+            this.imgLsitShow = !this.imgLsitShow            
+        },
         lookReviewAll(){
+            ls.setItem('reviewType','B')                   
             this.$router.push({name:'reviewAll',params:this.name})
         },
         lookReview(data){
-            console.log(data)
+            ls.setItem('reviewItem',data)
+            ls.setItem('reviewType','C')       
             this.$router.push({name:'review',params:data})
-            // this.$router.push({name:'review',params:data})
         },
         lookIconList(){
+            let iconInfo = this.name+' '+this.version
+            let url = this.HOST + '/detail/getDetailIconAllList.php'               
             this.iconListShow = true
+            if(iconInfo){
+                this.$axios.post(url,iconInfo).then(response=> {
+                    // console.log(response.data.iconAllList)
+                    this.iconAllList = response.data.iconAllList
+                }).catch(error=>{
+
+                })
+            }
         },
         lookGiftList(){
             this.giftListShow = true
@@ -453,33 +536,6 @@ export default {
         showPopup(){//展开下拉页面
             this.show = !this.show
         },        
-        warranty(){//点击保修服务
-            this.warrantyed = !this.warrantyed             
-        },
-        accident(){//点击意外
-            this.server = true
-            if(this.server){
-                this.accidented = !this.accidented
-                this.brokened = false
-            }else{
-                this.server = !this.server       
-            }
-            if(!this.accidented && !this.brokened){
-                this.server = false           
-            }
-        },
-        broken(){//点击碎屏
-            this.server = true
-            if(this.server){
-                this.brokened = !this.brokened
-                this.accidented = false
-            }else{
-                this.server = !this.server       
-            }    
-            if(!this.accidented && !this.brokened){
-                this.server = false           
-            }            
-        },
         init(newItemInfo){
             let itemInfo = null
             if(newItemInfo){
@@ -509,7 +565,8 @@ export default {
                         this.inforList.iconList = response.data.iconList
                         this.inforList.imgsList = response.data.imgsList
                         this.inforList.versionList = response.data.versionList
-                        // console.log(this.inforList)
+                        this.inforList.serviceList = response.data.serviceList
+                        console.log(this.inforList)
                         // console.log(this.details)                        
                     }
                 }).catch(error=> {
@@ -527,6 +584,7 @@ export default {
                     console.log(response.data)
                         this.staticList.reviewList = response.data.reviewList
                         this.staticList.recommend = response.data.recommend     
+                        this.staticList.foryouRecommend = response.data.foryouRecommend     
                         console.log(this.staticList)               
                 })
                 .catch(error=> {
@@ -541,6 +599,7 @@ export default {
                             let imgBlock =  document.getElementsByClassName('style_carousel')
                             let first_carouse =  document.getElementsByClassName('first_carouse')[0]
                             let height_infoAdd =  document.getElementsByClassName('height_infoAdd')[0]
+                            // let div = `<div class="height_infoAdd"  @click.native="zengzhi=!zengzhi,zengzhiIndex=4"></div>`
                             first_carouse.appendChild(height_infoAdd);         
                             for(let s=0;s<carousel.length;s++){
                                 imgBlock[s].appendChild(carousel[s])              
@@ -885,10 +944,13 @@ export default {
                     }
                 }
                 .text{
-                    height: 35px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    // touch-action: pan-y;
+                    // height: 35px;
+                    // overflow: hidden;
+                    // text-overflow: ellipsis;
+                    // padding: 0px 20px;
+                    margin-top: -10px;
+                    line-height: 18px;
+                    white-space:pre-line;                            
                 }
                 .imgList{
                     padding: 10px 0px 10px;
@@ -1350,11 +1412,15 @@ export default {
                 text-align: left;
                 font-size: .29rem;
                 .itemLine{
-                    padding: 15px 0;
+                    padding: 10px 0;
                     .name{
                         color: rgba(0,0,0,.54); 
-                        width: 200px;
-                        margin-right: 50px;
+                        width: 100px;
+                        display: inline-block;
+                        margin-right: 40px;
+                    }
+                    .val{
+                        text-align: left;
                     }
                 }
                 .itmeBlock{
@@ -1413,6 +1479,24 @@ export default {
                     background: #f56600;
                     box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                       
                 }                
+            }
+        }
+        .zengzhi{
+            width: 7.5rem;
+            // height: auto;      
+            i{
+                position: fixed;
+                display: block;
+                color: #aaa;
+                top:20px;
+                right: 20px;
+                font-size: .48rem;
+                z-index: 100000;
+            }       
+            img{
+                display: block;
+                width: 100%;
+                height: 100%;
             }
         }
         .ceiling2{

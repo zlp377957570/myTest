@@ -6,57 +6,51 @@
             <a class="right"><van-icon name="ellipsis" /></a>
         </div>
         <div class="swipe_top">
-            <van-swipe>
-                <van-swipe-item><img src="https://i8.mifile.cn/v1/a1/a9dbff6a-8844-6641-6979-bf220da15cb7.webp" alt=""></van-swipe-item>
-                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-2.jpg" alt=""></van-swipe-item>
-                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-1.jpg" alt=""></van-swipe-item>
-                <van-swipe-item><img src="https://img.yzcdn.cn/vant/apple-2.jpg" alt=""></van-swipe-item>
+            <van-swipe :autoplay="10000">
+                <van-swipe-item v-for="(imgs,im) in inforList.imgsList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
             </van-swipe>               
         </div>
         <div class="details_info">
-            <div class="detail_seckill">
+            <div v-show="isSeckill" class="detail_seckill">
                 <span class="seckill_price">
-                    秒杀价<i>2999</i>
+                    秒杀价<i>{{details.d_style_price}}</i>
                 </span>
                 <span class="seckill_time">
-                    距结束 <i>07:46:50</i>
+                    距结束 <i><van-count-down :time="time" @finish="overTime"/></i>
                 </span>
             </div>
             <div class="detail_name">
-                小米MIX3
+               {{details.p_name}}
             </div>
             <div class="detail_title">
-                <i>「8GB+128GB美拍套装，立省1158元」</i><span>DxOMark拍照108分 / 磁动力滑盖全面屏 / 四曲面陶瓷机身 / 骁龙845旗舰处理器 / 包装盒内附赠10W无线充电器</span>
+                <i>{{details.d_style_high_title}}</i><span>{{details.d_style_iconList_nameList}}</span>
             </div>
             <div class="detail_price">
-                <span><i>￥</i>2999</span>
-                <s>3599</s>
+                <span><i>￥</i>{{details.d_style_price}}</span>
+                <s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s>
             </div>
         </div>
         <div class="detail_icon_list" style="touch-action: pan-x">
-            <div v-for="(val,v) in 10" :key="v">
-                <img src="https://cdn.cnbj0.fds.api.mi-img.com/b2c-mimall-media/f0c04e138bfed2b1ebb589de615236d1.png" alt="">
-                <p>CPU</p>
-                <span>骁龙845八核</span>
+            <div v-for="(icons,ic) in inforList.iconList" :key="ic" @click="lookIconList">
+                <img :src="icons.src" alt="">
+                <p>{{icons.name}}</p>
+                <span>{{icons.val}}</span>
             </div>
         </div>
-        <div class="detail_promotion detail_options">
+        <div class="detail_promotion detail_options" @click="lookGiftList">
             <div class="name">促销</div>
             <div class="content">
-                <div>
-                    <i class="zp">赠品</i><span>送米家照片打印机相纸（40张）</span>
-                </div>
-                <div>
-                    <i class="zp">赠品</i><span>送米家照片打印机相纸（40张）</span>
-                </div>                
+                <div v-for="(gifs,gi) in inforList.giftList" :key="gi">
+                    <i class="zp">赠品</i><span>{{gifs}}</span>
+                </div>             
             </div>
             <div class="btn"><i></i></div>
         </div>
-        <div class="detail_options detail_option_item">
+        <div class="detail_options detail_option_item" @click="showPopup">
             <div class="name">已选</div>
             <div class="content">
                 <div>
-                    <span>小米MIX 3 全网通版 8GB+128GB 黑色<i> x 1</i></span>
+                    <span>{{details.p_info}}<i> x 1</i></span>
                 </div>            
             </div>
             <div class="btn"><i></i></div>
@@ -65,12 +59,12 @@
             <div class="name">送至</div>
             <div class="content">
                 <div>
-                    <span>北京市 东城区</span><i class="zt">有现货</i>
+                    <span>北京市 东城区</span><i class="zt">{{details.d_style_status}}</i>
                 </div>            
             </div>
             <div class="btn"><i></i></div>
         </div>    
-        <div class="detail_options detail_option_item">
+        <div class="detail_options detail_option_item" @click="lookServerList">
             <div class="service">    
                 <span><i>✔</i>小米自营</span>     
                 <span><i>✔</i>小米发货</span>     
@@ -81,48 +75,47 @@
         <div class="detail_recommend">
             <div class="title">相关推荐</div>
             <div class="content">
-                <div class="inline_block" v-for="(block,b) in 10" :key="b">
-                    <img src="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/23f42bfa929531ac7da9a4ca6dbe7c20.jpg" alt="">
-                    <p>Redmi充电宝</p>
-                    <span><i>¥</i>59</span>
+                <div class="inline_block" v-for="(recom,rc) in staticList.recommend" :key="rc">
+                    <img :src="recom.d_recommend_src" alt="">
+                    <p>{{recom.d_recommend_name}}</p>
+                    <span><i>¥</i>{{recom.d_recommend_price}}</span>
                 </div>
             </div>
         </div> 
         <div class="swipe_comment">
-            <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="false" :width="320">
-                <van-swipe-item v-for="(block,b) in 4" :key="b">
+            <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="true" :width="320">
+                <van-swipe-item v-for="(revw,rv) in staticList.reviewList" :key="rv" @click="lookReview(revw)">
                     <div class="block">
                         <div class="info">
                             <span class="icon">
-                                <img src="https://s1.mi-img.com/mfsv2/avatar/fdsc3/p01Byfmf3rk9/6NbsupoljsIpDD.jpg" alt="">
+                                <img :src="revw.reviewOnly.d_review_icon" alt="">
                             </span>
                             <span class="name">
-                                <p>シ华灯初上ミ旧人可安°</p>
-                                <span>2019-06-21</span>
+                                <p>{{revw.reviewOnly.d_review_name}}</p>
+                                <span>{{revw.reviewOnly.d_review_time}}</span>
                             </span>
                             <span class="zan">
-                                <img src="@/assets/image/icon/zan.png" alt=""><i></i>65
+                                <img src="@/assets/image/icon/zan.png" alt=""><i></i>{{revw.reviewOnly.d_review_zan}}
                             </span>
                         </div>
                         <div class="text">
-                            完美！<br>
-                            画质太清晰了，玩和平精英下面的书一目了然
+                            {{revw.reviewOnly.d_review_text | sliceString | lineFeed}}
                         </div>
-                        <div class="imgList" @touchmove="imgListmove" @touchend="imgListend">
-                            <img v-for="(img,i) in 4" :key="i" src="https://i1.mifile.cn/a2/1561084401_2972019_s750_1000wh!540x5400.jpg" alt="">
+                        <div class="imgList">
+                            <img v-for="(img,i) in revw.imgList" :key="i" :src="img" alt="">
                         </div>
                         <div class="reply">
-                            <i>官方回复：</i>越过山林，穿过薄雾，我愿意陪你等在湖海之畔，看月亮升起~感谢您对小米的...
+                            <i>{{revw.reviewOnly.d_review_reply_name}}</i>{{revw.reviewOnly.d_review_reply_val | sliceString}}
                         </div>
                     </div>
                 </van-swipe-item>
             </van-swipe>               
         </div>      
-        <div class="comment_all">
+        <div class="comment_all" @click="lookReviewAll">
             <a href="#">更多评论</a>
         </div>    
         <div class="height_imgListALL">
-            <div class="height_infoAdd">
+            <div class="height_infoAdd" @click="zengzhi=!zengzhi,zengzhiIndex=4">
                 <span>查看全部参数</span>
             </div>
             <div  class="heightImgList">
@@ -132,7 +125,7 @@
             </div>
             <div class="carouselAll">
                 <div ref="carousel" :class="['carousel',heCarousel.name]" v-for="(heCarousel,hc) in heightCarouselAll" :key="hc">
-                    <van-swipe :autoplay="3000" indicator-color="#eee">
+                    <van-swipe :autoplay="5000" indicator-color="#eee">
                         <van-swipe-item v-for="(hcItem,hi) in heCarousel.value" :key="hi">
                             <img :src="hcItem.d_h_src+hcItem.d_h_name+'_'+hcItem.d_h_id+'_'+hcItem.is_carousel+hcItem.img_type" alt="">
                         </van-swipe-item>                                        
@@ -140,32 +133,309 @@
                 </div>
             </div>
         </div> 
+        <div class="forYouRecommend">
+            <div class="title">
+                <span>为你推荐</span>
+            </div>
+            <div class="content">
+                <div class="block" v-for="(fourd,fr) in staticList.foryouRecommend" :key="fr">
+                    <img :src="fourd.df_r_src" alt="">
+                    <div class="name">{{fourd.df_r_name}}</div>
+                    <div class="price">
+                        <span>{{fourd.df_r_price}}</span>
+                        <s v-show="fourd.df_r_original_price!=0">{{fourd.df_r_original_price}}</s>                        
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="detailFoot">
+            <div class="detailFootBar">
+                <div class="home">
+                    <img src="@/assets/image/icon/首页.png" alt="">
+                    <span>首页</span>
+                </div>
+                <div class="shopp">
+                    <i v-show="count>0">{{count}}</i>
+                    <img src="@/assets/image/icon/购物车.png" alt="">
+                    <span>购物车</span>
+                </div>
+                <div class="addShopp">
+                    <span>加入购物车</span>
+                </div>                        
+            </div>            
+        </div>
+        <div class="showPage">
+            <van-image-preview
+                :startPosition="0"
+                :showIndex="false"
+                :showIndicators="true"
+                v-model="imgLsitShow"
+                :images="images"
+                @change="onChange"
+                >
+                <template v-slot:index>第{{ index }}页</template>
+            </van-image-preview>                  
+            <van-popup v-model="show"
+            position="bottom" round
+            :style="{height:'82%'}"
+            >
+                <div class="header">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="pro_info">
+                        <div class="src" @click="lookAllImg(inforList.imgsList)"><img :src="details.d_style_src" alt=""></div>
+                        <div class="info">
+                            <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s></p>
+                            <span class="title">{{details.p_info}}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="content">
+                    <div class="blocks">
+                        <p class="name">版本</p>
+                        <div class="val">
+                            <span @click="selectVersion(ver.d_style_version)" :v-model="ver.d_style_version" :class="ver.d_style_version==version?'selectActive':''" v-for="(ver,vi) in inforList.versionList" :key="vi">{{ver.d_style_version}}</span>
+                        </div>
+                    </div>
+                    <div class="blocks">
+                        <p class="name">颜色</p>
+                        <div class="val">
+                            <span @click="selectColor(col.d_style_color)" :v-model="col.d_style_color" :class="col.d_style_color==color?'selectActive':''" v-for="(col,ci) in inforList.colorList" :key="ci">{{col.d_style_color}}</span>
+                        </div>
+                    </div> 
+                    <div class="addCount">
+                        <span>购买数量</span>
+                        <div class="compute">
+                            <span @click="minus" :class="['minus',count<2?'disabled':'']">－</span>
+                            <span class="val" :v-model="count">{{count}}</span>
+                            <span @click="add" class="add">＋</span>
+                        </div>
+                    </div>
+                    <div class="accident_protection">
+                        <div class="title">
+                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=0">意外保护<van-icon name="question-o" /></span>
+                            <span class="val" v-show="server" v-if="accidented">手机意外碎屏/进水/碾压等损坏</span>
+                            <span class="val" v-show="server" v-if="brokened">手机意外碎屏</span>
+                        </div>
+                        <div :class="['block',accidented?'selectActive':'']" @click="accident">
+                            <span class="name">意外保障服务</span>
+                            <span class="val">299元</span>
+                        </div>
+                        <div :class="['block',brokened?'selectActive':'']" @click="broken">
+                            <span class="name">碎屏保障服务</span>
+                            <span class="val">159元</span>
+                        </div>  
+                        <div class="info" v-show="server">
+                            <span class="affirm"><van-icon name="checked" />我已阅读</span>
+                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=1">服务条款 | </span>
+                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=2">常见问题</span>
+                        </div>                  
+                    </div>    
+                    <div class="accident_protection">
+                        <div class="title">
+                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=3">延长保修<van-icon name="question-o" /></span>
+                            <span class="val" v-show="warrantyed">厂保延一年，性能故障免费维修</span>
+                        </div>
+                        <div :class="['block',warrantyed?'selectActive':'']" @click="warranty">
+                            <span class="name">延长保修服务</span>
+                            <span class="val">99元</span>
+                        </div>
+                        <div class="info" v-show="warrantyed">
+                            <span class="affirm"><van-icon name="checked" />我已阅读</span>
+                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=1">服务条款 | </span>
+                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=2">常见问题</span>
+                        </div>                  
+                    </div>  
+                </div> 
+                <div class="footer" @click="getProductShopping">
+                    <div class="addShopp">加入购物车</div>
+                </div>                        
+            </van-popup>            
+        </div>                                                                  
+        <van-popup v-model="zengzhi"><div class="zengzhi"><van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/><img @click="zengzhi=!zengzhi" :src="zengzhiImgList[zengzhiIndex]" alt=""></div></van-popup>                  
+        <div class="showPageList">
+            <van-popup
+            v-model="iconListShow"
+            round
+            position="bottom"
+            :style="{ height: '80%' }"
+            >       
+                <div class="iconList showPopupPage">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="header">
+                        <span>关键参数</span>
+                    </div>    
+                    <div class="content">
+                        <p class="itemLine" v-for="(iconl,il) in iconAllList" :key="il">
+                            <span class="name">{{iconl.d_icon_min_name}}</span>
+                            <span class="val">{{iconl.d_icon_min_title}}</span>
+                        </p>
+                    </div>
+                    <div class="footer">
+                        <div class="achieve">完成</div>                    
+                    </div>
+                </div>     
+            </van-popup>
+            <van-popup
+            v-model="giftListShow"
+            round
+            position="bottom"
+            :style="{ height: '80%' }"
+            >       
+                <div class="giftList showPopupPage">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="header">
+                        <span>促销</span>
+                    </div>    
+                    <div class="content">
+                        <div class="itmeBlock" v-for="(gifl,gl) in inforList.giftList" :key="gl">
+                            <p class="name"><span>赠品</span></p>
+                            <p class="val">{{gifl}}</p>
+                        </div>
+                    </div>
+                </div>     
+            </van-popup>      
+            <van-popup
+            v-model="serverListShow"
+            round
+            position="bottom"
+            :style="{ height: '80%' }"
+            >       
+                <div class="serverList showPopupPage">
+                    <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
+                    <div class="header">
+                        <span>服务说明</span>
+                    </div>    
+                    <div class="content">
+                        <div class="serverBlock" v-for="(serl,sl) in inforList.serviceList" :key="sl">
+                            <p class="name"><van-icon name="passed"/><span>{{serl.d_s_name}}</span></p>
+                            <p class="val">
+                                {{serl.d_s_text}}
+                            </p>
+                        </div>
+                    </div>
+                </div>     
+            </van-popup>                   
+        </div>          
     </div>
 </template>
 <script>
 import ls from '../../assets/js/ls.js'
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem } from 'vant';
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview } from 'vant';
 export default {
     name:'product_detail',
     props:[],    
     data(){
         return{
+            getProductShoppInfo:{
+                product:{
+                    info:'小米9 SE 6GB 全息幻彩紫128GB 128GB',
+                    src:'https://i1.mifile.cn/a1/pms_1550572227.36038081.jpg',
+                    count:1,
+                    price:1999,
+                    isAdd:true,
+                    isShow:true,                    
+                    state:true
+                },
+                accident:{
+                    info:'小米9 SE 碎屏保障服务',
+                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
+                    count:1,
+                    price:99,
+                    isAdd:false,
+                    isShow:true,                    
+                    state:true
+                },   
+                Warranty:{
+                    info:'小米9 SE 延长保修服务',
+                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
+                    count:1,
+                    price:49,
+                    isAdd:false,
+                    isShow:true,
+                    state:true
+                }                             
+            },
+            show:false,
+            imgLsitShow:false,
+            index: 0,
+            images: [
+            ],   
+            zengzhiColor:'color:#ddd',
+            zengzhi:false,    
+            zengzhiIndex:0,
+            zengzhiImgList:[
+                "../../static/image/qita/意外保护.png",
+                "../../static/image/qita/服务条款.png",
+                "../../static/image/qita/常见问题.png",
+                "../../static/image/qita/延迟保修.png",
+                "../../static/image/qita/更多参数.png"
+            ],     
+            iconListShow:false,
+            giftListShow:false,
+            serverListShow:false,
+            isSeckill:true,
+            server:false,
+            accidented:false,
+            brokened:false,
+            warrantyed:false,
             scrollTop2:0,
             scrollBtn2:true,
             imgList_isMove:true,
             heightImgList: [],
-            heightCarouselAll:[]
+            heightCarouselAll:[],
+            iconAllList:[],
+            inforList:{},
+            staticList:{},
+            time:100000,
+            details:'',
+            version:'',
+            color:'',
+            name:'',
+            model:'',
+            count:0
         }
     },
+　　filters: {
+　　　　sliceString(value) {
+            // console.log(value.length)
+            if(value.length<35){
+                return value
+            }else{
+                return value.substring(0,35)+'...'
+            }
+　　　　},
+        lineFeed(value) {
+            let str = value.replace(/<br>/g," \r\n ")
+            return str
+　　　　}
+　　},    
     components:{
-
     },
     beforeRouteUpdate (to, from, next) {
-        // just use `this`
-        this.name = to.params.name
-        console.log(this.name)
-        next()
+    //     if(this.$route.path!='/home') //假设name为home的路由都使用`slide-left`,其它的路由都为`slider-right`
+    //     {
+    //         this.$router.isBack=true;
+    //     }
+    //   let isBack = this.$router.isBack
+    //   if (isBack) {
+    //     this.transitionName = 'slide-right'
+    //   } else {
+    //     this.transitionName = 'slide-left'
+    //   }
+    //   this.$router.isBack = false
+    //   next()
     },
+　  watch: {
+    // 　　'$route' (to, from) {   
+    // 　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
+    // 　　　　　　if(isBack) {
+    // 　　　　　　　　this.transitionName = 'slide-right'
+    // 　　　　　　} else {
+    // 　　　　　　       this.transitionName = 'slide-left'
+    // 　　　　　}
+    // 　　    this.$router.isBack = false
+    // 　　}
+　  },     
     created(){
 
     },
@@ -174,33 +444,173 @@ export default {
     },
     mounted(){
         this.init()
+        this.initStaticData()           
         // window.addEventListener('resize',this.setRemUnits)    
     },
     computed:{
-        // imgList:function(){
-        //     var src = './static/image/linshi/dianshi_'
-        //     for(var i=0;i<17;i++){
-        //         this.imageList.push(src+(i+1)+'.png')
-        //     }
-        //     return this.imageList
-        // }
+      
     },    
     methods:{
-        init(){
-            let itemName = ls.getItem('item')
-            let routerName = ls.getItem('routerName')
-            let url = this.HOST + '/detail/getDetailHeightImgs.php'            
+        getProductShopping(){
+            let gpsi = this.getProductShoppInfo
+            gpsi.product.info = this.details.p_info
+        },
+        onChange(index) {
+            this.index = index;
+        },        
+        lookAllImg(imgList){
+            this.images = imgList
+            this.imgLsitShow = !this.imgLsitShow            
+        },
+        lookReviewAll(){
+            ls.setItem('reviewType','B')                   
+            this.$router.push({name:'reviewAll',params:this.name})
+        },
+        lookReview(data){
+            ls.setItem('reviewItem',data)
+            ls.setItem('reviewType','C')       
+            this.$router.push({name:'review',params:data})
+        },
+        lookIconList(){
+            let iconInfo = this.name+' '+this.version
+            let url = this.HOST + '/detail/getDetailIconAllList.php'               
+            this.iconListShow = true
+            if(iconInfo){
+                this.$axios.post(url,iconInfo).then(response=> {
+                    // console.log(response.data.iconAllList)
+                    this.iconAllList = response.data.iconAllList
+                }).catch(error=>{
+
+                })
+            }
+        },
+        lookGiftList(){
+            this.giftListShow = true
+        },
+        lookServerList(){
+            this.serverListShow = true
+        },        
+        overTime(){//倒计时结束
+            this.isSeckill = false
+        },
+        selectVersion(newVersion){//选择规格款式
+            this.version = newVersion
+            let newItemInfo = this.name+' '+this.model+' '+this.version+' '+this.color
+            console.log(newItemInfo)
+            this.init(newItemInfo)
+        },
+        selectColor(newColor){//选择颜色款式
+            this.color = newColor  
+            let newItemInfo = this.name+' '+this.model+' '+this.version+' '+this.color
+            console.log(newItemInfo)
+            this.init(newItemInfo)                      
+        },
+        minus(){//购买数量--
+            this.count>1?this.count--:1
+        },
+        add(){//购买数量++
+            this.count++
+        },  
+        closeShowPage(){//关闭下拉页面
+            this.show = false
+            this.iconListShow = false
+            this.giftListShow = false
+            this.serverListShow = false
+        },
+        showPopup(){//展开下拉页面
+            this.show = !this.show
+        },        
+        warranty(){//点击保修服务
+            this.warrantyed = !this.warrantyed             
+        },
+        accident(){//点击意外
+            this.server = true
+            if(this.server){
+                this.accidented = !this.accidented
+                this.brokened = false
+            }else{
+                this.server = !this.server       
+            }
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }
+        },
+        broken(){//点击碎屏
+            this.server = true
+            if(this.server){
+                this.brokened = !this.brokened
+                this.accidented = false
+            }else{
+                this.server = !this.server       
+            }    
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }            
+        },
+        init(newItemInfo){
+            let itemInfo = null
+            if(newItemInfo){
+                itemInfo = newItemInfo
+            }else{
+                itemInfo = ls.getItem('info')
+            }
+            // let itemInfo = ls.getItem('info') || newItemInfo
+            console.log(itemInfo)
+            let routerName = ls.getItem('routerName')       
+            let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
+            if(itemInfo){
+                this.$axios.post(url2,itemInfo).then(response=> {
+
+                    // let valuesList = response.data
+                    if(response.data){
+                        this.inforList.colorList = response.data.colorList
+                        this.details = response.data.detail
+                        this.version = response.data.detail.d_style_version
+                        this.color = response.data.detail.d_style_color
+                        this.name = response.data.detail.p_name
+                        this.model = response.data.detail.d_style_model
+                        let stime = response.data.detail.d_seckill_time
+                        this.time = Number(stime)
+                        // this.time = 10000
+                        this.inforList.giftList = response.data.giftList
+                        this.inforList.iconList = response.data.iconList
+                        this.inforList.imgsList = response.data.imgsList
+                        this.inforList.versionList = response.data.versionList
+                        this.inforList.serviceList = response.data.serviceList
+                        console.log(this.inforList)
+                        // console.log(this.details)                        
+                    }
+                }).catch(error=> {
+                });                 
+ 
+            }               
+        },
+        initStaticData(){
+            let itemName = ls.getItem('name')
+            console.log(itemName)
+            let url = this.HOST + '/detail/getDetailReview.php'                 
+            let url2 = this.HOST + '/detail/getDetailHeightImgs.php'                 
             if(itemName){
-                this.$axios.get(url, {}).then(response=> {
+                this.$axios.post(url,itemName).then(response=> {
+                    console.log(response.data)
+                        this.staticList.reviewList = response.data.reviewList
+                        this.staticList.recommend = response.data.recommend     
+                        this.staticList.foryouRecommend = response.data.foryouRecommend     
+                        console.log(this.staticList)               
+                })
+                .catch(error=> {
+                });                     
+                this.$axios.post(url2,itemName).then(response=> {
                     // console.log(response.data)
                     this.heightImgList = response.data.imgList;
                     this.heightCarouselAll = response.data.carouselAll;
-                    // console.log(this.heightImgList)       
+                    console.log(this.heightImgList)       
                         this.$nextTick(()=>{
                             let carousel =  this.$refs.carousel
                             let imgBlock =  document.getElementsByClassName('style_carousel')
                             let first_carouse =  document.getElementsByClassName('first_carouse')[0]
                             let height_infoAdd =  document.getElementsByClassName('height_infoAdd')[0]
+                            // let div = `<div class="height_infoAdd"  @click.native="zengzhi=!zengzhi,zengzhiIndex=4"></div>`
                             first_carouse.appendChild(height_infoAdd);         
                             for(let s=0;s<carousel.length;s++){
                                 imgBlock[s].appendChild(carousel[s])              
@@ -208,13 +618,9 @@ export default {
                     })                
                 })
                 .catch(error=> {
-                });   
-            }               
+                });                 
+            }
         },
-        // setRemUnits(){
-        //     var deviceWidth = document.documentElement.clientWidth;
-        //         console.log(deviceWidth)
-        // },
         ceiling2(){
             var self = this
             var detail = self.$refs.detail
@@ -314,7 +720,9 @@ export default {
                 }
                 .seckill_time{
                     font-size: .28rem;      
-                    i{
+                    .van-count-down{
+                        color: #fff;
+                        display: inline-block;
                         font-size: .24rem;                              
                     }                   
                 }
@@ -375,7 +783,11 @@ export default {
 
                 }
                 span{
+                    width: 95%;
+                    display: inline-block;
                     color: #676767;      
+                    overflow: hidden;
+                    text-overflow: ellipsis;
                 }
             }
             div:not(:first-child){
@@ -543,10 +955,13 @@ export default {
                     }
                 }
                 .text{
-                    height: 35px;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    // touch-action: pan-y;
+                    // height: 35px;
+                    // overflow: hidden;
+                    // text-overflow: ellipsis;
+                    // padding: 0px 20px;
+                    margin-top: -10px;
+                    line-height: 18px;
+                    white-space:pre-line;                            
                 }
                 .imgList{
                     padding: 10px 0px 10px;
@@ -645,11 +1060,463 @@ export default {
                 }                                                
             // }
         }
+        .forYouRecommend{
+            padding: 70px 20px;
+            background: #fafafa;
+            .title{
+                text-align: left;
+                span{
+                    font-size: .48rem;
+                    color: rgba(0,0,0,.87);
+                }
+            }
+            .content{
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                flex-wrap: wrap;
+                text-align: left;
+                .block{
+                    width: 46%;
+                    height: 200px;
+                    margin-top: 20px;
+                    img{
+                        border-radius: 18px;
+                        width: 100%;
+                        height: 150px;                        
+                    }
+                    .name{
+                        margin-left: 15px;                        
+                        line-height: 30px;
+                        font-size: .28rem;
+                        color: rgba(0,0,0,.87);                      
+                    }
+                    .price{
+                        margin-left: 15px;
+                        span{
+                            color: #f56600;
+                            font-size: .32rem;
+                            margin-right: 3px;
+                        }
+                        span:before{
+                            content: '\A5';
+                            display: inline-block;
+                            // margin-top: -2px;
+                            vertical-align: middle;
+                            padding-bottom: 5px;
+                            padding-right: 3px;
+                            font-size: .2rem;        
+                        }
+                        s{
+                            color: rgba(0,0,0,.54);
+                        }
+                        s:before{
+                            content: 'Y';
+                            font-size: .14rem;        
+                        }                        
+                    }
+                }
+            }
+        }
+        .detailFoot{
+            width: 95%;
+            margin:  140px auto 10px;
+            .detailFootBar{
+                background: #fff;            
+                position: fixed;
+                bottom:10px;
+                z-index: 1000;
+                height: 52px;
+                border: 1px solid #fafafa;
+                border-radius: 10px;
+                box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .3); 
+                padding: 6px 10px;
+                display: flex;
+                overflow: hidden;
+                div{
+                    height: 25px;                  
+                    display: inline-block;
+                    img{
+                        margin: 0 auto;                         
+                        display: block;
+                    }
+                    span{
+                        color:rgba(0,0,0,.54);
+                    }
+                }
+                .home{
+                    width: 50px;
+                    img{
+                        width: 21px;
+                        height: 23px;  
+                        margin-bottom: 1px;       
+                    }
+                }
+                .shopp{
+                    position: relative;
+                    i{
+                        position: absolute;
+                        background: #ed4d41;
+                        color: #fff;
+                        border-radius: 50%;
+                        font-size: .10rem;
+                        width: 15px;
+                        height: 15px;       
+                        top:-2px;
+                        right: 2px;                  
+                    }
+                    img{
+                        width: 24px;
+                        height: 24px;          
+                    }
+                }
+                .addShopp{
+                    height: 100%;
+                    margin-left: 120px;
+                    display: inline-flex;
+                    align-items:center;
+                    span{
+                        box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                
+                        background: #f56600;
+                        color: #fff;
+                        font-size: .3rem;
+                        border-radius: 15px;
+                        width: 125px;
+                        line-height: 34px; 
+                    }
+                }
+            }            
+        }
+        .showPage{
+            overflow: hidden;
+            .selectActive{
+                border-color: #f566009d!important;
+                color:#f56600;
+            }                
+            .header{
+                position: fixed;
+                background: #fff;
+                .close{
+                    padding: 10px 15px 0px 0px;       
+                    text-align: right;
+                    font-size: .44rem;    
+                    color: #aaa;
+                    i{
+                        vertical-align: bottom;
+                    } 
+                }        
+                .pro_info{
+                    padding: 0px 20px 20px;
+                    align-items: center;
+                    display: flex;
+                    .src{
+                        width: 104px;
+                        height: 104px;          
+                        border: 1px solid #f0f0f0;               
+                        display: inline-block;
+                        img{
+                            width: 100%;
+                            height: 100%;                  
+                            display: block;
+                        }
+                    }
+                    .info{
+                            text-align: left;
+                            margin-left: 15px;
+                        .price{
+                            span{
+                                color: #f56600;
+                                font-size: .49rem;
+                                margin-right: 10px;
+                            }
+                            span:before{
+                                content: '\A5';
+                                display: inline-block;
+                                // margin-top: -2px;
+                                vertical-align: middle;
+                                padding-bottom: 5px;
+                                padding-right: 3px;
+                                font-size: .29rem;        
+                            }
+                            s{
+                                color: rgba(0,0,0,.54);
+                            }
+                            s:before{
+                                content: 'Y';
+                                font-size: .25rem;        
+                            }                        
+                        }
+                        .title{
+                            font-size: .29rem;
+                        }
+                    }
+                }                
+            }
+            .content{
+                margin-top: 155px;
+                margin-bottom: 55px;
+                padding: 0px 20px;                
+                overflow-y: auto;
+                .blocks{
+                    border-top:1px solid #f8f8f8;                    
+                    padding: 0px 0px 20px;
+                    text-align: left;
+                    .name{
+                        font-size: .25rem;
+                        padding: 15px 0px;
+                    }
+                    .val{
+                        font-size: .23rem;
+                        span{
+                            display: inline-block;
+                            padding: 9.5px 0px;
+                            text-align: center;
+                            width: 76.5px;
+                            border: 1px solid #f0f0f0;
+                            margin-left: 8px;
+                        }
+                    }
+                }
+                .addCount{
+                    border-top:1px solid #f8f8f8;
+                    padding: 20px 0 0px;       
+                    display: flex;
+                    justify-content: space-between;  
+                    align-items:center;           
+                    span{
+                        font-size: .25rem;
+                    }
+                    .compute{
+                        border: 1px solid #f0f0f0;
+                        overflow: hidden;
+                        span{
+                            display: inline-block;
+                            font-size: .48rem;
+                            background: #f0f0f0;
+                            color: #676767;
+                            width: 28px;
+                            margin-left: -2.5px;
+                            padding-left: 0px;
+                            line-height: 28px;
+                            vertical-align: middle;
+                            padding: 0px 3px;
+                        }
+                        .val{
+                            font-size: .36rem;        
+                            background: #fff;
+                            color: rgba(0,0,0,.87);
+                        }
+                        .disabled{
+                            background: #fafafa;
+                            color: #ccc;
+                        }
+                    }
+                }
+                .accident_protection{
+                    font-size: .25rem;
+                    display: flex;
+                    padding: 20px 0;
+                    justify-content: space-between;
+                    flex-wrap: wrap;
+                    text-align: left;                
+                    .title{
+                        padding: 25px 0 15px;
+                        border-top:1px solid #f8f8f8;
+                        width: 100%;
+                        .name{
+                            i::before{
+                                font-size: .32rem;
+                                display: inline-block;
+                                margin: 0 5px; 
+                                vertical-align: middle;                         
+                            }
+                        }
+                        .val{
+                            color: rgba(0,0,0,.54);
+                        }
+                    }
+                    .block{
+                        width: 162px;
+                        display: inline-block;
+                        border: 1px solid #f0f0f0;
+                        display: flex;
+                        justify-content: space-between;
+                        padding: 9.5px 10px;
+                        .name{
+                            text-align: left;
+                        }
+                        .val{
+                            text-align: right;
+
+                        }
+                    }
+                    .info{
+                        padding: 10px 0; 
+                        .affirm{
+                            i::before{
+                                font-size: .32rem;
+                                display: inline-block;
+                                margin: -3px 5px 0; 
+                                color:#f56600;
+                                vertical-align: middle;                       
+                            }
+                        } 
+                        .clause{
+                            color:#f56600;
+                        }  
+                        .issue{
+                            color:#f56600;
+                        }   
+                    }
+                }                
+            }
+            .footer{
+                position: fixed;
+                bottom: 0px;
+                width: 100%;
+                background: #fff;
+                padding: 10px 0;
+                box-shadow: 0px 5px 15px 1px rgba(0, 0, 0, .1);                          
+                .addShopp{
+                    width: 91%;
+                    margin: 0 auto;
+                    padding: 7.5px 0;
+                    color: #fff;
+                    font-size: .29rem;
+                    border-radius: 15px;
+                    background: #f56600;
+                    box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                       
+                }
+            }
+        }
+        .showPopupPage{
+            overflow: hidden;
+            .close{
+                padding: 10px 15px 0px 0px;   
+                position: fixed;
+                right: 0;
+                z-index: 100;
+                font-size: .44rem;    
+                color: #aaa;
+                i{
+                    vertical-align: bottom;
+                } 
+            }               
+            .header{
+                position: fixed;
+                background: #fff;                             
+                width: 100%;
+                line-height: 55px;
+                padding: 0px 20px;    
+                span{
+                    width: 100%;
+                    display: block;
+                    border-bottom: 1px solid #f0f0f0;
+                    font-size: .36rem;
+                }
+            }
+            .content{
+                margin-top: 70px;
+                margin-bottom: 45px;
+                padding: 0px 20px;                
+                overflow-y: scroll;
+                text-align: left;
+                font-size: .29rem;
+                .itemLine{
+                    padding: 10px 0;
+                    .name{
+                        color: rgba(0,0,0,.54); 
+                        width: 100px;
+                        display: inline-block;
+                        margin-right: 40px;
+                    }
+                    .val{
+                        text-align: left;
+                    }
+                }
+                .itmeBlock{
+                    padding: 10px 0;
+                    margin-bottom: 10px;
+                    border-bottom: 1px solid #f9f9f9;
+                    .name{
+                        span{
+                            font-size: .1rem;
+                            padding: 0px 2px;
+                            vertical-align: bottom;
+                            color: #f56600;
+                            border:1px solid #e4a97fa6;
+                        }
+                    }
+                    .val{
+                        padding: 10px 0;
+                        color: #000;
+                    }
+                }
+                .serverBlock{
+                    padding: 10px 0;
+                    .name{
+                        color: #000;
+                        i{
+                            color: #f56600;
+                            font-size: .36rem;
+                            vertical-align: -3px;
+                            width: 35px;
+                        }
+                        span{
+                        }
+                    }
+                    .val{
+                        color: rgba(0,0,0,.54);
+                        font-size: .25rem;
+                        margin-left: 35px;
+                        padding: 3px 0;
+                    }
+                }
+            }
+            .footer{
+                position: fixed;
+                bottom: 0px;
+                width: 100%;
+                background: #fff;
+                padding: 10px 0;
+                box-shadow: 0px 5px 15px 1px rgba(0, 0, 0, .1);                          
+                .achieve{
+                    width: 91%;
+                    margin: 0 auto;
+                    padding: 7.5px 0;
+                    color: #fff;
+                    font-size: .29rem;
+                    border-radius: 15px;
+                    background: #f56600;
+                    box-shadow: 0px 1px 4px 2px rgba(0, 0, 0, .1);                       
+                }                
+            }
+        }
+        .zengzhi{
+            width: 7.5rem;
+            // height: auto;      
+            i{
+                position: fixed;
+                display: block;
+                color: #aaa;
+                top:20px;
+                right: 20px;
+                font-size: .48rem;
+                z-index: 100000;
+            }       
+            img{
+                display: block;
+                width: 100%;
+                height: 100%;
+            }
+        }
         .ceiling2{
             position: fixed;
-            right:10px;
-            bottom:70px;
-            z-index: 10000;
+            right:15px;
+            bottom:80px;
+            z-index: 1000;
+            border-radius: 50%;
+            box-shadow: 0px 0px 5px 2px rgba(0, 0, 0, .1);            
             a{
                 img{
                     width: 36.5px;

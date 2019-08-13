@@ -10,7 +10,7 @@
                 有图片
             </span>
         </div>
-        <div class="block" v-for="(rbody,rb) in reviewAllBody" :key = "rb" @click="lookItemReply(rbody)">
+        <div class="block" v-for="(rbody,rb) in reviewAllBody" :key = "rb" @click="lookItemReply($event,rbody)">
             <div class="info">
                 <span class="icon">
                     <img :src="rbody.reviewOnly.d_review_icon" alt="">
@@ -27,7 +27,7 @@
                 {{rbody.reviewOnly.d_review_text | lineFeed}}
             </div>
             <div class="imgList" v-show="rbody.imgListAll.length>0" :style="rbody.imgListAll.length>4?'width:100%':'width:80%'">
-                <img v-show="img" :style="rbody.imgListAll.length<2?'width:auto;height:156px;margin:0 auto 10px;':''" v-for="(img,i) in rbody.imgListAll" :key="i" :src="img" alt="">
+                <img class="imgs" @click="lookMaxPicAll(rbody.imgListAll)" v-show="img" :style="rbody.imgListAll.length<2?'width:auto;height:156px;margin:0 auto 10px;':''" v-for="(img,i) in rbody.imgListAll" :key="i" :src="img" alt="">
             </div>
             <div class="reply" v-show="rbody.replyList[0].icon!==''">
                 <div class="itemReply" :index="re" :style="re<4?'display:block;':'display:none;'" v-for="(rep,re) in rbody.replyList" :key="re">
@@ -39,18 +39,33 @@
                     查看全部{{rbody.replyList.length}}条评论
                 </div>
             </div>
-        </div>        
+        </div>     
+        <van-image-preview
+        :startPosition="0"
+        :showIndex="false"
+        :showIndicators="true"
+        v-model="show"
+        :images="images"
+        @change="onChange"
+        >
+        <template v-slot:index>第{{ index }}页</template>
+        </van-image-preview>               
     </div>
 </template>
 
 <script>
 import ls from '../../assets/js/ls.js'
+import { ImagePreview } from 'vant';
 export default {
     name:'reviewAllBody',
     data(){
         return{
             reviewAllBody:'',
-            select:true
+            select:true,
+            show:false,
+            index: 0,
+            images: [
+            ]                
         }
     },
     created(){
@@ -68,22 +83,33 @@ export default {
     methods:{
         init(){        
             // let routerName = ls.getItem('routerName')   
-            let routerName = '小米9'
-            console.log(routerName)    
+            let routerName = '小米9'    
             let url = this.HOST + '/detail/getDetailReviewAll.php'            
             if(routerName){
                 this.$axios.post(url,routerName).then(response=> {
                     this.reviewAllBody = response.data.reviewListAll
-                    console.log(response)
-                    console.log(this.reviewAllBody)                    
+                    // console.log(response)
+                    // console.log(this.reviewAllBody)                    
                 }).catch(error=>{
                 })        
             }
-            console.log(this.$store.getters.detailHeaderUp)
+            // console.log(this.$store.getters.detailHeaderUp)
         },
-        lookItemReply(values){
-            console.log(values)
-            this.$router.push({name:'review',params:values})
+        onChange(index) {
+            this.index = index;
+        },
+        lookMaxPicAll(imgList){
+            this.images = imgList
+            this.show = !this.show
+        },        
+        lookItemReply(e,values){
+            let nodeName = e.target.getAttributeNode("class").nodeValue
+            // console.log(nodeName) //输出id，属性节点为属性名
+            if(nodeName !== 'imgs'){
+                ls.setItem('reviewType','A')
+                ls.setItem('reviewItem',values)
+                this.$router.push({name:'review',params:values})
+            }
         }        
     }
 }

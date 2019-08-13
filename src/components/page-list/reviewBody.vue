@@ -14,10 +14,10 @@
                 </span>
             </div>
             <div class="text">
-                {{reviewBody.reviewOnly.d_review_text}}
+                {{reviewBody.reviewOnly.d_review_text | lineFeed}}
             </div>
             <div class="imgList" :style="reviewBody.imgListAll.length>4?'width:100%':'width:80%'">
-                <img :style="reviewBody.imgListAll.length<2?'width:auto;height:156px;margin:0 auto 10px;':''" v-for="(img,i) in reviewBody.imgListAll" :key="i" :src="img" alt="">
+                <img @click="lookMaxPic(reviewBody.imgListAll)" :style="reviewBody.imgListAll.length<2?'width:auto;height:156px;margin:0 auto 10px;':''" v-for="(img,i) in reviewBody.imgListAll" :key="i" :src="img" alt="">
             </div>
             <div class="reply">
                 <div class="itemReply" v-for="(rep,re) in reviewBody.replyList" :key="re">
@@ -26,24 +26,57 @@
                     {{rep.val}}
                 </div>
             </div>
-        </div>        
+        </div>  
+        <van-image-preview
+        :startPosition="0"
+        :showIndex="false"
+        :showIndicators="true"
+        v-model="show"
+        :images="images"
+        @change="onChange"
+        >
+        <template v-slot:index>第{{ index }}页</template>
+        </van-image-preview>              
     </div>
 </template>
 
 <script>
+import ls from '../../assets/js/ls.js'
+import { ImagePreview } from 'vant';
 export default {
     name:'reviewBody',
-    props:['reviewBody'],
+    props:['reviewVal'],
     data(){
         return{
-
+            show:false,
+            reviewBody:'',
+            index: 0,
+            images: [
+            ]            
         }
     },
+　　filters: {
+        lineFeed(value) {
+            let str = value.replace(/<br>/g," \r\n ")
+            return str
+　　　　}
+　　},     
     created(){
-        
+        // ls.setItem('reviewItem',this.reviewVal)
+        this.reviewBody = ls.getItem('reviewItem')
     },
     mounted(){
-        console.log(this.reviewBody)
+        // console.log(this.reviewBody)
+        // console.log(ls.getItem('reviewItem'))
+    },
+    methods:{
+        onChange(index) {
+            this.index = index;
+        },
+        lookMaxPic(imgList){
+            this.images = imgList
+            this.show = !this.show
+        }     
     }
 }
 </script>
@@ -107,10 +140,11 @@ export default {
                 }
             }
             .text{
-                padding: 5px 20px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                // touch-action: pan-y;
+                padding: 0px 20px;
+                margin-top: -10px;
+                line-height: 18px;
+                // white-space: pre-wrap;
+                white-space:pre-line;             
             }
             .imgList{
                 padding: 5px 20px 0px;

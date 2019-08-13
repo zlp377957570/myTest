@@ -68,6 +68,11 @@ if($getData!=''){
     $colorList = mysqli_fetch_all($result,1);
     // print_r($colorList);
     
+    //获取手机服务信息表   
+    $sql = "select * from mimi_detail_service where p_name = '$name'";
+    $result = mysqli_query($conn,$sql);
+    $serviceList = mysqli_fetch_all($result,1);   
+
     //获取手机配置信息表
         //获取配置图片路径
         $srcList = $only["d_style_iconList_srcList"];
@@ -118,6 +123,7 @@ if($getData!=''){
     $output["giftList"] = $giftList;      
     $output["colorList"] = $colorList;      
     $output["versionList"] = $versionList;      
+    $output["serviceList"] = $serviceList;      
     $output["detail"] = $only;      
     // $output["recommend"] = $recommend;      
     // $output["review"] = $review;      

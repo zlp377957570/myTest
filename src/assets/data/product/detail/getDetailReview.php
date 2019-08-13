@@ -15,6 +15,11 @@ if($name!=''){
     $result = mysqli_query($conn,$sql);
     $recommend = mysqli_fetch_all($result,1);
 
+    //获取为你推荐
+    // $name = $only["p_name"];
+    $sql = "select * from mimi_detail_foryou_recommend where p_name = '$name'";
+    $result = mysqli_query($conn,$sql);
+    $foryouRecommend = mysqli_fetch_all($result,1);
 
     //获取5条评论
     $sql = "select * from mimi_details_review where p_name = '$name' limit 0,5";
@@ -84,6 +89,7 @@ if($name!=''){
     // $output["review"] = $review;      
     $output["reviewList"] = $reviewList;      
     $output["recommend"] = $recommend;      
+    $output["foryouRecommend"] = $foryouRecommend;      
 }
 
 
