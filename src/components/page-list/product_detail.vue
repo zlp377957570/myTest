@@ -154,12 +154,12 @@
                     <img src="@/assets/image/icon/首页.png" alt="">
                     <span>首页</span>
                 </div>
-                <div class="shopp">
+                <div class="shopp" @click="goShopping">
                     <i v-show="count>0">{{count}}</i>
                     <img src="@/assets/image/icon/购物车.png" alt="">
                     <span>购物车</span>
                 </div>
-                <div class="addShopp">
+                <div class="addShopp" @click="openProductShopping">
                     <span>加入购物车</span>
                 </div>                        
             </div>            
@@ -320,12 +320,14 @@
 </template>
 <script>
 import ls from '../../assets/js/ls.js'
+import shopp from '../../assets/js/shopp.js'
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview } from 'vant';
 export default {
     name:'product_detail',
     props:[],    
     data(){
         return{
+            goShoppingList:[],
             getProductShoppInfo:{
                 product:{
                     info:'小米9 SE 6GB 全息幻彩紫128GB 128GB',
@@ -429,7 +431,7 @@ export default {
     updated(){
 
     },
-    mounted(){
+    mounted(){   
         this.init()
         this.initStaticData()           
     },
@@ -437,8 +439,75 @@ export default {
       
     },    
     methods:{
-        getProductShopping(){
-            let gpsi = this.getProductShoppInfo
+        
+        openProductShopping(){//打开商品选择面板
+            this.show = !this.show
+        },
+        goShopping(){//跳转至购物车
+            // this.$router.push({name:'goShopping',params:{}})
+            let sss = shopp(111111111)
+            console.log(sss.params)
+        },
+        getProductShopping(){//加入购物车
+        // this.goShoppingList
+            let obj = new {}
+            obj.type = '套餐'      //选中商品类型
+            // obj.a_Product_info = '小米CC 9 6/64+果冻包套装'
+            // obj.a_Product_name = '小米CC 9 6/64+果冻包套装'
+            // obj.a_Product_version = '套装'
+            // obj.a_Product_color = '小米CC 9 6/64+果冻包套装'
+            if(obj.type == '套餐'){
+                obj.mainProduct_title = '小米CC 9 6/64+果冻包套装'
+                obj.mainProduct_subTitle = '套装'
+                obj.mainProduct_price = '1818'
+                obj.mainProduct_count = 1
+                obj.mainProduct_selected = true
+            }
+            obj.zengpin = [
+                {
+                    src:'sssss.png',
+                    title:'sssss.png',
+                    count:1
+                },
+                {
+                    src:'sssss.png',
+                    title:'sssss.png',
+                    count:1
+                },                
+            ]
+
+            obj.hasServer = true      //是否有服务
+            if(obj.hasServer){
+                obj.server_yiwai_selected = false //是否选中服务意外     
+                obj.server_hasYiwai = true       //是否有服务意外
+                obj.server_yiwai_isMoreSelect = true//服务意外是否有多选   
+                obj.server_yiwai_yiwai_selected = false//服务意外中意外是否选中   
+                
+                obj.server_hasYanchang = true      //是否有服务延长
+                obj.server_yanchang_selected = false //服务延长是否选中                
+            }
+
+            obj.server_selected = true //是否已选择服务
+            obj.server_isMoreSelect = true //服务是否有多选，基本都多选
+
+            obj.server_hasYiwai = true       //是否有服务意外
+            obj.server_yiwai_selected = false //是否选中服务意外
+            obj.server_yiwai_isMoreSelect = true//服务意外是否有多选
+            obj.server_yiwai_yiwai_selected = false//服务意外中意外是否选中
+            obj.server_yiwai_suiping_selected = false//服务意外中碎屏是否选中
+
+            obj.server_hasYanchang = true      //是否有服务延长
+            obj.server_yanchang_selected = false //服务延长是否选中
+            obj.server_yanchang_isMoreSelect = false//服务延长是否有多选
+            obj.server_yanchang_yanchang_isMoreSelect = false//服务延长中延长是否选中
+
+
+
+
+            obj.leixing = '套餐'
+            obj.leixing = '套餐'
+            obj.leixing = '套餐'
+            obj.leixing = '套餐'
             gpsi.product.info = this.details.p_info
             gpsi.product.src = this.details.d_style_src
             gpsi.product.price = this.details.d_style_price
@@ -1143,6 +1212,7 @@ export default {
                 }
                 .shopp{
                     position: relative;
+                    left: 10px;
                     i{
                         position: absolute;
                         background: #ed4d41;

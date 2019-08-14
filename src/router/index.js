@@ -63,6 +63,11 @@ export default new Router({
       component:() => import('@/components/page-list/product_detail.vue')
     },
     {
+      path: '/goShopping',
+      name: 'goShopping',
+      component:() => import('@/components/page-list/goShopping.vue')
+    },    
+    {
       path: '/review',
       name: 'review',
       component:() => import('@/components/page-list/review.vue')
