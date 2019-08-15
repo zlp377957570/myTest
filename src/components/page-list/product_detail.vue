@@ -322,50 +322,13 @@
 import ls from '../../assets/js/ls.js'
 import shopp from '../../assets/js/shopp.js'
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview } from 'vant';
+import { Server } from 'tls';
 export default {
     name:'product_detail',
     props:[],    
     data(){
         return{
             goShoppingList:[],
-            getProductShoppInfo:{
-                product:{
-                    info:'小米9 SE 6GB 全息幻彩紫128GB 128GB',
-                    src:'https://i1.mifile.cn/a1/pms_1550572227.36038081.jpg',
-                    count:1,
-                    price:1999,
-                    isAdd:true,
-                    isShow:true,                    
-                    state:true
-                },
-                accident:{
-                    info:'小米9 SE 意外保障服务',
-                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
-                    count:1,
-                    price:179,
-                    isAdd:false,
-                    isShow:true,                    
-                    state:true
-                },   
-                broken:{
-                    info:'小米9 SE 碎屏保障服务',
-                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
-                    count:1,
-                    price:99,
-                    isAdd:false,
-                    isShow:true,                    
-                    state:true
-                },                   
-                Warranty:{
-                    info:'小米9 SE 延长保修服务',
-                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
-                    count:1,
-                    price:49,
-                    isAdd:false,
-                    isShow:true,
-                    state:true
-                }                             
-            },
             show:false,
             imgLsitShow:false,
             index: 0,
@@ -397,6 +360,7 @@ export default {
             iconAllList:[],
             inforList:{},
             staticList:{},
+            product_info:{},
             time:100000,
             details:'',
             version:'',
@@ -445,8 +409,38 @@ export default {
         },
         goShopping(){//跳转至购物车
             // this.$router.push({name:'goShopping',params:{}})
-            let sss = shopp(111111111)
-            console.log(sss.params)
+            // let sss = shopp(111111111)
+            // console.log(sss.params)
+
+            // let itemInfo = ls.getItem('info')
+            // console.log(itemInfo)
+            // let url = this.HOST + '/detail/getProductInfo.php'                 
+            // if(itemInfo){
+            //     this.$axios.post(url,itemInfo).then(response=> {
+            //         console.log(response.data.product_info)
+            //         let values = response.data.product_info
+            //         let pi_server = values.pi_server.replace(/\s*/g,"")
+            //         let pi_choose = values.pi_choose.replace(/\s*/g,"")
+            //         let pi_gift = values.pi_gift.replace(/\s*/g,"")
+            //         let pi_set_meal = values.pi_set_meal.replace(/\s*/g,"")
+            //         // let obj = str.replace(/\s*/g,"")
+            //         values.pi_server= eval("("+pi_server+")")
+            //         values.pi_choose= eval("("+pi_choose+")")
+            //         values.pi_gift= eval("("+pi_gift+")")
+            //         values.pi_set_meal= eval("("+pi_set_meal+")")
+            //         // console.log(pi_server)
+            //         // console.log(pi_choose)
+            //         // console.log(pi_gift)
+            //         // console.log(pi_set_meal)
+            //         console.log(values)
+                    
+            //     }).catch(error=>{
+                    
+            //     })
+            // }
+
+
+
         },
         getProductShopping(){//加入购物车
         // this.goShoppingList
@@ -476,42 +470,69 @@ export default {
                 },                
             ]
 
-            obj.hasServer = true      //是否有服务
-            if(obj.hasServer){
-                obj.server_yiwai_selected = false //是否选中服务意外     
-                obj.server_hasYiwai = true       //是否有服务意外
-                obj.server_yiwai_isMoreSelect = true//服务意外是否有多选   
-                obj.server_yiwai_yiwai_selected = false//服务意外中意外是否选中   
-                
-                obj.server_hasYanchang = true      //是否有服务延长
-                obj.server_yanchang_selected = false //服务延长是否选中                
-            }
+            server = [
+                {
+                    name:'意外保护',
+                    isHas:true,
+                    isSelect:false,
+                    values:[
+                        {
+                            name:'意外保障服务',
+                            checked:false,
+                            count:1,                    
+                            price:299
+                        },{
+                            name:'碎屏保障服务',
+                            checked:false,
+                            count:1,                    
+                            price:159
+                        }
+                    ]             
+                },
+                {
+                    name:'延长保修',
+                    isHas:true,   
+                    isSelect:false,                                 
+                    values:[
+                        {
+                            name:'延长保修服务',
+                            checked:false,     
+                            count:1,                                   
+                            price:99
+                        }
+                    ]    
+                }
+            ]
 
-            obj.server_selected = true //是否已选择服务
-            obj.server_isMoreSelect = true //服务是否有多选，基本都多选
+            choose = [         
+            ]
 
-            obj.server_hasYiwai = true       //是否有服务意外
-            obj.server_yiwai_selected = false //是否选中服务意外
-            obj.server_yiwai_isMoreSelect = true//服务意外是否有多选
-            obj.server_yiwai_yiwai_selected = false//服务意外中意外是否选中
-            obj.server_yiwai_suiping_selected = false//服务意外中碎屏是否选中
+            set_meal = [
+                {
+                    name:'标配',
+                    price:2999,
+                    original_price:3299,    
+                    isSelect:true,                  
+                    values:[
+                        {
+                            name:'小米9 全网通版 8GB+128GB',
+                            price:2999,
+                            original_price:3299,                    
+                            valList:[
+                                {
+                                    src:'https://i8.mifile.cn/a1/pms_1550642240.48638886.jpg',
+                                    color:'全息幻彩蓝',
+                                    count:1,
+                                    checked:true                             
+                                }                    
+                            ]
+                        }         
+                    ]
+                }
+            ]
+            gift = [                         
+            ]
 
-            obj.server_hasYanchang = true      //是否有服务延长
-            obj.server_yanchang_selected = false //服务延长是否选中
-            obj.server_yanchang_isMoreSelect = false//服务延长是否有多选
-            obj.server_yanchang_yanchang_isMoreSelect = false//服务延长中延长是否选中
-
-
-
-
-            obj.leixing = '套餐'
-            obj.leixing = '套餐'
-            obj.leixing = '套餐'
-            obj.leixing = '套餐'
-            gpsi.product.info = this.details.p_info
-            gpsi.product.src = this.details.d_style_src
-            gpsi.product.price = this.details.d_style_price
-            console.log(gpsi)
         },
         warranty(){//点击保修服务
             this.warrantyed = !this.warrantyed             
@@ -639,8 +660,27 @@ export default {
                         // console.log(this.details)                        
                     }
                 }).catch(error=> {
-                });                 
- 
+                });    
+
+                console.log(itemInfo)
+                let url = this.HOST + '/detail/getProductInfo.php'                 
+                this.$axios.post(url,itemInfo).then(response=> {
+                    console.log(response.data.product_info)
+                    let values = response.data.product_info
+                    let pi_server = values.pi_server.replace(/\s*/g,"")
+                    let pi_choose = values.pi_choose.replace(/\s*/g,"")
+                    let pi_gift = values.pi_gift.replace(/\s*/g,"")
+                    let pi_set_meal = values.pi_set_meal.replace(/\s*/g,"")
+                    // let obj = str.replace(/\s*/g,"")
+                    values.pi_server= eval("("+pi_server+")")
+                    values.pi_choose= eval("("+pi_choose+")")
+                    values.pi_gift= eval("("+pi_gift+")")
+                    values.pi_set_meal= eval("("+pi_set_meal+")")
+                    this.product_info = values
+                    console.log(this.product_info)
+                    
+                }).catch(error=>{
+                })
             }               
         },
         initStaticData(){

@@ -154,12 +154,12 @@
                     <img src="@/assets/image/icon/首页.png" alt="">
                     <span>首页</span>
                 </div>
-                <div class="shopp">
+                <div class="shopp" @click="goShopping">
                     <i v-show="count>0">{{count}}</i>
                     <img src="@/assets/image/icon/购物车.png" alt="">
                     <span>购物车</span>
                 </div>
-                <div class="addShopp">
+                <div class="addShopp" @click="openProductShopping">
                     <span>加入购物车</span>
                 </div>                        
             </div>            
@@ -320,12 +320,14 @@
 </template>
 <script>
 import ls from '../../assets/js/ls.js'
+import shopp from '../../assets/js/shopp.js'
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview } from 'vant';
 export default {
     name:'product_detail',
     props:[],    
     data(){
         return{
+            goShoppingList:[],
             getProductShoppInfo:{
                 product:{
                     info:'小米9 SE 6GB 全息幻彩紫128GB 128GB',
@@ -337,6 +339,15 @@ export default {
                     state:true
                 },
                 accident:{
+                    info:'小米9 SE 意外保障服务',
+                    src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
+                    count:1,
+                    price:179,
+                    isAdd:false,
+                    isShow:true,                    
+                    state:true
+                },   
+                broken:{
                     info:'小米9 SE 碎屏保障服务',
                     src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
                     count:1,
@@ -344,7 +355,7 @@ export default {
                     isAdd:false,
                     isShow:true,                    
                     state:true
-                },   
+                },                   
                 Warranty:{
                     info:'小米9 SE 延长保修服务',
                     src:'https://i1.mifile.cn/a1/pms_1551237769.94071706.png',
@@ -397,7 +408,6 @@ export default {
     },
 　　filters: {
 　　　　sliceString(value) {
-            // console.log(value.length)
             if(value.length<35){
                 return value
             }else{
@@ -412,29 +422,8 @@ export default {
     components:{
     },
     beforeRouteUpdate (to, from, next) {
-    //     if(this.$route.path!='/home') //假设name为home的路由都使用`slide-left`,其它的路由都为`slider-right`
-    //     {
-    //         this.$router.isBack=true;
-    //     }
-    //   let isBack = this.$router.isBack
-    //   if (isBack) {
-    //     this.transitionName = 'slide-right'
-    //   } else {
-    //     this.transitionName = 'slide-left'
-    //   }
-    //   this.$router.isBack = false
-    //   next()
     },
 　  watch: {
-    // 　　'$route' (to, from) {   
-    // 　　　　let isBack = this.$router.isBack  //  监听路由变化时的状态为前进还是后退
-    // 　　　　　　if(isBack) {
-    // 　　　　　　　　this.transitionName = 'slide-right'
-    // 　　　　　　} else {
-    // 　　　　　　       this.transitionName = 'slide-left'
-    // 　　　　　}
-    // 　　    this.$router.isBack = false
-    // 　　}
 　  },     
     created(){
 
@@ -442,19 +431,307 @@ export default {
     updated(){
 
     },
-    mounted(){
+    mounted(){   
         this.init()
         this.initStaticData()           
-        // window.addEventListener('resize',this.setRemUnits)    
     },
     computed:{
       
     },    
     methods:{
-        getProductShopping(){
-            let gpsi = this.getProductShoppInfo
-            gpsi.product.info = this.details.p_info
+        
+        openProductShopping(){//打开商品选择面板
+            this.show = !this.show
         },
+        goShopping(){//跳转至购物车
+            // this.$router.push({name:'goShopping',params:{}})
+            let sss = shopp(111111111)
+            console.log(sss.params)
+        },
+        getProductShopping(){//加入购物车
+        // this.goShoppingList
+            let obj = new {}
+            obj.type = '套餐'      //选中商品类型
+            // obj.a_Product_info = '小米CC 9 6/64+果冻包套装'
+            // obj.a_Product_name = '小米CC 9 6/64+果冻包套装'
+            // obj.a_Product_version = '套装'
+            // obj.a_Product_color = '小米CC 9 6/64+果冻包套装'
+            if(obj.type == '套餐'){
+                obj.mainProduct_title = '小米CC 9 6/64+果冻包套装'
+                obj.mainProduct_subTitle = '套装'
+                obj.mainProduct_price = '1818'
+                obj.mainProduct_count = 1
+                obj.mainProduct_selected = true
+            }
+            obj.zengpin = [
+                {
+                    src:'sssss.png',
+                    title:'sssss.png',
+                    count:1
+                },
+                {
+                    src:'sssss.png',
+                    title:'sssss.png',
+                    count:1
+                },                
+            ]
+
+        server = [
+            {
+                name:'意外保护',
+                isHas:true,
+                isSelect:false,
+                values:[
+                    {
+                        name:'意外保障服务',
+                        checked:false,
+                        count:1,                    
+                        price:299
+                    },{
+                        name:'碎屏保障服务',
+                        checked:false,
+                        count:1,                    
+                        price:159
+                    }
+                ]             
+            },
+            {
+                name:'延长保修',
+                isHas:true,   
+                isSelect:false,                                 
+                values:[
+                    {
+                        name:'延长保修服务',
+                        checked:false,     
+                        count:1,                                   
+                        price:99
+                    }
+                ]    
+            }
+        ]
+
+        choose = [
+            {
+                name:'透明果冻色CC单肩包',
+                price:19,
+                original_price:99,       
+                isSelect:false,                         
+                valList:[
+                    {
+                        src:'https://i8.mifile.cn/a1/pms_1562072866.03711600.jpg',
+                        color:'荧光粉',
+                        count:1,
+                        checked:true                          
+                    },
+                    {
+                        src:'https://i8.mifile.cn/a1/pms_1562072869.14856428.jpg',
+                        color:'荧光绿',
+                        count:1,
+                        checked:false                          
+                    }                                    
+                ]                
+
+            }            
+        ]
+
+        set_meal = [
+            {
+                name:'标配',
+                price:1799,
+                original_price:0,  
+                isSelect:true,                  
+                values:[
+                    {
+                        name:'小米CC9 6GB+64GB',
+                        price:1799,
+                        original_price:0,                     
+                        valList:[
+                            {
+                                src:'https://i8.mifile.cn/a1/pms_1562056107.03295989.jpg',
+                                color:'白色恋人',
+                                count:1,
+                                checked:true                             
+                            }                    
+                        ]
+                    }         
+                ]
+            },    
+            {
+                name:'照片打印机套装',
+                price:2288,
+                original_price:0,  
+                isSelect:false,                  
+                values:[
+                    {
+                        name:'小米CC9 6GB+64GB',
+                        price:1799,
+                        original_price:0,                     
+                        valList:[
+                            {
+                                src:'https://i8.mifile.cn/a1/pms_1562056107.03295989.jpg',
+                                color:'白色恋人',
+                                count:1,
+                                checked:true                             
+                            }                    
+                        ]
+                    },            
+                    {
+                        name:'小米米家照片打印机',
+                        price:489,
+                        original_price:499,                     
+                        valList:[
+                            {
+                                src:'https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/906df61431e627a11c1e784256863cab.jpg',
+                                color:'白色',
+                                count:1,
+                                checked:true                            
+                            }                    
+                        ]
+                    }          
+                ]
+            },    
+            {
+                name:'+19元得果冻包',
+                price:1818,
+                original_price:0,      
+                isSelect:false,                                   
+                values:[
+                    {
+                        name:'小米CC9 6GB+64GB',
+                        price:1799,
+                        original_price:0,                     
+                        valList:[
+                            {
+                                src:'https://i8.mifile.cn/a1/pms_1562056107.03295989.jpg',
+                                color:'白色恋人',
+                                count:1,
+                                checked:true                             
+                            }                    
+                        ]
+                    },
+                    {
+                        name:'透明果冻色CC单肩包',
+                        price:99,
+                        original_price:0,                
+                        valList:[
+                            {
+                                src:'https://i8.mifile.cn/a1/pms_1562072866.03711600.jpg',
+                                color:'荧光粉',
+                                count:1,
+                                checked:true                          
+                            },
+                            {
+                                src:'https://i8.mifile.cn/a1/pms_1562072869.14856428.jpg',
+                                color:'荧光绿',
+                                count:1,
+                                checked:false                          
+                            }                                    
+                        ]                
+        
+                    }            
+                ]
+            }
+        ]
+        gift = [
+            {
+                name:'小米CC9 荧光色高透果冻保护壳',
+                price:0,
+                original_price:49,
+                valList:[
+                    {
+                        src:'https://i1.mifile.cn/a1/pms_1562067017.28075121.jpg',
+                        color:'荧光绿',
+                        count:1,
+                        checked:true     
+                    },
+                    {
+                        src:'https://i8.mifile.cn/a1/pms_1562067029.54018331.jpg',
+                        color:'荧光橙',
+                        count:1,                            
+                        checked:false     
+                    }                     
+                ]
+            },
+            {
+                name:'小米CC 9&小米CC 9美图定制版 标准高透贴膜',
+                price:0,
+                original_price:19,
+                valList:[
+                    {
+                        src:'https://i1.mifile.cn/a1/pms_1562067017.28075121.jpg',
+                        color:'透明',
+                        count:1,                            
+                        checked:true
+                    },                  
+                ]
+            }                
+        ]
+            
+
+            obj.hasServer = true      //是否有服务
+            if(obj.hasServer){
+                obj.server_yiwai_selected = false //是否选中服务意外     
+                obj.server_hasYiwai = true       //是否有服务意外
+                obj.server_yiwai_isMoreSelect = true//服务意外是否有多选   
+                obj.server_yiwai_yiwai_selected = false//服务意外中意外是否选中   
+                
+                obj.server_hasYanchang = true      //是否有服务延长
+                obj.server_yanchang_selected = false //服务延长是否选中                
+            }
+
+            obj.server_selected = true //是否已选择服务
+            obj.server_isMoreSelect = true //服务是否有多选，基本都多选
+
+            obj.server_hasYiwai = true       //是否有服务意外
+            obj.server_yiwai_selected = false //是否选中服务意外
+            obj.server_yiwai_isMoreSelect = true//服务意外是否有多选
+            obj.server_yiwai_yiwai_selected = false//服务意外中意外是否选中
+            obj.server_yiwai_suiping_selected = false//服务意外中碎屏是否选中
+
+            obj.server_hasYanchang = true      //是否有服务延长
+            obj.server_yanchang_selected = false //服务延长是否选中
+            obj.server_yanchang_isMoreSelect = false//服务延长是否有多选
+            obj.server_yanchang_yanchang_isMoreSelect = false//服务延长中延长是否选中
+
+
+
+
+            obj.leixing = '套餐'
+            obj.leixing = '套餐'
+            obj.leixing = '套餐'
+            obj.leixing = '套餐'
+            gpsi.product.info = this.details.p_info
+            gpsi.product.src = this.details.d_style_src
+            gpsi.product.price = this.details.d_style_price
+            console.log(gpsi)
+        },
+        warranty(){//点击保修服务
+            this.warrantyed = !this.warrantyed             
+        },
+        accident(){//点击意外
+            this.server = true
+            if(this.server){
+                this.accidented = !this.accidented
+                this.brokened = false
+            }else{
+                this.server = !this.server       
+            }
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }
+        },
+        broken(){//点击碎屏
+            this.server = true
+            if(this.server){
+                this.brokened = !this.brokened
+                this.accidented = false
+            }else{
+                this.server = !this.server       
+            }    
+            if(!this.accidented && !this.brokened){
+                this.server = false           
+            }            
+        },        
         onChange(index) {
             this.index = index;
         },        
@@ -520,33 +797,6 @@ export default {
         showPopup(){//展开下拉页面
             this.show = !this.show
         },        
-        warranty(){//点击保修服务
-            this.warrantyed = !this.warrantyed             
-        },
-        accident(){//点击意外
-            this.server = true
-            if(this.server){
-                this.accidented = !this.accidented
-                this.brokened = false
-            }else{
-                this.server = !this.server       
-            }
-            if(!this.accidented && !this.brokened){
-                this.server = false           
-            }
-        },
-        broken(){//点击碎屏
-            this.server = true
-            if(this.server){
-                this.brokened = !this.brokened
-                this.accidented = false
-            }else{
-                this.server = !this.server       
-            }    
-            if(!this.accidented && !this.brokened){
-                this.server = false           
-            }            
-        },
         init(newItemInfo){
             let itemInfo = null
             if(newItemInfo){
@@ -1154,6 +1404,7 @@ export default {
                 }
                 .shopp{
                     position: relative;
+                    left: 10px;
                     i{
                         position: absolute;
                         background: #ed4d41;
