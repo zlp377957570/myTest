@@ -3,7 +3,7 @@
 import Vue from 'vue'
 import App from './App'
 import router from './router'
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem,Popup,ActionSheet,ImagePreview } from 'vant';
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem,Popup,ActionSheet,ImagePreview,Toast } from 'vant';
 import './assets/css/myBase.css';
 import axios from '../node_modules/axios';
 import VueTouch from 'vue-touch';
@@ -27,6 +27,7 @@ Vue.use(Swipe).use(SwipeItem);
 Vue.use(Popup);
 Vue.use(ActionSheet );
 Vue.use(ImagePreview );
+Vue.use(Toast );
 Vue.config.productionTip = false
 Vue.prototype.HOST = "/api"
 /* eslint-disable no-new */

@@ -155,7 +155,7 @@
                     <span>首页</span>
                 </div>
                 <div class="shopp" @click="goShopping">
-                    <i v-show="count>0">{{count}}</i>
+                    <i v-show="shoppingCountAll>0">{{shoppingCountAll}}</i>
                     <img src="@/assets/image/icon/购物车.png" alt="">
                     <span>购物车</span>
                 </div>
@@ -210,41 +210,23 @@
                             <span @click="add" class="add">＋</span>
                         </div>
                     </div>
-                    <div class="accident_protection">
+
+                    <div class="accident_protection" v-for="(pis,pi) in pi.pi_server" :key="pi">
                         <div class="title">
-                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=0">意外保护<van-icon name="question-o" /></span>
-                            <span class="val" v-show="server" v-if="accidented">手机意外碎屏/进水/碾压等损坏</span>
-                            <span class="val" v-show="server" v-if="brokened">手机意外碎屏</span>
+                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=pis.a_srcIndex">{{pis.name}}<van-icon name="question-o" /></span>
+                            <span v-for="(vss,vi) in pis.values" :key="vi" class="val" v-show="pis.isSelect" v-if="vss.checked">{{vss.text}}</span>
                         </div>
-                        <div :class="['block',accidented?'selectActive':'']" @click="accident">
-                            <span class="name">意外保障服务</span>
-                            <span class="val">299元</span>
+                        <div v-for="(vss,vi) in pis.values" :key="vi" :class="['block',vss.checked?'selectActive':'']" @click="selectServer(pis.isSelect,pi,vss.checked,vi)">
+                            <span class="name">{{vss.name}}</span>
+                            <span class="val">{{vss.price}}元</span>
                         </div>
-                        <div :class="['block',brokened?'selectActive':'']" @click="broken">
-                            <span class="name">碎屏保障服务</span>
-                            <span class="val">159元</span>
-                        </div>  
-                        <div class="info" v-show="server">
+                        <div class="info" v-show="pis.isSelect">
                             <span class="affirm"><van-icon name="checked" />我已阅读</span>
-                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=1">服务条款 | </span>
-                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=2">常见问题</span>
+                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=pis.b_srcIndex">服务条款 | </span>
+                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=pis.c_srcIndex">常见问题</span>
                         </div>                  
-                    </div>    
-                    <div class="accident_protection">
-                        <div class="title">
-                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=3">延长保修<van-icon name="question-o" /></span>
-                            <span class="val" v-show="warrantyed">厂保延一年，性能故障免费维修</span>
-                        </div>
-                        <div :class="['block',warrantyed?'selectActive':'']" @click="warranty">
-                            <span class="name">延长保修服务</span>
-                            <span class="val">99元</span>
-                        </div>
-                        <div class="info" v-show="warrantyed">
-                            <span class="affirm"><van-icon name="checked" />我已阅读</span>
-                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=1">服务条款 | </span>
-                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=2">常见问题</span>
-                        </div>                  
-                    </div>  
+                    </div> 
+
                 </div> 
                 <div class="footer" @click="getProductShopping">
                     <div class="addShopp">加入购物车</div>
@@ -321,8 +303,9 @@
 <script>
 import ls from '../../assets/js/ls.js'
 import shopp from '../../assets/js/shopp.js'
-import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview } from 'vant';
+import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview,Toast } from 'vant';
 import { Server } from 'tls';
+import { setTimeout } from 'timers';
 export default {
     name:'product_detail',
     props:[],    
@@ -348,10 +331,10 @@ export default {
             giftListShow:false,
             serverListShow:false,
             isSeckill:true,
-            server:false,
-            accidented:false,
-            brokened:false,
-            warrantyed:false,
+            // server:false,
+            // accidented:false,
+            // brokened:false,
+            // warrantyed:false,
             scrollTop2:0,
             scrollBtn2:true,
             imgList_isMove:true,
@@ -360,14 +343,16 @@ export default {
             iconAllList:[],
             inforList:{},
             staticList:{},
-            product_info:{},
+            pi:{},
             time:100000,
             details:'',
             version:'',
             color:'',
             name:'',
             model:'',
-            count:0
+            shoppingCount:0,
+            shoppingCountAll:0,
+            count:1
         }
     },
 　　filters: {
@@ -402,165 +387,67 @@ export default {
     computed:{
       
     },    
-    methods:{
-        
+    methods:{        
+        selectServer(a,ai,b,bi){
+            let adom = this.pi.pi_server[ai].values
+            let ale = adom.length
+            let s = 0
+            if(ale && ale>1){
+                for(let i in adom){
+                    this.pi.pi_server[ai].isSelect = true
+                    if(this.pi.pi_server[ai].isSelect){
+                            adom[i].checked = false
+                            this.pi.pi_server[ai].values[bi].checked = !b
+                    }else{
+                        this.pi.pi_server[ai].isSelect = !a 
+                    }
+                    if(adom[i].checked === true){
+                        s++
+                    }
+                    if(s===0){
+                        this.pi.pi_server[ai].isSelect = false
+                    }
+                }                    
+            }else{
+                this.pi.pi_server[ai].isSelect = !a                   
+                this.pi.pi_server[ai].values[bi].checked = !b                    
+            }
+            console.log(adom)
+        },
         openProductShopping(){//打开商品选择面板
             this.show = !this.show
         },
         goShopping(){//跳转至购物车
-            // this.$router.push({name:'goShopping',params:{}})
+            this.$router.push({name:'goShopping',params:{}})
             // let sss = shopp(111111111)
             // console.log(sss.params)
-
-            // let itemInfo = ls.getItem('info')
-            // console.log(itemInfo)
-            // let url = this.HOST + '/detail/getProductInfo.php'                 
-            // if(itemInfo){
-            //     this.$axios.post(url,itemInfo).then(response=> {
-            //         console.log(response.data.product_info)
-            //         let values = response.data.product_info
-            //         let pi_server = values.pi_server.replace(/\s*/g,"")
-            //         let pi_choose = values.pi_choose.replace(/\s*/g,"")
-            //         let pi_gift = values.pi_gift.replace(/\s*/g,"")
-            //         let pi_set_meal = values.pi_set_meal.replace(/\s*/g,"")
-            //         // let obj = str.replace(/\s*/g,"")
-            //         values.pi_server= eval("("+pi_server+")")
-            //         values.pi_choose= eval("("+pi_choose+")")
-            //         values.pi_gift= eval("("+pi_gift+")")
-            //         values.pi_set_meal= eval("("+pi_set_meal+")")
-            //         // console.log(pi_server)
-            //         // console.log(pi_choose)
-            //         // console.log(pi_gift)
-            //         // console.log(pi_set_meal)
-            //         console.log(values)
-                    
-            //     }).catch(error=>{
-                    
-            //     })
-            // }
-
-
-
         },
         getProductShopping(){//加入购物车
-        // this.goShoppingList
-            let obj = new {}
-            obj.type = '套餐'      //选中商品类型
-            // obj.a_Product_info = '小米CC 9 6/64+果冻包套装'
-            // obj.a_Product_name = '小米CC 9 6/64+果冻包套装'
-            // obj.a_Product_version = '套装'
-            // obj.a_Product_color = '小米CC 9 6/64+果冻包套装'
-            if(obj.type == '套餐'){
-                obj.mainProduct_title = '小米CC 9 6/64+果冻包套装'
-                obj.mainProduct_subTitle = '套装'
-                obj.mainProduct_price = '1818'
-                obj.mainProduct_count = 1
-                obj.mainProduct_selected = true
-            }
-            obj.zengpin = [
-                {
-                    src:'sssss.png',
-                    title:'sssss.png',
-                    count:1
-                },
-                {
-                    src:'sssss.png',
-                    title:'sssss.png',
-                    count:1
-                },                
-            ]
-
-            server = [
-                {
-                    name:'意外保护',
-                    isHas:true,
-                    isSelect:false,
-                    values:[
-                        {
-                            name:'意外保障服务',
-                            checked:false,
-                            count:1,                    
-                            price:299
-                        },{
-                            name:'碎屏保障服务',
-                            checked:false,
-                            count:1,                    
-                            price:159
-                        }
-                    ]             
-                },
-                {
-                    name:'延长保修',
-                    isHas:true,   
-                    isSelect:false,                                 
-                    values:[
-                        {
-                            name:'延长保修服务',
-                            checked:false,     
-                            count:1,                                   
-                            price:99
-                        }
-                    ]    
+            // ls.setItem('shoppCount',)
+            let count = this.count
+            let p_info = this.details.p_info
+            let pi = this.pi
+            let url = this.HOST + '/detail/addShoppingInfor.php'
+            this.$axios.post(url,{p_info,count,pi}).then(response=> {
+                console.log(response.data)
+                // console.log(response.data.hint)
+                let hint = response.data.hint
+                if(hint === 'ok'){
+                    this.shoppingCountAll = response.data.shoppCountAll
+                    Toast.success('添加成功');       
+                    setTimeout(()=>{this.show = !this.show },800)
+                }else{
+                    Dialog.alert({
+                    message: '商品超过最大购买限制'
+                    }).then(() => {
+                    // on close
+                    });
                 }
-            ]
+            }).catch(error=>{
 
-            choose = [         
-            ]
+            })             
 
-            set_meal = [
-                {
-                    name:'标配',
-                    price:2999,
-                    original_price:3299,    
-                    isSelect:true,                  
-                    values:[
-                        {
-                            name:'小米9 全网通版 8GB+128GB',
-                            price:2999,
-                            original_price:3299,                    
-                            valList:[
-                                {
-                                    src:'https://i8.mifile.cn/a1/pms_1550642240.48638886.jpg',
-                                    color:'全息幻彩蓝',
-                                    count:1,
-                                    checked:true                             
-                                }                    
-                            ]
-                        }         
-                    ]
-                }
-            ]
-            gift = [                         
-            ]
-
-        },
-        warranty(){//点击保修服务
-            this.warrantyed = !this.warrantyed             
-        },
-        accident(){//点击意外
-            this.server = true
-            if(this.server){
-                this.accidented = !this.accidented
-                this.brokened = false
-            }else{
-                this.server = !this.server       
-            }
-            if(!this.accidented && !this.brokened){
-                this.server = false           
-            }
-        },
-        broken(){//点击碎屏
-            this.server = true
-            if(this.server){
-                this.brokened = !this.brokened
-                this.accidented = false
-            }else{
-                this.server = !this.server       
-            }    
-            if(!this.accidented && !this.brokened){
-                this.server = false           
-            }            
-        },        
+        },      
         onChange(index) {
             this.index = index;
         },        
@@ -676,7 +563,7 @@ export default {
                     values.pi_choose= eval("("+pi_choose+")")
                     values.pi_gift= eval("("+pi_gift+")")
                     values.pi_set_meal= eval("("+pi_set_meal+")")
-                    this.product_info = values
+                    this.pi = values
                     console.log(this.product_info)
                     
                 }).catch(error=>{
@@ -688,6 +575,7 @@ export default {
             console.log(itemName)
             let url = this.HOST + '/detail/getDetailReview.php'                 
             let url2 = this.HOST + '/detail/getDetailHeightImgs.php'                 
+            let url3 = this.HOST + '/detail/getShoppingInfor.php'                 
             if(itemName){
                 this.$axios.post(url,itemName).then(response=> {
                     console.log(response.data)
@@ -716,7 +604,13 @@ export default {
                     })                
                 })
                 .catch(error=> {
-                });                 
+                });  
+                this.$axios.get(url3,{}).then(response=> {
+                    console.log(response.data.shoppingCountAll)
+                    this.shoppingCountAll = response.data.shoppingCountAll
+                }).catch(error=>{
+
+                })              
             }
         },
         ceiling2(){
