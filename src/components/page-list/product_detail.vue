@@ -427,6 +427,7 @@ export default {
             let count = this.count
             let p_info = this.details.p_info
             let pi = this.pi
+            console.log(pi)
             let url = this.HOST + '/detail/addShoppingInfor.php'
             this.$axios.post(url,{p_info,count,pi}).then(response=> {
                 console.log(response.data)
@@ -564,7 +565,6 @@ export default {
                     values.pi_gift= eval("("+pi_gift+")")
                     values.pi_set_meal= eval("("+pi_set_meal+")")
                     this.pi = values
-                    console.log(this.product_info)
                     
                 }).catch(error=>{
                 })
@@ -575,7 +575,7 @@ export default {
             console.log(itemName)
             let url = this.HOST + '/detail/getDetailReview.php'                 
             let url2 = this.HOST + '/detail/getDetailHeightImgs.php'                 
-            let url3 = this.HOST + '/detail/getShoppingInfor.php'                 
+            let url3 = this.HOST + '/detail/getShoppingCountAll.php'                 
             if(itemName){
                 this.$axios.post(url,itemName).then(response=> {
                     console.log(response.data)

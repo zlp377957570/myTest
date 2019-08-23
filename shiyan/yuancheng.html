@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+,
+        {
+            name: "白色圈刻度",
+            type: "gauge",
+            radius: "60%",
+            startAngle: 225, //刻度起始
+            endAngle: -45, //刻度结束
+            z: 4,
+            axisTick: {
+                show: false
+            },
+            splitLine: {
+                length: 26, //刻度节点线长度
+                lineStyle: {
+                    width: 2,
+                    color: 'rgba(1,244,255, 0.9)'
+                } //刻度节点线
+            },
+            axisLabel: {
+                color: 'rgba(255,255,255,0)',
+                fontSize: 12,
+            }, //刻度节点文字颜色
+            pointer: {
+                show: false
+            },
+            axisLine: {
+                lineStyle: {
+                    opacity: 0
+                }
+            },
+            detail: {
+                show: false
+            },
+            data: [{
+                value: 0,
+                name: ""
+            }]
+        }
+    </script>
+</body>
+</html>

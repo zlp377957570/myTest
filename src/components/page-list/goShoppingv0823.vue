@@ -5,8 +5,8 @@
             <div class="shopp">
                 <div class="content" v-for="(spb,sp) in sl" :key="sp">
                     <div class="only">
-                        <div class="select" @click="spb.si_checked = !spb.si_checked">
-                            <van-icon name="checked" :class="spb.si_checked?'':'selectCheck'"/>
+                        <div class="select">
+                            <van-icon name="checked" />
                         </div>
                         <div class="image">
                             <img :src="spb.si_only.d_style_src" alt="">
@@ -14,19 +14,19 @@
                         <div class="info">
                             <div class="title"><span>{{spb.si_only.p_name+' '+spb.si_only.d_style_version}}</span></div>
                             <div class="subTitle"><span>{{spb.si_only.d_style_color+'&nbsp;&nbsp;'+spb.si_only.d_style_disk}}</span></div>
-                            <div class="price"><span>{{spb.si_only.d_style_price}}</span><s v-if="spb.si_only.d_style_original_price!=0">{{spb.si_only.d_style_original_price}}</s></div>
+                            <div class="price"><span>{{spb.si_only.d_style_price}}</span><s>{{spb.si_only.d_style_original_price}}</s></div>
                         </div>
                         <div class="addCount">
                             <div class="compute">
-                                <span @click="spb.si_count>1?spb.si_count--:1" :class="[spb.si_count<2?'disabled':'']">－</span>
-                                <span class="val" :v-model="count">{{spb.si_count}}</span>
-                                <span @click="spb.si_count<2?spb.si_count++:2" :class="[spb.si_count<2&&spb.si_count>=1?'':'disabled']">＋</span>
+                                <span @click="minus" :class="[count<2?'disabled':'']">－</span>
+                                <span class="val" :v-model="count">{{count}}</span>
+                                <span @click="add" :class="[count<3&&count>=1?'':'disabled']">＋</span>
                             </div>
                         </div>
                     </div>  
-                    <div class="subjoin" v-show="spb.si_checked">
+                    <div class="subjoin">
                         <div class="addBuy"></div>
-                        <div class="server" v-for="(ser,s) in spb.si_server" :key="'ser-'+ s" v-show="!ser.isSelect">
+                        <div class="server" v-for="(ser,s) in spb.si_server" :key="'ser-'+ s">
                             <div class="title">
                                 服务
                             </div>
@@ -40,20 +40,7 @@
                                 选购
                             </div>
                         </div>
-                        <div class="serverChecked" v-for="(ser,s) in spb.si_server" :key="'ser+'+ s" v-show="ser.isSelect">
-                            <div class="serverItem" v-for="(sed,d) in ser.values" :key="'sed+'+ d" v-show="sed.checked">
-                                <div class="src">
-                                    <img :src="ser.src" alt="">
-                                </div>
-                                <div class="title">
-                                    <p>{{sed.name+'&nbsp;&nbsp; x'}}{{ser.count}}</p>
-                                    <span>{{sed.price}}</span>
-                                </div>
-                                <div class="setSelect" @click="lookServerShow(sp)" v-show="ser.values.length>1">
-                                    重选
-                                </div>                            
-                            </div>                               
-                        </div>
+                        <div class="serverChecked"></div>
                         <div class="gift" v-for="(gif,gi) in spb.si_gift" :key="gi">
                             <div class="itemGift" v-for="(itmgif,ig) in gif.values" :key="ig">
                                 <div class="src">
@@ -80,7 +67,7 @@
                                     <span>购买服务</span>
                                 </div>    
                                 <div class="content">
-                                    <div class="accident_protection" v-for="(pis,pi) in serverCopy" :key="pi" v-show="!sl[sp].si_server[pi].isSelect || sl[sp].si_server[pi].values.length>1">
+                                    <div class="accident_protection" v-for="(pis,pi) in spb.si_server" :key="pi">
                                         <div class="title">
                                             <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=pis.a_srcIndex">{{pis.name}}<van-icon name="question-o" /></span>
                                             <span v-for="(vss,vi) in pis.values" :key="vi" class="val" v-show="pis.isSelect" v-if="vss.checked">{{vss.text}}</span>
@@ -101,13 +88,12 @@
                                         <span v-if="serverCount>0" class="selected">已选{{serverCount}}种服务</span>
                                         <span v-if="serverCount==0" class="select">请选择服务</span>
                                     </div>
-                                    <div class="affirm" @click="serverAffirm(sp)">确认</div>                    
+                                    <div class="affirm" @click="serverAffirm">确认</div>                    
                                 </div>
                             </div>     
                         </van-popup>
                     </div>
                 </div>
-                <van-popup v-model="zengzhi"><div class="zengzhi"><van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/><img @click="zengzhi=!zengzhi" :src="zengzhiImgList[zengzhiIndex]" alt=""></div></van-popup>
             </div>
         </div>
     </div>
@@ -128,14 +114,12 @@ export default {
                 "../../static/image/qita/意外保护.png",
                 "../../static/image/qita/服务条款.png",
                 "../../static/image/qita/常见问题.png",
-                "../../static/image/qita/延迟保修.png"
+                "../../static/image/qita/延迟保修.png",
+                "../../static/image/qita/更多参数.png"
             ],         
             serverCount:0,  
             serverCopy:{},  
-            sIndex:0,
             count:1,
-            isA:0,
-            isB:0,            
             sl:{}
         }
     },
@@ -148,77 +132,95 @@ export default {
     mounted(){
     },
     methods:{
-        serverAffirm(sp){//确认选择服务
-        console.log(sp)
-            this.sl[this.sIndex].si_server = this.serverCopy
-            this.serverListShow = !this.serverListShow    
-                    console.log(this.sl[this.sIndex].si_server)              
-            Toast({
-                message:'ok',
-                duration:300
-            });  
+        serverAffirm(){//确认选择服务
+
         },
         selectServer(sp,a,ai,b,bi){//选择服务
-            let adom = this.serverCopy[ai].values
+
+            // this.serverCopy = this.sl
+            console.log(this.serverCopy)
+            console.log(this.serverCopy===this.sl)
+            let adom = this.serverCopy[sp].si_server[ai].values
             let ale = adom.length
             let s = 0
             if(ale && ale>1){
                 for(let i in adom){
-                    this.serverCopy[ai].isSelect = true
-                    if(this.serverCopy[ai].isSelect){
+                    this.serverCopy[sp].si_server[ai].isSelect = true
+                    if(this.serverCopy[sp].si_server[ai].isSelect){
                             adom[i].checked = false
-                            this.serverCopy[ai].values[bi].checked = !b
+                            this.serverCopy[sp].si_server[ai].values[bi].checked = !b
                     }else{
-                        this.serverCopy[ai].isSelect = !a 
+                        this.serverCopy[sp].si_server[ai].isSelect = !a 
                     }
                     if(adom[i].checked === true){
                         s++
                     }
                     if(s===0){
-                        this.serverCopy[ai].isSelect = false
+                        this.serverCopy[sp].si_server[ai].isSelect = false
                     }
                 }                    
             }else{
-                this.serverCopy[ai].isSelect = !a                   
-                this.serverCopy[ai].values[bi].checked = !b                    
+                this.serverCopy[sp].si_server[ai].isSelect = !a                   
+                this.serverCopy[sp].si_server[ai].values[bi].checked = !b                    
             }
 
-            if(this.serverCopy[0].values.length>1 && this.serverCopy[0].values[0].checked || this.serverCopy[0].values[1].checked){
-                this.isA = 1
+            if(this.serverCopy[sp].si_server[0].isSelect && this.serverCopy[sp].si_server[1].isSelect){
+                this.serverCount = 2
+            }else if(this.serverCopy[sp].si_server[0].isSelect){
+                this.serverCount = 1
+            }else if(this.serverCopy[sp].si_server[1].isSelect){
+                this.serverCount = 1
             }else{
-                this.isA = 0
+                this.serverCount = 0
             }
-            if(this.serverCopy[1].values.length<2 && this.serverCopy[1].values[0].checked && !this.sl[sp].si_server[1].values[0].checked){
-                this.isB = 1
-            }else{
-                this.isB = 0        
-            }
-                                
-            this.serverCount = this.isA + this.isB
-        },                     
+        },        
+        // selectServer(sp,a,ai,b,bi){//选择服务
+        //     let adom = this.serverCopy[sp].si_server[ai].values
+        //     let ale = adom.length
+        //     let s = 0
+        //     if(ale && ale>1){
+        //         for(let i in adom){
+        //             this.serverCopy[sp].si_server[ai].isSelect = true
+        //             if(this.serverCopy[sp].si_server[ai].isSelect){
+        //                     adom[i].checked = false
+        //                     this.serverCopy[sp].si_server[ai].values[bi].checked = !b
+        //             }else{
+        //                 this.serverCopy[sp].si_server[ai].isSelect = !a 
+        //             }
+        //             if(adom[i].checked === true){
+        //                 s++
+        //             }
+        //             if(s===0){
+        //                 this.serverCopy[sp].si_server[ai].isSelect = false
+        //             }
+        //         }                    
+        //     }else{
+        //         this.serverCopy[sp].si_server[ai].isSelect = !a                   
+        //         this.serverCopy[sp].si_server[ai].values[bi].checked = !b                    
+        //     }
+
+        //     if(this.serverCopy[sp].si_server[0].isSelect && this.serverCopy[sp].si_server[1].isSelect){
+        //         this.serverCount = 2
+        //     }else if(this.serverCopy[sp].si_server[0].isSelect){
+        //         this.serverCount = 1
+        //     }else if(this.serverCopy[sp].si_server[1].isSelect){
+        //         this.serverCount = 1
+        //     }else{
+        //         this.serverCount = 0
+        //     }
+        // },         
         lookServerShow(sp){//打开服务面板
-                console.log(sp)
-                this.sIndex = sp
             this.serverListShow = !this.serverListShow   
-            this.serverCopy = JSON.parse(JSON.stringify(this.sl[sp].si_server))
-
-            if(this.serverCopy[1].values.length>1 && this.serverCopy[1].values[0].checked){
-                this.isA = 1
-            }
-            if(!this.sl[sp].si_server[1].values[0].checked && this.serverCopy[1].values[0].checked){
-                this.isB = 1
-            }else{
-                this.isB = 0                
-            }
-            this.serverCount = this.isA + this.isB
+            this.serverCopy = JSON.parse(JSON.stringify(this.sl))
+            console.log(sp)
         },
         closeShowPage(){//关闭下拉页面
             this.serverListShow = false
         },        
-        minusCount(){//购买数量--
+        minus(){//购买数量--
             this.count>1?this.count--:1
         },
-        minusCount(){//购买数量++
+        add(){//购买数量++
             this.count++
         },        
         init(){
@@ -254,16 +256,9 @@ export default {
                         position: relative;
                         .select{
                             padding: 25px 7px;
-                            i{                            
-                                color: #f56600;                                
-                                border-radius: 50%;
+                            i::before{
                                 font-size: .42rem;
-                            }
-                            .selectCheck{
-                                border:1px solid #ddd;
-                                border-radius: 50%;                                
-                                font-size: .38rem;                                
-                                color: #fff;
+                                color: #f56600;
                             }
                         }
                         .image{
@@ -282,10 +277,10 @@ export default {
                             line-height: 18px;
                             .title{
                                color: #333;
-                               font-size: .29rem;
+                               font-size: .27rem;
                             }
                             .subTitle{
-                                font-size: .1rem;                                
+                                font-size: .18rem;                                
                                 color: #aaa;
                             }
                             .price{
@@ -341,7 +336,6 @@ export default {
                         }
                     }
                     .subjoin{
-                        font-size: .1rem;
                         .addBuy{
 
                         }
@@ -375,43 +369,7 @@ export default {
                             }                                
                         }
                         .serverChecked{
-                            .serverItem{
-                                position: relative;
-                                display: flex;
-                                align-items: center;
-                                padding: 10px 20px 10px 35px;
-                                background: #fafafa;                                
-                                .src{
-                                    padding: 0 15px;
-                                    img{
-                                        border-radius: 6px;
-                                        border: 1px solid #ccc;
-                                        width: 45px;
-                                        height: 45px;
-                                        display: block
-                                    }
-                                }
-                                .title{
-                                    text-align: left;
-                                    line-height: 20px;
-                                    p{
-                                        color: #777;
-                                    }
-                                    span{
-                                        color: #f56600;
-                                    }
-                                    span:before{
-                                        content:'\A5';
-                                        font-size: .1rem;
-                                        vertical-align: 1px;
-                                    }
-                                }
-                                .setSelect{
-                                    position: absolute;
-                                    right: 15px;
-                                    color: #777;
-                                }
-                            }
+
                         }
                         .gift{
                             .itemGift{
@@ -538,47 +496,30 @@ export default {
                                 }
                             }
                         }
-                        .footer{
-                            width: 100%;
-                            display: flex;
-                            align-items: center;
-                            position: fixed;
-                            left: 0;
-                            bottom: 0;
-                            font-size: .29rem;
-                            .selects{
-                                border-top:1px solid #ccc;                        
-                                width: 70%;
-                                padding: 15px 0;
-                                color: #555;
-                            }
-                            .affirm{
-                                width: 30%;
-                                padding: 15px 0;    
-                                border-top:1px solid #999;                        
-                                background: #f56600;
-                                color: #fff;
-                            }
-                        }                        
                     }                
                 }
-                .zengzhi{
-                    width: 7.5rem;   
-                    i{
-                        position: fixed;
-                        display: block;
-                        color: #aaa;
-                        top:20px;
-                        right: 20px;
-                        font-size: .48rem;
-                        z-index: 100000;
-                    }       
-                    img{
-                        display: block;
-                        width: 100%;
-                        height: 100%;
+                .footer{
+                    width: 100%;
+                    display: flex;
+                    align-items: center;
+                    position: fixed;
+                    left: 0;
+                    bottom: 0;
+                    font-size: .29rem;
+                    .selects{
+                        border-top:1px solid #ccc;                        
+                        width: 70%;
+                        padding: 15px 0;
+                        color: #555;
                     }
-                }                
+                    .affirm{
+                        width: 30%;
+                        padding: 15px 0;    
+                        border-top:1px solid #999;                        
+                        background: #f56600;
+                        color: #fff;
+                    }
+                }
             }
         }
     }

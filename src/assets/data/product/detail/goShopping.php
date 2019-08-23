@@ -57,6 +57,7 @@ for($l=0;$l<count($valList);$l++){
     $valList[$l]["si_server"] = json_decode($valList[$l]["si_server"],true);
     $valList[$l]["si_gift"] = json_decode($valList[$l]["si_gift"],true);
     $valList[$l]["si_choose"] = json_decode($valList[$l]["si_choose"],true);
+    $valList[$l]["si_only"] = json_decode($valList[$l]["si_only"],true);
     // print_r(json_decode(urldecode($valList[$l]["si_set_meal"])),true);
 // print_r($valList[$l]["si_set_meal"]);    
 }
