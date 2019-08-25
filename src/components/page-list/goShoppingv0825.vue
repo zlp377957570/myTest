@@ -41,7 +41,7 @@
                             </div>
                         </div>
                         <div class="serverChecked" v-for="(ser,s) in spb.si_server" :key="'ser+'+ s" v-show="ser.isSelect">
-                            <div class="serverItem" @touchstart="serverTouchStart($event,sp,s,d,sed.checked)" v-for="(sed,d) in ser.values" :key="'sed+'+ d" v-show="sed.checked">
+                            <div class="serverItem" v-for="(sed,d) in ser.values" :key="'sed+'+ d" v-show="sed.checked">
                                 <div class="src">
                                     <img :src="ser.src" alt="">
                                 </div>
@@ -80,12 +80,12 @@
                                     <span>购买服务</span>
                                 </div>    
                                 <div class="content">
-                                    <div class="accident_protection" v-for="(pis,pi) in cpl[sIndex].si_server" :key="pi" v-show="!sl[sIndex].si_server[pi].isSelect || sl[sIndex].si_server[pi].values.length>1">
+                                    <div class="accident_protection" v-for="(pis,pi) in serverCopy" :key="pi" v-show="!sl[sp].si_server[pi].isSelect || sl[sp].si_server[pi].values.length>1">
                                         <div class="title">
                                             <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=pis.a_srcIndex">{{pis.name}}<van-icon name="question-o" /></span>
                                             <span v-for="(vss,vi) in pis.values" :key="vi" class="val" v-show="pis.isSelect" v-if="vss.checked">{{vss.text}}</span>
                                         </div>
-                                        <div v-for="(vss,vi) in pis.values" :key="vi" :class="['block',vss.checked?'selectActive':'']" @click="selectServer(pis.isSelect,pi,vss.checked,vi)">
+                                        <div v-for="(vss,vi) in pis.values" :key="vi" :class="['block',vss.checked?'selectActive':'']" @click="selectServer(sp,pis.isSelect,pi,vss.checked,vi)">
                                             <span class="name">{{vss.name}}</span>
                                             <span class="val">{{vss.price}}元</span>
                                         </div>
@@ -101,7 +101,7 @@
                                         <span v-if="serverCount>0" class="selected">已选{{serverCount}}种服务</span>
                                         <span v-if="serverCount==0" class="select">请选择服务</span>
                                     </div>
-                                    <div class="affirm" @click="serverAffirm">确认</div>                    
+                                    <div class="affirm" @click="serverAffirm(sp)">确认</div>                    
                                 </div>
                             </div>     
                         </van-popup>
@@ -116,7 +116,6 @@
 import ls from '../../assets/js/ls.js'
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview,Toast } from 'vant';
 import detailHead from './detailHead.vue'
-import { setTimeout, clearTimeout } from 'timers';
 export default {
     name:'goShopping',
     data(){
@@ -132,7 +131,7 @@ export default {
                 "../../static/image/qita/延迟保修.png"
             ],         
             serverCount:0,  
-            cpl:{},  
+            serverCopy:{},  
             sIndex:0,
             count:1,
             isA:0,
@@ -149,86 +148,47 @@ export default {
     mounted(){
     },
     methods:{
-        serverTouchStart(a,sp,ai,bi,status){//手指长按服务
-            a.stopPropagation()
-            let $this = a.currentTarget
-            // let touchEvent = 0
-            let touchEvent = setTimeout(()=>{
-                touchEvent = 0
-                // console.log(this.sIndex)
-                // console.log(sp)
-                // console.log(ai)
-                // console.log(bi)
-                Dialog.confirm({
-                // title: '标题',
-                message: '是否删除该服务？'
-                }).then(() => {
-                    this.sl[sp].si_server[ai].isSelect = !status
-                    this.sl[sp].si_server[ai].values[bi].checked = !status
-                }).catch(()=>{
-                    
-                })               
-
-            },500)
-
-            $this.ontouchmove = function(){
-                touchEvent = null
-            }
-            $this.ontouchend = function(){
-                clearTimeout(touchEvent)
-                console.log(touchEvent)
-                if(touchEvent!=0){
-                }
-            }            
-        },
         serverAffirm(sp){//确认选择服务
-        // console.log(this.sIndex)
-            this.sl[this.sIndex].si_server = JSON.parse(JSON.stringify(this.cpl[this.sIndex].si_server))
-            this.serverListShow = !this.serverListShow               
+        console.log(this.sIndex)
+            this.sl[this.sIndex].si_server = this.serverCopy
+            this.serverListShow = !this.serverListShow    
+                    console.log(this.sl[this.sIndex].si_server)              
             Toast({
                 message:'ok',
                 duration:300
             });  
         },
-        selectServer(a,ai,b,bi){//选择服务
-            let sp = this.sIndex
-            let adom = this.cpl[sp].si_server[ai].values
+        selectServer(sp,a,ai,b,bi){//选择服务
+            let adom = this.serverCopy[ai].values
             let ale = adom.length
             let s = 0
             if(ale && ale>1){
-                    this.cpl[sp].si_server[ai].isSelect = true
-                    if(this.cpl[sp].si_server[ai].isSelect){
-                        if(bi===0){
-                            this.cpl[sp].si_server[ai].values[bi].checked = !b
-                            this.cpl[sp].si_server[ai].values[1].checked = false
-                        }else{
-                            this.cpl[sp].si_server[ai].values[bi].checked = !b
-                            this.cpl[sp].si_server[ai].values[0].checked = false                            
-                        }                      
-
+                for(let i in adom){
+                    this.serverCopy[ai].isSelect = true
+                    if(this.serverCopy[ai].isSelect){
+                            adom[i].checked = false
+                            this.serverCopy[ai].values[bi].checked = !b
                     }else{
-                        this.cpl[sp].si_server[ai].isSelect = !a 
+                        this.serverCopy[ai].isSelect = !a 
                     }
-                    for(let j in adom){
-                        if(adom[j].checked === true){
-                            s++
-                        }
+                    if(adom[i].checked === true){
+                        s++
                     }
                     if(s===0){
-                        this.cpl[sp].si_server[ai].isSelect = false
-                    }                
-                   
+                        this.serverCopy[ai].isSelect = false
+                    }
+                }                    
             }else{
-                this.cpl[sp].si_server[ai].isSelect = !a                   
-                this.cpl[sp].si_server[ai].values[bi].checked = !b                    
+                this.serverCopy[ai].isSelect = !a                   
+                this.serverCopy[ai].values[bi].checked = !b                    
             }
 
-            if(this.cpl[sp].si_server[0].values.length>1 && this.cpl[sp].si_server[0].values[0].checked || this.cpl[sp].si_server[0].values[1].checked){
+            if(this.serverCopy[0].values.length>1 && this.serverCopy[0].values[0].checked || this.serverCopy[0].values[1].checked){
                 this.isA = 1
             }else{
                 this.isA = 0
             }
-            if(this.cpl[sp].si_server[1].values.length<2 && this.cpl[sp].si_server[1].values[0].checked && !this.sl[sp].si_server[1].values[0].checked){
+            if(this.serverCopy[1].values.length<2 && this.serverCopy[1].values[0].checked && !this.sl[sp].si_server[1].values[0].checked){
                 this.isB = 1
             }else{
                 this.isB = 0        
@@ -237,19 +197,18 @@ export default {
             this.serverCount = this.isA + this.isB
         },                     
         lookServerShow(sp){//打开服务面板
-            this.sIndex = sp
-            this.cpl[this.sIndex].si_server = JSON.parse(JSON.stringify(this.sl[this.sIndex].si_server))
+                console.log(sp)
+                this.sIndex = sp
             this.serverListShow = !this.serverListShow   
+            this.serverCopy = JSON.parse(JSON.stringify(this.sl[sp].si_server))
 
-            if(this.cpl[sp].si_server[0].values.length>1 && this.cpl[sp].si_server[0].values[0].checked || this.cpl[sp].si_server[0].values[1].checked){
+            if(this.serverCopy[1].values.length>1 && this.serverCopy[1].values[0].checked){
                 this.isA = 1
-            }else{
-                this.isA = 0
             }
-            if(this.cpl[sp].si_server[1].values.length<2 && this.cpl[sp].si_server[1].values[0].checked && !this.sl[sp].si_server[1].values[0].checked){
+            if(!this.sl[sp].si_server[1].values[0].checked && this.serverCopy[1].values[0].checked){
                 this.isB = 1
             }else{
-                this.isB = 0        
+                this.isB = 0                
             }
             this.serverCount = this.isA + this.isB
         },
@@ -266,8 +225,8 @@ export default {
             let url = this.HOST + '/detail/goShopping.php'
             this.$axios.post(url,{}).then(response=> {
                 console.log(response.data)
-                this.sl = response.data.shoppingList    
-                this.cpl = JSON.parse(JSON.stringify(response.data.shoppingList))      
+                this.sl = response.data.shoppingList          
+                console.log(this.sl)             
             }).catch(error=>{
 
             })              
@@ -420,7 +379,7 @@ export default {
                                 position: relative;
                                 display: flex;
                                 align-items: center;
-                                padding: 10px 50px 10px 35px;
+                                padding: 10px 20px 10px 35px;
                                 background: #fafafa;                                
                                 .src{
                                     padding: 0 15px;
