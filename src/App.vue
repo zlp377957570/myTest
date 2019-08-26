@@ -65,5 +65,9 @@ export default {
   margin: 0 auto;
   overflow-y: scroll;
   padding: 0;
+  user-select: none;
+}
+.van-dialog__message {
+   user-select: none; 
 }
 </style>

@@ -18,15 +18,15 @@
                         </div>
                         <div class="addCount">
                             <div class="compute">
-                                <span @click="spb.si_count>1?spb.si_count--:1" :class="[spb.si_count<2?'disabled':'']">－</span>
+                                <span @click="minusCount(sp)" :class="[spb.si_count<2?'disabled':'']">－</span>
                                 <span class="val" :v-model="count">{{spb.si_count}}</span>
-                                <span @click="spb.si_count<2?spb.si_count++:2" :class="[spb.si_count<2&&spb.si_count>=1?'':'disabled']">＋</span>
+                                <span @click="addCount(sp)" :class="[spb.si_count<2&&spb.si_count>=1?'':'disabled']">＋</span>
                             </div>
                         </div>
                     </div>  
                     <div class="subjoin" v-show="spb.si_checked">
                         <div class="addBuy"></div>
-                        <div class="server" v-for="(ser,s) in spb.si_server" :key="'ser-'+ s" v-show="!ser.isSelect">
+                        <div class="server"  @click="lookServerShow(sp)" v-for="(ser,s) in spb.si_server" :key="'ser-'+ s" v-show="!ser.isSelect">
                             <div class="title">
                                 服务
                             </div>
@@ -36,7 +36,7 @@
                             <div class="price">
                                 <span>{{ser.price}}</span>
                             </div>
-                            <div class="setSelect" @click="lookServerShow(sp)">
+                            <div class="setSelect">
                                 选购
                             </div>
                         </div>
@@ -159,21 +159,23 @@ export default {
                 // console.log(sp)
                 // console.log(ai)
                 // console.log(bi)
+                clearTimeout(touchEvent)
                 Dialog.confirm({
                 // title: '标题',
                 message: '是否删除该服务？'
                 }).then(() => {
                     this.sl[sp].si_server[ai].isSelect = !status
                     this.sl[sp].si_server[ai].values[bi].checked = !status
+                    this.cpl[sp].si_server = JSON.parse(JSON.stringify(this.sl[sp].si_server))                    
                 }).catch(()=>{
                     
                 })               
 
             },500)
 
-            $this.ontouchmove = function(){
-                touchEvent = null
-            }
+            // $this.ontouchmove = function(){
+            //     touchEvent = null
+            // }
             $this.ontouchend = function(){
                 clearTimeout(touchEvent)
                 console.log(touchEvent)
@@ -238,7 +240,7 @@ export default {
         },                     
         lookServerShow(sp){//打开服务面板
             this.sIndex = sp
-            this.cpl[this.sIndex].si_server = JSON.parse(JSON.stringify(this.sl[this.sIndex].si_server))
+            this.cpl[sp].si_server = JSON.parse(JSON.stringify(this.sl[sp].si_server))
             this.serverListShow = !this.serverListShow   
 
             if(this.cpl[sp].si_server[0].values.length>1 && this.cpl[sp].si_server[0].values[0].checked || this.cpl[sp].si_server[0].values[1].checked){
@@ -256,11 +258,16 @@ export default {
         closeShowPage(){//关闭下拉页面
             this.serverListShow = false
         },        
-        minusCount(){//购买数量--
-            this.count>1?this.count--:1
+        minusCount(sp){//购买数量--
+            // this.count>1?this.count--:1
+            this.sl[sp].si_count>1?this.sl[sp].si_count--:1
+            console.log(sp)
+            // spb.si_count>1?spb.si_count--:1
         },
-        minusCount(){//购买数量++
-            this.count++
+        addCount(sp){//购买数量++
+            // this.count++
+            this.sl[sp].si_count<2?this.sl[sp].si_count++:2
+            // spb.si_count<2?spb.si_count++:2
         },        
         init(){
             let url = this.HOST + '/detail/goShopping.php'

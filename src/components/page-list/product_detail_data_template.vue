@@ -201,11 +201,7 @@ export default {
                             "color":"黑色",
                             "count":1,
                             "checked":true
-                        }                        
-                    ]
-                },
-                {
-                    values:[
+                        },
                         {
                             "name":"小米无线车充",
                             "price":0,
@@ -214,9 +210,9 @@ export default {
                             "color":"黑色",
                             "count":1,
                             "checked":true
-                        }                       
+                        }                          
                     ]
-                }                
+                }               
             ]              
     }
 }

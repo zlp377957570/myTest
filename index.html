@@ -21,7 +21,10 @@
             setRemUnit()
           }
         })  
-
+        document.oncontextmenu = function(){
+          // alert("当前页面不能使用右键！");
+          return false;
+        }
         // document.body.addEventListener('touchmove' , function(e){ 
         //     e.preventDefault(); 
         // })    
