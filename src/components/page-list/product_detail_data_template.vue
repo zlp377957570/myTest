@@ -62,6 +62,8 @@ export default {
             choose = [         
             ]
 
+[{"values":[{"name":"小米9全网通版6GB+128GB","price":2599,"original_price":2999,"src":"https://i8.mifile.cn/a1/pms_1565339466.57314633.jpg","color":"全息幻彩紫","count":1,"checked":true}]}]
+[{"values":[{"name":"小米9全网通版8GB+256GB","price":3699,"original_price":0,"src":"https://i1.mifile.cn/a1/pms_1553001921.97126644.jpg","color":"透明","count":1,"checked":true}]}]
             set_meal = [
                 {
                     values:[
@@ -209,7 +211,7 @@ export default {
                             "src":"https://i1.mifile.cn/a1/pms_1550588698.58663947.jpg",
                             "color":"黑色",
                             "count":1,
-                            "checked":true
+                            "checked":false
                         }                          
                     ]
                 }               

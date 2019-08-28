@@ -72,6 +72,7 @@ export default {
         color: #666;  
         font-size: .32rem;
         z-index: 1000;
+        border-bottom: 1px solid #ccc;           
         .content{
             width: 100%;
             height: 100%;

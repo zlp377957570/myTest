@@ -117,11 +117,11 @@
                                 </div>    
                                 <div class="content">
                                     <div class="giftBlock" v-for="(gift,gf) in cpl[sIndex].si_gift" :key="gf" v-show="gf===giftIndex">
-                                        <div class="block" v-for="(gis,gs) in gift.values" :key="gs" @click="selectGift(sp,gf,gs,gis.checked)">
+                                        <div class="block" v-for="(gis,gs) in gift.values" :key="gs">
                                             <div class="src">
                                                 <img :src="gis.src" alt="">
                                             </div>
-                                            <div class="select">
+                                            <div class="select" @click="selectGift(sp,gf,gs,gis.checked)">
                                                 <van-icon name="checked" :class="gis.checked?'':'selectCheck'"/>
                                             </div>                                            
                                             <div class="title">
@@ -148,7 +148,7 @@
                     <span>全选</span>
                 </div>
                 <div class="total">
-                    合计：<span>{{priceAll.toFixed(2)}}</span>
+                    合计：<span>6597.00</span>
                 </div>
                 <div class="computeCount" :style="countAll<1?{'background':'#aaa'}:''">
                     结算({{countAll}})  
@@ -183,7 +183,6 @@ export default {
             giftIndex:0,
             count:1,
             countAll:0,
-            priceAll:0,
             checkedAll:false,
             isA:0,
             isB:0,            
@@ -197,9 +196,6 @@ export default {
         this.init()
     },
     mounted(){
-        setTimeout(()=>{//暂时使用timeout,得用pormeise优化
-            this.sumAllChecked()    
-        },500)
     },
     updated(){
     },
@@ -207,8 +203,13 @@ export default {
         serverTouchStart(a,sp,ai,bi,status){//手指长按服务
             a.stopPropagation()
             let $this = a.currentTarget
+            // let touchEvent = 0
             let touchEvent = setTimeout(()=>{
                 touchEvent = 0
+                // console.log(this.sIndex)
+                // console.log(sp)
+                // console.log(ai)
+                // console.log(bi)
                 clearTimeout(touchEvent)
                 Dialog.confirm({
                 // title: '标题',
@@ -216,8 +217,7 @@ export default {
                 }).then(() => {
                     this.sl[sp].si_server[ai].isSelect = !status
                     this.sl[sp].si_server[ai].values[bi].checked = !status
-                    this.cpl[sp].si_server = JSON.parse(JSON.stringify(this.sl[sp].si_server))    
-                    this.sumAllChecked()                    
+                    this.cpl[sp].si_server = JSON.parse(JSON.stringify(this.sl[sp].si_server))                    
                 }).catch(()=>{
                     
                 })               
@@ -225,7 +225,7 @@ export default {
             },500)
             $this.ontouchend = function(){
                 clearTimeout(touchEvent)
-                // console.log(touchEvent)
+                console.log(touchEvent)
                 if(touchEvent!=0){
                 }
             }            
@@ -237,18 +237,21 @@ export default {
                 message:'ok',
                 duration:300
             });  
-            this.sumAllChecked()             
         },
         serverAffirm(){//确认选择服务
+        // console.log(this.sIndex)
             this.sl[this.sIndex].si_server = JSON.parse(JSON.stringify(this.cpl[this.sIndex].si_server))
             this.serverListShow = false        
             Toast({
                 message:'ok',
                 duration:300
             });  
-            this.sumAllChecked()             
         },
         selectGift(sp,gf,gs,checked){//选择赠品
+            console.log(sp)        
+            console.log(gf)//第几种赠品
+            console.log(gs)//第几种赠品中的第几款
+            console.log(checked)//第几种赠品中的第几款
             let adom = this.cpl[sp].si_gift[gf].values
             let ale = adom.length            
             if(ale && ale>1){
@@ -307,6 +310,7 @@ export default {
             this.serverCount = this.isA + this.isB
         },      
         lookGiftShow(sp,gi){//打开赠品面板
+        console.log(sp)
             this.sIndex = sp          
             this.giftIndex = gi          
             this.cpl[sp].si_gift = JSON.parse(JSON.stringify(this.sl[sp].si_gift))              
@@ -335,12 +339,10 @@ export default {
         },    
         itemShoppingSelect(sp,selected){//单选商品
             this.sl[sp].si_checked = !this.sl[sp].si_checked
-            // this.sumOnlyCheck(this.sl[sp])
-            this.sumAllChecked()       
+            this.sumOnlyCheck(this.sl[sp])
         },
         sumOnlyCheck(obj){//单件商品的选中状态
             console.log(obj)
-            let n = 0
             for(let i in obj){
                 if(obj[i].constructor === Array && obj[i].length>0){    
                     for(let k in obj[i]){
@@ -356,81 +358,75 @@ export default {
         },
         selectCheckedAll(){//全选商品
             this.checkedAll = !this.checkedAll
-            let obj = this.sl        
             if(this.checkedAll){
-                for(let i in obj){
-                    obj[i].si_checked = true
-                }                
-                this.sumAllChecked()                
+                sumAllChecked()                
             }else{
-                this.sumAllCheck(obj)
+                sumAllCheck()
             }
         },     
-        sumAllCheck(obj){//全部取消选中商品      
-            for(let i in obj){
-                obj[i].si_checked = false
-            }
-            this.sumAllChecked()               
+        sumAllCheck(){//全部取消选中商品
+
         },
         sumAllChecked(){//全部商品选中
             let obj = this.sl
             let n = 0
-            let p = 0
             let arr = []
             let sum = []
-            let sumPrice = []
             for(let a in obj){
-                let num = []
-                let price = []
-                if(obj[a].si_checked){
-                    arr.push(Number(obj[a].si_count))
-                    for(let b in obj[a]){
-                        if(obj[a][b].constructor === Array && obj[a][b].length>0){//同上      
-                            for(let k in obj[a][b]){
-                                for(let j in obj[a][b][k].values){
-                                    if(obj[a][b][k].values[j].checked){
-                                        num.push(1)
-                                        price.push(obj[a][b][k].values[j].price)
-                                    }
+                arr.push(Number(obj[a].si_count))
+                    let num = []
+                for(let b in obj[a]){
+                    if(obj[a][b].constructor === Array && obj[a][b].length>0){//同上      
+                        for(let k in obj[a][b]){
+                            for(let j in obj[a][b][k].values){
+                                if(obj[a][b][k].values[j].checked){
+                                    // n++
+                                    num.push(1)
                                 }
-                                
-                            }           
-                        }                
-                    }
-                    sum.push(num)  
-                    sumPrice.push(price)                  
+                            }
+                            
+                        }           
+                    }                
                 }
+                // n*=Number(obj[a].si_count)
+                sum.push(num)
             } 
-            if(arr.length>0){
-                for(let v in arr){
-                    for(let s in sum[v]){
-                        n += arr[v]*sum[v][s]
-                        p += arr[v]*sumPrice[v][s]
-                    }
-                }                
-                this.countAll = n 
-                this.priceAll = p 
-            }else{
-                this.countAll = 0
-                this.priceAll = 0                 
-            }      
+            for(let v in arr){
+                for(let s in sum[v]){
+                    n += arr[v]*sum[v][s]
+                }
+            }
+            this.countAll = n 
+            console.log(n)           
         },          
         minusCount(sp){//购买数量--
             this.sl[sp].si_count>1?this.sl[sp].si_count--:1
             let count = this.sl[sp].si_count
             let obj = this.sl[sp]
             this.findMod(obj,count);
-            this.sumAllChecked()             
         },     
         addCount(sp){//购买数量++
+            // this.count++
             this.sl[sp].si_count<2?this.sl[sp].si_count++:2
             let count = this.sl[sp].si_count
             let obj = this.sl[sp]
+            // let json = JSON.stringify(this.sl[sp])
+            // let match = json.match(/"count"/g)
+            // let n = json.indexOf('count')
+            // let j = json.substring(n+7,n+8);
+            console.log(this.sl)
             this.findMod(obj,count);
-            this.sumAllChecked() 
         },
         findMod(obj,count){//count加减计算方法
             for(let key in obj){
+                // if(typeof(obj[key]) === "object"){//不太准确
+                //     console.log(obj[key])
+                //     console.log(obj[key].length)                    
+                // }
+                // if((obj[key] instanceof Array) === true){//较为准确
+                //     console.log(obj[key])
+                //     console.log(obj[key].length)                    
+                // }
                 if(obj[key].constructor === Array && obj[key].length>0){//同上      
                     for(let k in obj[key]){
                         if(obj[key][k].count){
