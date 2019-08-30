@@ -11,64 +11,56 @@ export default {
     },
     created(){
         //分期公式  价格* 费率/分期数    2899*0.0222/3 = 21.45元
-            installment = {
-                title:'小米分期/花呗分期',
-                name:'小米9 全网通版 6GB+128GB',
-                price:2899,
-                original_price:3099,                                  
-                src:'https://i8.mifile.cn/a1/pms_1550642240.48638886.jpg',
-                color:'全息幻彩蓝',       
-                values:[
-                    {
-                        name:'小米分期',
-                        checked:true,
-                        values:[
-                            {
-                                name:3,
-                                rate:0.022,
-                                checked:true,
-                                val:true
-                            },
-                            {
-                                name:6,
-                                rate:0.039,
-                                checked:false,
-                                val:true
-                            },
-                            {
-                                name:12,
-                                rate:0.072,
-                                checked:false,
-                                val:true
-                            },                                                        
-                        ]
-                    },
-                    {
-                        name:'花呗分期',
-                        checked:false,
-                        values:[
-                            {
-                                name:3,
-                                rate:0.023,
-                                checked:true,
-                                val:true
-                            },
-                            {
-                                name:6,
-                                rate:0.045,
-                                checked:false,
-                                val:true
-                            },
-                            {
-                                name:12,
-                                rate:0.075,
-                                checked:false,
-                                val:true
-                            },                                                        
-                        ]
-                    },                    
-                ]         
-            }
+            installment = [
+                {
+                    name:'小米分期',
+                    checked:true,
+                    values:[
+                        {
+                            name:3,
+                            rate:0.022,
+                            checked:true,
+                            val:true
+                        },
+                        {
+                            name:6,
+                            rate:0.039,
+                            checked:false,
+                            val:true
+                        },
+                        {
+                            name:12,
+                            rate:0.072,
+                            checked:false,
+                            val:true
+                        },                                                        
+                    ]
+                },
+                {
+                    name:'花呗分期',
+                    checked:false,
+                    values:[
+                        {
+                            name:3,
+                            rate:0.023,
+                            checked:true,
+                            val:true
+                        },
+                        {
+                            name:6,
+                            rate:0.045,
+                            checked:false,
+                            val:true
+                        },
+                        {
+                            name:12,
+                            rate:0.075,
+                            checked:false,
+                            val:true
+                        },                                                        
+                    ]
+                }                   
+            ]         
             server = [
                 {
                     name:'意外保护',
@@ -125,6 +117,7 @@ export default {
 
             set_meal = [
                 {
+                    name:'标配',
                     values:[
                         {
                             name:'小米9 全网通版 6GB+128GB',
@@ -140,6 +133,7 @@ export default {
             ]
             set_meal = [
                 {
+                    name:'标配',                    
                     values:[
                         {
                             name:'小米9 全网通版 6GB+128GB',
@@ -156,6 +150,7 @@ export default {
 
             set_meal = [
                 {
+                    name:'标配',                    
                     values:[
                         {
                             name:'小米9 全网通版 6GB+128GB',
@@ -172,6 +167,7 @@ export default {
 
             set_meal = [
                 {
+                    name:'标配',                    
                     values:[
                         {
                             name:'小米9 全网通版 8GB+128GB',
@@ -187,6 +183,7 @@ export default {
             ]
             set_meal = [
                 {
+                    name:'标配',                    
                     values:[
                         {
                             name:'小米9 全网通版 8GB+128GB',
@@ -203,6 +200,7 @@ export default {
 
             set_meal = [
                 {
+                    name:'标配',                    
                     values:[
                         {
                             name:'小米9 全网通版 8GB+128GB',
@@ -219,6 +217,7 @@ export default {
 
             set_meal = [
                 {
+                    name:'标配',                    
                     values:[
                         {
                             name:'小米9 全网通版 8GB+256GB',
@@ -235,6 +234,7 @@ export default {
 
             set_meal = [
                 {
+                    name:'标配',                    
                     values:[
                         {
                             name:'小米9 全网通版 8GB+128GB',
@@ -330,7 +330,84 @@ export default {
                 },                                                                       
             ]
 
-
+            heheight_list = [
+                {
+                    name:'商品介绍',
+                    type:'a',
+                    values:[
+                        {
+                            type:'a',
+                            index:1,
+                            suffix:'webp',
+                            length:3,
+                            style:''                           
+                        },
+                        {
+                            type:'b',
+                            index:2,
+                            suffix:'webp',
+                            length:3,
+                            style:''                           
+                        },
+                        {
+                            type:'c',
+                            index:3,
+                            suffix:'webp',
+                            length:6,
+                            style:''                           
+                        },    
+                        {
+                            type:'a',
+                            index:4,
+                            suffix:'webp',
+                            length:7,
+                            style:''                           
+                        }, 
+                        {
+                            type:'c',
+                            index:5,
+                            suffix:'webp',
+                            length:5,
+                            style:''                           
+                        },     
+                        {
+                            type:'a',
+                            index:6,
+                            suffix:'webp',
+                            length:7,
+                            style:''                           
+                        },               
+                        {
+                            type:'c',
+                            index:7,
+                            suffix:'webp',
+                            length:3,
+                            style:''                           
+                        },    
+                        {
+                            type:'a',
+                            index:8,
+                            suffix:'webp',
+                            length:11,
+                            style:''                           
+                        },  
+                        {
+                            type:'c',
+                            index:9,
+                            suffix:'webp',
+                            length:3,
+                            style:''                           
+                        },         
+                        {
+                            type:'a',
+                            index:10,
+                            suffix:'webp',
+                            length:3,
+                            style:''                           
+                        },                                                                                                                                                               
+                    ]
+                }
+            ]
 
     }
 }
