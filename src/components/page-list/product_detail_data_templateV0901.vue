@@ -80,7 +80,26 @@ export default {
                     val:'由小米发货的商品，单笔满150元免运费;由第三方商家发货的商品，免运费;特殊商品需要单独收取运费，具体以实际结算金额为准；优惠券等不能抵扣运费金额;'
                 }                                                
             ]
-            
+
+            promise = [
+                {
+                    name:"小米自营",
+                    val:""
+                },
+                {
+                    name:"小米发货",
+                    val:"由小米发货"
+                },
+                {
+                    name:"7天无理由退货",
+                    val:""
+                },
+                {
+                    name:"",
+                    val:"由小米发货的商品，单笔满150元免运费;由第三方商家发货的商品，免运费;特殊商品需要单独收取运费，具体以实际结算金额为准；优惠券等不能抵扣运费金额;"
+                }                                                
+            ]
+
             server = [
                 {
                     name:'意外保护',
@@ -354,6 +373,8 @@ export default {
                 {
                     name:'商品介绍',
                     type:'a',
+                    p_name:'小米9',
+                    src:'http://www.zlpones.com/imgs/mi/height_imgList/',
                     values:[
                         {
                             type:'a',
@@ -429,6 +450,13 @@ export default {
                 }
             ]
 
+            d_style_info = {
+                model:'',
+                version:'',
+                color:'',
+                size:''
+            }
+ "小米9 全网通 8+64G 白色"
     }
 }
 </script>

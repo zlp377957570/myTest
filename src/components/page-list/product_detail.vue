@@ -37,11 +37,11 @@
                 <span>{{icons.val}}</span>
             </div>
         </div>
-        <div class="detail_promotion detail_options" @click="lookGiftList">
+        <div class="detail_promotion detail_options" v-show="pi.pi_gift.length>0">
             <div class="name">促销</div>
             <div class="content">
-                <div v-for="(gifs,gi) in inforList.giftList" :key="gi">
-                    <i class="zp">赠品</i><span>{{gifs}}</span>
+                <div v-for="(gifs,gi) in pi.pi_gift" :key="gi" @click="lookGiftList(gi)">
+                    <i class="zp">赠品</i><span>{{gifs.name}}</span>
                 </div>             
             </div>
             <div class="btn"><i></i></div>
@@ -269,9 +269,11 @@
                         <span>促销</span>
                     </div>    
                     <div class="content">
-                        <div class="itmeBlock" v-for="(gifl,gl) in inforList.giftList" :key="gl">
-                            <p class="name"><span>赠品</span></p>
-                            <p class="val">{{gifl}}</p>
+                        <div class="itmeBlock" v-show="pi.pi_gift.length>0" v-for="(gifl,gl) in pi.pi_gift" :key="gl">
+                            <div v-for="(gis,gs) in gifl.values" :key="gs">
+                                <p class="name"><span>赠品</span></p>
+                                <p class="val">{{gis.name}}</p>                                
+                            </div>
                         </div>
                     </div>
                 </div>     
@@ -315,6 +317,7 @@ export default {
             show:false,
             imgLsitShow:false,
             index: 0,
+            giftList:[],
             images: [
             ],   
             zengzhiColor:'color:#ddd',
@@ -478,7 +481,11 @@ export default {
                 })
             }
         },
-        lookGiftList(){
+        lookGiftList(gi){
+            console.log(gi)
+            if(this.pi.pi_gift[gi]){
+                this.giftList = this.pi.pi_gift[gi].values
+            }
             this.giftListShow = true
         },
         lookServerList(){
@@ -527,25 +534,30 @@ export default {
             let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
             if(itemInfo){
                 this.$axios.post(url2,itemInfo).then(response=> {
-
                     // let valuesList = response.data
                     if(response.data){
-                        this.inforList.colorList = response.data.colorList
-                        this.details = response.data.detail
-                        this.version = response.data.detail.d_style_version
-                        this.color = response.data.detail.d_style_color
-                        this.name = response.data.detail.p_name
-                        this.model = response.data.detail.d_style_model
-                        let stime = response.data.detail.d_seckill_time
+                        console.log(response.data)
+                        let values = response.data                      
+                        this.details = values.detail
+                        this.version = values.detail.d_style_version
+                        this.color = values.detail.d_style_color
+                        this.name = values.detail.p_name
+                        this.model = values.detail.d_style_model
+                        let stime = values.detail.d_seckill_time
                         this.time = Number(stime)
                         // this.time = 10000
-                        this.inforList.giftList = response.data.giftList
-                        this.inforList.iconList = response.data.iconList
-                        this.inforList.imgsList = response.data.imgsList
-                        this.inforList.versionList = response.data.versionList
-                        this.inforList.serviceList = response.data.serviceList
+                        let iconList = values.detail.d_style_iconList.replace(/\s*/g,"")                
+                        let installment = values.detail.d_style_installment.replace(/\s*/g,"")                
+                        let promise = values.detail.d_style_promise.replace(/\s*/g,"")    
+
+                        this.inforList.colorList = values.colorList
+                        this.inforList.imgsList = values.imgsList
+                        this.inforList.versionList = values.versionList  
+                        this.inforList.iconList = eval("("+iconList+")")
+                        this.inforList.installment = eval("("+installment+")")
+                        this.inforList.promise = eval("("+promise+")")
+
                         console.log(this.inforList)
-                        // console.log(this.details)                        
                     }
                 }).catch(error=> {
                 });    
@@ -757,7 +769,7 @@ export default {
         .detail_icon_list{
             font-size: .24rem;
             width: 7.5rem;
-            padding: 10px 0;
+            padding: 10px 0 20px;
             overflow-x: auto;
             white-space: nowrap;
             div{
@@ -792,11 +804,11 @@ export default {
             justify-content: space-between;
             background: #fafafa;
             margin: 0 auto;
-            line-height: 25px;
+            line-height: 36px;
             color: rgba(0,0,0,.87);
             border: 1px solid #eee;
             border-radius: 5px;
-            padding: 6px 10px;
+            padding: 0px 10px;
             font-size: .24rem;            
             .name{
                 padding-left:10px;
@@ -804,9 +816,13 @@ export default {
             }
             .content{
                 min-width: 75%;
+                position: relative;
                 text-align: left;
                 div{
-                    line-height: 25px;
+                width: 115%;
+                position: absolute;
+                    // line-height: 25px;
+                    height: 100%;
                     text-align: left;
                     .zp{
                         margin-right: 5px;
@@ -1428,21 +1444,23 @@ export default {
                     }
                 }
                 .itmeBlock{
-                    padding: 10px 0;
-                    margin-bottom: 10px;
-                    border-bottom: 1px solid #f9f9f9;
-                    .name{
-                        span{
-                            font-size: .1rem;
-                            padding: 0px 2px;
-                            vertical-align: bottom;
-                            color: #f56600;
-                            border:1px solid #e4a97fa6;
-                        }
-                    }
-                    .val{
+                    div{
                         padding: 10px 0;
-                        color: #000;
+                        margin-bottom: 10px;
+                        border-bottom: 1px solid #f9f9f9;
+                        .name{
+                            span{
+                                font-size: .1rem;
+                                padding: 0px 2px;
+                                vertical-align: bottom;
+                                color: #f56600;
+                                border:1px solid #e4a97fa6;
+                            }
+                        }
+                        .val{
+                            padding: 10px 0;
+                            color: #000;
+                        }                        
                     }
                 }
                 .serverBlock{

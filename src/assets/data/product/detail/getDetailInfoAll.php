@@ -9,7 +9,7 @@ $getData = file_get_contents('php://input');
 // var_dump($getData);
 // $getData = "小米9 全网通版 8GB+256GB 全息幻彩紫";
 // $getData = "小米9 全网通版 6GB+128GB";
-// $getData = "小米9 全网通版 8GB+128GB 透明版";
+// $getData = "小米9 全网通版 8GB+128GB 全息幻彩紫";
 $getDataList = explode(" ",$getData);
 // print_r($getDataList);
 $oname = $getDataList[0];
@@ -42,9 +42,9 @@ if($getData!=''){
     $imgs = $only["d_style_imgs"];
     $imgsList = explode("~~~",$imgs);
 
-    //获取赠品组
-    $gifts = $only["d_style_is_gift"];
-    $giftList = explode("~~~",$gifts);
+    // //获取赠品组
+    // $gifts = $only["d_style_is_gift"];
+    // $giftList = explode("~~~",$gifts);
 
     //获取手机规格组
     $name = $only["p_name"];
@@ -69,67 +69,32 @@ if($getData!=''){
     // print_r($colorList);
     
     //获取手机服务信息表   
-    $sql = "select * from mimi_detail_service where p_name = '$name'";
-    $result = mysqli_query($conn,$sql);
-    $serviceList = mysqli_fetch_all($result,1);   
-
-    //获取手机配置信息表
-        //获取配置图片路径
-        $srcList = $only["d_style_iconList_srcList"];
-        $srcLists = explode(",",$srcList);
-        // print_r($srcLists);  
-        //获取配置名称
-        $nameList = $only["d_style_iconList_nameList"];
-        $nameLists = explode(",",$nameList);
-        // print_r($nameLists);  
-        //获取配置参数
-        $valList = $only["d_style_iconList_valList"];
-        $valLists = explode(",",$valList);
-        // print_r($valLists);  
-        $arr = array();
-
-    for($i=0;$i<count($nameLists);$i++){
-        $obj = new StdClass;
-        $obj->src = $srcLists[$i];
-        $obj->name = $nameLists[$i];
-        $obj->val = $valLists[$i];
-
-        array_push($arr,$obj);
-    }
-    // print_r($arr);
-
-    //获取相关推荐
-    // // $name = $only["p_name"];
-    // $sql = "select d_recommend_src,d_recommend_name,d_recommend_price from mimi_details_recommend where p_name = '$name'";
+    // $sql = "select * from mimi_detail_service where p_name = '$name'";
     // $result = mysqli_query($conn,$sql);
-    // $recommend = mysqli_fetch_all($result,1);
-    // print_r($recommend);
+    // $serviceList = mysqli_fetch_all($result,1);   
 
-    //获取5条评论
-    // $name = $only["p_name"];
-    // $sql = "select * from mimi_details_review where p_name = '$name' limit 0,5";
-    // $result = mysqli_query($conn,$sql);
-    // $review = mysqli_fetch_all($result,1);
-    // print_r($recommend);
+// //获取承诺
+//     $promise = $only["d_style_promise"];
+//     $only["d_style_promise"] = json_decode($promise,true);
 
-    // print_r($giftList);  
-    // print_r($srcList);  
-    // print_r($color.'cccccc');  
-    // print_r($version.'vvvvvv');  
-    // print_r($imgs.'iiiiii');  
+// //获取设备配置信息
+//     $iconList = $only["d_style_iconList"];
+//     $only["d_style_iconList"] = json_decode($iconList,true);
 
-    $output["iconList"] = $arr;      
-    $output["imgsList"] = $imgsList;      
-    $output["giftList"] = $giftList;      
+// //获取分期
+//     $installment = $only["d_style_installment"];
+//     $only["d_style_installment"] = json_decode($installment,true);
+//     // print_r($arr);
+
+     
+    $output["imgsList"] = $imgsList;         
     $output["colorList"] = $colorList;      
-    $output["versionList"] = $versionList;      
-    $output["serviceList"] = $serviceList;      
+    $output["versionList"] = $versionList;        
     $output["detail"] = $only;      
-    // $output["recommend"] = $recommend;      
-    // $output["review"] = $review;      
+ 
 }
 
 
 
-echo json_encode($output);
+echo json_encode($output,true);
 ?>
