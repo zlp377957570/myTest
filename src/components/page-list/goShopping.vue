@@ -20,7 +20,7 @@
                             <div class="compute">
                                 <span @click="minusCount(sp)" :class="[spb.si_count<2?'disabled':'']">－</span>
                                 <span class="val" :v-model="count">{{spb.si_count}}</span>
-                                <span @click="addCount(sp)" :class="[spb.si_count<2&&spb.si_count>=1?'':'disabled']">＋</span>
+                                <span @click="addCount(sp)" :class="[spb.si_count<spb.si_only.d_style_MaxCount&&spb.si_count>=1?'':'disabled']">＋</span>
                             </div>
                         </div>
                     </div>  
@@ -423,7 +423,7 @@ export default {
             this.sumAllChecked()             
         },     
         addCount(sp){//购买数量++
-            this.sl[sp].si_count<2?this.sl[sp].si_count++:2
+            this.sl[sp].si_count<this.sl[sp].si_only.d_style_MaxCount?this.sl[sp].si_count++:this.sl[sp].si_only.d_style_MaxCount
             let count = this.sl[sp].si_count
             let obj = this.sl[sp]
             this.findMod(obj,count);

@@ -381,73 +381,107 @@ export default {
                             index:1,
                             suffix:'webp',
                             length:3,
+                            class:'',
                             style:''                           
                         },
                         {
                             type:'b',
                             index:2,
                             suffix:'webp',
-                            length:3,
-                            style:''                           
+                            length:13,
+                            class:'',
+                            style:''                         
                         },
                         {
                             type:'c',
                             index:3,
                             suffix:'webp',
                             length:6,
-                            style:''                           
+                            class:'carousel1',
+                            style:'width:100%;height:250px;'                                                         
                         },    
                         {
                             type:'a',
                             index:4,
                             suffix:'webp',
                             length:7,
-                            style:''                           
+                            class:'',
+                            style:''                         
                         }, 
                         {
                             type:'c',
                             index:5,
                             suffix:'webp',
                             length:5,
-                            style:''                           
+                            class:'carousel2',                            
+                            style:'width:100%;height:230px;'                           
                         },     
                         {
                             type:'a',
                             index:6,
                             suffix:'webp',
-                            length:7,
-                            style:''                           
+                            length:5,
+                            class:'',
+                            style:''                        
                         },               
                         {
                             type:'c',
                             index:7,
                             suffix:'webp',
                             length:3,
-                            style:''                           
+                            class:'carousel3',                              
+                            style:'width:85%;height:230px;'                           
                         },    
                         {
                             type:'a',
                             index:8,
                             suffix:'webp',
                             length:11,
-                            style:''                           
+                            class:'',
+                            style:''                         
                         },  
                         {
                             type:'c',
                             index:9,
                             suffix:'webp',
                             length:3,
-                            style:''                           
+                            class:'carousel4',                              
+                            style:'width:90%;height:310px;'                           
                         },         
                         {
                             type:'a',
                             index:10,
                             suffix:'webp',
                             length:3,
-                            style:''                           
+                            class:'',
+                            style:''                         
                         },                                                                                                                                                               
                     ]
-                }
+                },
+                {
+                    name:'参数介绍',
+                    type:'b',
+                    p_name:'小米9',
+                    src:'http://www.zlpones.com/imgs/mi/height_imgList/',
+                    values:[
+                        {
+                            type:'a',
+                            index:1,
+                            suffix:'webp',
+                            length:3,
+                            class:'',
+                            style:''                           
+                        },
+                        {
+                            type:'c',
+                            index:2,
+                            suffix:'webp',
+                            length:6,
+                            class:'carousel1',
+                            style:'width:100%;height:250px;'                                                         
+                        },                                                                                                                                                                  
+                    ]
+                }                
             ]
 
             d_style_info = {

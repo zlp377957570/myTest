@@ -23,7 +23,7 @@
                {{details.p_name}}
             </div>
             <div class="detail_title">
-                <i>{{details.d_style_high_title}}</i><span>{{details.d_style_iconList_nameList}}</span>
+                <i>{{details.d_style_high_title}}</i><span>{{details.d_style_sub_title}}</span>
             </div>
             <div class="detail_price">
                 <span><i>￥</i>{{details.d_style_price}}</span>
@@ -37,7 +37,7 @@
                 <span>{{icons.val}}</span>
             </div>
         </div>
-        <div class="detail_promotion detail_options" v-show="pi.pi_gift.length>0">
+        <div class="detail_promotion detail_options" v-if="pi.pi_gift !== undefined && pi.pi_gift.length >0">
             <div class="name">促销</div>
             <div class="content">
                 <div v-for="(gifs,gi) in pi.pi_gift" :key="gi" @click="lookGiftList(gi)">
@@ -115,24 +115,27 @@
             <a href="#">更多评论</a>
         </div>    
         <div class="height_imgListALL">
-            <div class="height_infoAdd" @click="zengzhi=!zengzhi,zengzhiIndex=4">
-                <span>查看全部参数</span>
+            <div class="height_title" v-show="heightImgList.length>0">
+                <span v-for="(hList,hl) in heightImgList" @click="heightIndex=hl" :key="hl+'T'" :class="heightIndex===hl?'active':''">{{hList.name}}</span>
             </div>
-            <div  class="heightImgList">
-                <div :class="['itemImg',hImg.style_type]" v-for="(hImg,h) in heightImgList" :key="h">
-                    <img :src="hImg.d_h_src+hImg.d_h_name+'_'+hImg.d_h_id+'_'+hImg.is_carousel+hImg.img_type">
+            <div class="heightImgPage" v-for="(hList,hl) in heightImgList" :key="hl" v-show="heightIndex===hl">
+                <div class="heightImgList" v-for="(hBlock,hb) in hList.values" :key="hb">
+                    <div class="itemImg" v-if="hBlock.type==='a'">
+                        <img v-for="(himg,hi) in hBlock.length" :key="hi" :src="hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type+(hi+1)+'.'+hBlock.suffix" alt="">
+                    </div>
+                    <div class="height_infoAdd" v-if="hBlock.type==='b'" @click="lookAddHeightImgList(hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type,hBlock.length,'.'+hBlock.suffix)">
+                        <span>查看全部参数</span>
+                    </div>                    
+                    <div :class="['carousel',hBlock.class]" v-if="hBlock.type==='c'">
+                        <van-swipe :autoplay="5000" indicator-color="#eee">
+                            <van-swipe-item v-for="(himg,hi) in hBlock.length" :key="hi+'sss'">
+                                <img :style="hBlock.style" :src="hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type+(hi+1)+'.'+hBlock.suffix" alt="">
+                            </van-swipe-item>                                        
+                        </van-swipe>                        
+                    </div>
                 </div>
             </div>
-            <div class="carouselAll">
-                <div ref="carousel" :class="['carousel',heCarousel.name]" v-for="(heCarousel,hc) in heightCarouselAll" :key="hc">
-                    <van-swipe :autoplay="5000" indicator-color="#eee">
-                        <van-swipe-item v-for="(hcItem,hi) in heCarousel.value" :key="hi">
-                            <img :src="hcItem.d_h_src+hcItem.d_h_name+'_'+hcItem.d_h_id+'_'+hcItem.is_carousel+hcItem.img_type" alt="">
-                        </van-swipe-item>                                        
-                    </van-swipe>
-                </div>
-            </div>
-        </div> 
+        </div>         
         <div class="forYouRecommend">
             <div class="title">
                 <span>为你推荐</span>
@@ -207,7 +210,7 @@
                         <div class="compute">
                             <span @click="minus" :class="['minus',count<2?'disabled':'']">－</span>
                             <span class="val" :v-model="count">{{count}}</span>
-                            <span @click="add" class="add">＋</span>
+                            <span @click="add" :class="['add',count>=details.d_style_MaxCount?'disabled':'']">＋</span>
                         </div>
                     </div>
 
@@ -233,7 +236,7 @@
                 </div>                        
             </van-popup>            
         </div>                                                                  
-        <van-popup v-model="zengzhi"><div class="zengzhi"><van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/><img @click="zengzhi=!zengzhi" :src="zengzhiImgList[zengzhiIndex]" alt=""></div></van-popup>                  
+        <van-popup v-model="zengzhi"><div class="zengzhi"><van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/><img v-for="(zzimg,zi) in zengzhiImgList[zengzhiIndex]" :key="zi" @click="zengzhi=!zengzhi" :src="zzimg" alt=""></div></van-popup>                                 
         <div class="showPageList">
             <van-popup
             v-model="iconListShow"
@@ -324,25 +327,21 @@ export default {
             zengzhi:false,    
             zengzhiIndex:0,
             zengzhiImgList:[
-                "../../static/image/qita/意外保护.png",
-                "../../static/image/qita/服务条款.png",
-                "../../static/image/qita/常见问题.png",
-                "../../static/image/qita/延迟保修.png",
-                "../../static/image/qita/更多参数.png"
+                ["../../static/image/qita/意外保护.png"],
+                ["../../static/image/qita/服务条款.png"],
+                ["../../static/image/qita/常见问题.png"],
+                ["../../static/image/qita/延迟保修.png"],
+                []
             ],     
             iconListShow:false,
             giftListShow:false,
             serverListShow:false,
             isSeckill:true,
-            // server:false,
-            // accidented:false,
-            // brokened:false,
-            // warrantyed:false,
             scrollTop2:0,
             scrollBtn2:true,
             imgList_isMove:true,
             heightImgList: [],
-            heightCarouselAll:[],
+            heightIndex:0,
             iconAllList:[],
             inforList:{},
             staticList:{},
@@ -510,7 +509,7 @@ export default {
             this.count>1?this.count--:1
         },
         add(){//购买数量++
-            this.count++
+            this.count<this.details.d_style_MaxCount?this.count++:this.details.d_style_MaxCount
         },  
         closeShowPage(){//关闭下拉页面
             this.show = false
@@ -520,7 +519,17 @@ export default {
         },
         showPopup(){//展开下拉页面
             this.show = !this.show
-        },        
+        },      
+        lookAddHeightImgList(src,length,suffix){//查看更多参数
+            this.zengzhi=!this.zengzhi
+            this.zengzhiIndex = 4
+            let imgArr = []
+            for(let i=0;i<length;i++){
+                imgArr.push(src+(i+1)+suffix)
+            }
+            this.zengzhiImgList[this.zengzhiIndex] = imgArr
+
+        },  
         init(newItemInfo){
             let itemInfo = null
             if(newItemInfo){
@@ -539,6 +548,7 @@ export default {
                         console.log(response.data)
                         let values = response.data                      
                         this.details = values.detail
+                        this.count = this.details.d_style_MaxCount>this.count?this.count:this.details.d_style_MaxCount
                         this.version = values.detail.d_style_version
                         this.color = values.detail.d_style_color
                         this.name = values.detail.p_name
@@ -577,6 +587,8 @@ export default {
                     values.pi_gift= eval("("+pi_gift+")")
                     values.pi_set_meal= eval("("+pi_set_meal+")")
                     this.pi = values
+                    console.log(this.pi.pi_gift)
+                    console.log(this.pi.pi_gift.length)
                     
                 }).catch(error=>{
                 })
@@ -590,35 +602,36 @@ export default {
             let url3 = this.HOST + '/detail/getShoppingCountAll.php'                 
             if(itemName){
                 this.$axios.post(url,itemName).then(response=> {
-                    console.log(response.data)
+
                         this.staticList.reviewList = response.data.reviewList
                         this.staticList.recommend = response.data.recommend     
                         this.staticList.foryouRecommend = response.data.foryouRecommend     
-                        console.log(this.staticList)               
+                        // console.log(this.staticList)               
                 })
                 .catch(error=> {
                 });                     
                 this.$axios.post(url2,itemName).then(response=> {
-                    // console.log(response.data)
-                    this.heightImgList = response.data.imgList;
-                    this.heightCarouselAll = response.data.carouselAll;
-                    console.log(this.heightImgList)       
-                        this.$nextTick(()=>{
-                            let carousel =  this.$refs.carousel
-                            let imgBlock =  document.getElementsByClassName('style_carousel')
-                            let first_carouse =  document.getElementsByClassName('first_carouse')[0]
-                            let height_infoAdd =  document.getElementsByClassName('height_infoAdd')[0]
-                            // let div = `<div class="height_infoAdd"  @click.native="zengzhi=!zengzhi,zengzhiIndex=4"></div>`
-                            first_carouse.appendChild(height_infoAdd);         
-                            for(let s=0;s<carousel.length;s++){
-                                imgBlock[s].appendChild(carousel[s])              
-                            }
-                    })                
+                    console.log(response.data.heightAll)
+                    let values = response.data.heightAll;
+                    let heightList = values.heheight_list.replace(/\s*/g,"")
+                    // this.heightCarouselAll = response.data.carouselAll;
+                    this.heightImgList= eval("("+heightList+")")                    
+                    // console.log(this.heightImgList)       
+                    //     this.$nextTick(()=>{
+                    //         let carousel =  this.$refs.carousel
+                    //         let imgBlock =  document.getElementsByClassName('style_carousel')
+                    //         let first_carouse =  document.getElementsByClassName('first_carouse')[0]
+                    //         let height_infoAdd =  document.getElementsByClassName('height_infoAdd')[0]
+                    //         // let div = `<div class="height_infoAdd"  @click.native="zengzhi=!zengzhi,zengzhiIndex=4"></div>`
+                    //         first_carouse.appendChild(height_infoAdd);         
+                    //         for(let s=0;s<carousel.length;s++){
+                    //             imgBlock[s].appendChild(carousel[s])              
+                    //         }
+                    // })                
                 })
                 .catch(error=> {
                 });  
                 this.$axios.get(url3,{}).then(response=> {
-                    console.log(response.data.shoppingCountAll)
                     this.shoppingCountAll = response.data.shoppingCountAll
                 }).catch(error=>{
 
@@ -916,8 +929,9 @@ export default {
         .swipe_comment{
             margin-left: 10px;
             .block{
-            margin-left: 10px;
-            margin-top: 20px;
+                height: 234px;
+                margin-left: 10px;
+                margin-top: 20px;
                 text-align: left;
                 background: #fafafa;
                 padding: 20px;
@@ -995,7 +1009,7 @@ export default {
             }                        
         }
         .comment_all{
-            margin: 15px 0;
+            margin: 20px 0;
             a{
                 color:#4e72a5;
                 font-size: .33rem;
@@ -1013,61 +1027,53 @@ export default {
             }
         }
         .height_imgListALL{
+            width: 100%;
             position: relative;
             top:0;
             left: 0;
-            .height_infoAdd{
-                text-align: left;
-                margin:20px 0 20px 20px;
+            .height_title{
+                display: flex;
+                width: 100%;
+                justify-content: space-around;
+                font-size: .29rem;
+                border-top: 1px solid #ddd;
+                border-bottom: 1px solid #ddd;
                 span{
-                    font-size: .33rem;
-                    color: #4e72a5;
-                }
-                span:after{
-                    content: "\25BA";
-                    font-size: .2rem;
-                    vertical-align: middle;
                     display: inline-block;
-                    -webkit-transform: scale(.8,1.5);
-                    transform: scale(.8,1.5);
-                    font-family: Times New Roman;                    
+                    line-height: 50px;
+                }
+                .active{
+                    color:#f56600;
                 }
             }
-            .heightImgList{
-                .itemImg{
-                    &>img{
-                        width: 100%;
-                        height: 100%;                        
-                    }
-                }                                                        
+            .heightImgPage{
+                .heightImgList{   
+                    .height_infoAdd{
+                        text-align: left;
+                        margin:20px 0 20px 20px;
+                        span{
+                            font-size: .33rem;
+                            color: #4e72a5;
+                        }
+                        span:after{
+                            content: "\25BA";
+                            font-size: .2rem;
+                            vertical-align: middle;
+                            display: inline-block;
+                            -webkit-transform: scale(.8,1.5);
+                            transform: scale(.8,1.5);
+                            font-family: Times New Roman;                    
+                        }
+                    }                                     
+                    .itemImg{
+                        &>img{
+                            width: 100%;
+                            height: 100%;                        
+                        }
+                    }                                                        
+                }
             }
-            // .carouselAll{       
-                .carousel{
-                    img{
-                        width: 100%;
-                        height: 250px;
-                    }
-                }     
-                .carousel1{
-
-                }
-                .carousel2{
-
-                }
-                .carousel3{
-                    img{
-                        width: 82.5%;
-                        height: 230px;
-                    }
-                }
-                .carousel4{
-                    img{
-                        width: 100%;
-                        height: 310px;
-                    }
-                }                                                
-            // }
-        }
+        }        
         .forYouRecommend{
             padding: 70px 20px;
             background: #fafafa;
