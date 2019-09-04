@@ -49,17 +49,18 @@ if($name!=''){
         $val = $review[$i]["d_review_reply_val"];
         $imgListAll = explode('~~~',$img);
         $iconList = explode('~~~',$icon);
-        $nameList = explode('|',$names);
+        $nameList = explode('|',$names);//打撒评论
         $valList = explode('|',$val);
+
         $imgList = array_slice($imgListAll,0,3);
-        $names = array_slice($nameList,0,1);
+        $names = array_slice($nameList,0,1);//获取评论其中一条回复
         $val = array_slice($valList,0,1);
-        $nn = array_reduce($names,'nameOnlys');
+
+        $nn = array_reduce($names,'nameOnlys');//数组降维转成字符串
         $vv = array_reduce($val,'valOnlys');
         $review[$i]["d_review_reply_name"] = $nn;
         $review[$i]["d_review_reply_val"] = $vv;
-        // print_r($nn);
-        // print_r($vv);
+
         for($j=0;$j<count($nameList);$j++){
             $vals = new StdClass;
             $vals->icon = $iconList[$j];
@@ -81,7 +82,9 @@ if($name!=''){
         // var_dump("</br>");
         // var_dump("</br>");
         array_push($reviewList,$obj);
+
     }
+
     // print_r($reviewList);
     // print_r($review);
 

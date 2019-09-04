@@ -199,7 +199,30 @@ export default {
                     },                  
                 ]
             }                
-        ]        
+        ]     
+        
+        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+[{"name":"官方回复","src":"http://www.zlpones.com/imgs/mi/icon/小米.png","val":"越过山林，穿过薄雾，我愿意陪你等在湖海之畔，看月亮升起~感谢您对小米的支持 *★,°*:.☆(￣▽￣)/$:*.°★* "}]
+
+[{"name":"标配","values":[{"name":"小米9全网通版6GB+128GB","price":2599,"original_price":2999,"src":"https://i8.mifile.cn/a1/pms_1565339466.57314633.jpg","color":"全息幻彩紫","count":1,"checked":true}]}]
+
+
     }
 }
 </script>

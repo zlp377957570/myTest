@@ -29,14 +29,14 @@
             <div class="imgList" v-show="rbody.imgListAll.length>0" :style="rbody.imgListAll.length>4?'width:100%':'width:80%'">
                 <img class="imgs" @click="lookMaxPicAll(rbody.imgListAll)" v-show="img" :style="rbody.imgListAll.length<2?'width:auto;height:156px;margin:0 auto 10px;':''" v-for="(img,i) in rbody.imgListAll" :key="i" :src="img" alt="">
             </div>
-            <div class="reply" v-show="rbody.replyList[0].icon!==''">
+            <div class="reply" v-show="rbody.replyList && rbody.replyList.length>0 && rbody.replyList[0].src!==''">
                 <div class="itemReply" :index="re" :style="re<4?'display:block;':'display:none;'" v-for="(rep,re) in rbody.replyList" :key="re">
-                    <img :src="rep.icon" alt="">
+                    <img :src="rep.src" alt="">
                     <i>{{rep.name}}</i>
                     {{rep.val}}
                 </div>
-                <div class="replyMore" v-show="rbody.replyList[0].icon!==''">
-                    查看全部{{rbody.replyList.length}}条评论
+                <div class="replyMore" v-show="rbody.replyList && rbody.replyList.length>0 && rbody.replyList[0].src!==''">
+                    查看全部{{rbody.replyList?rbody.replyList.length:0}}条评论
                 </div>
             </div>
         </div>     
@@ -89,7 +89,7 @@ export default {
                 this.$axios.post(url,routerName).then(response=> {
                     this.reviewAllBody = response.data.reviewListAll
                     // console.log(response)
-                    // console.log(this.reviewAllBody)                    
+                    console.log(this.reviewAllBody)                    
                 }).catch(error=>{
                 })        
             }

@@ -1,11 +1,14 @@
 <template>
     <div ref="detail" class="product_detail" @scroll="paperScroll2($event)">  
         <div v-show="scrollTop2>=300" class="ceiling2"><a href="javascript:void(0);" @click="ceiling2"><img src="@/assets/image/icon/吸顶.png" alt=""></a></div>               
-        <div class="ceiling">
-            <a class="left" @click="routerGo"><van-icon name="arrow-left" /></a>
-            <a class="right"><van-icon name="ellipsis" /></a>
+        <div class="ceiling" :style="{pointerEvents:scrollTop2>=200?'auto':'none',boxShadow:scrollTop2<scrollIndexArr[2]?'0 1px 4px 2px rgba(0,0,0,'+(scrollTop2/500<=0.3?scrollTop2/500:0.3)+')':'',background:'rgba(255,255,255,'+(scrollTop2/500<=1?scrollTop2/500:1)+')'}">
+            <a class="left" @click="routerGo"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="arrow-left" /></a>
+            <div class="scrollTab" v-show="scrollTop2>=200">
+                <span :class="scrollIndex===st?'scrollTabActive':''" @click="selectScrollTab(scrollTab,st)" v-for="(scrollTab,st) in ['商品','评价','详情']" :key="st">{{scrollTab}}</span>
+            </div>
+            <a class="right"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="ellipsis" /></a>
         </div>
-        <div class="swipe_top">
+        <div class="swipe_top offsetTopIndex" data-scrollTab="scrollTab" @click="lookTopImg(inforList.imgsList)">
             <van-swipe :autoplay="10000">
                 <van-swipe-item v-for="(imgs,im) in inforList.imgsList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
             </van-swipe>               
@@ -64,11 +67,9 @@
             </div>
             <div class="btn"><i></i></div>
         </div>    
-        <div class="detail_options detail_option_item" @click="lookServerList">
+        <div class="detail_options detail_option_item" @click="lookPromiseList">
             <div class="service">    
-                <span><i>✔</i>小米自营</span>     
-                <span><i>✔</i>小米发货</span>     
-                <span><i>✔</i>7天无理由退货</span>     
+                <span v-show="pm<3" v-for="(prom,pm) in inforList.promise" :key="pm"><i>✔</i>{{prom.name}}</span>     
             </div>
             <div class="btn"><i></i></div>
         </div> 
@@ -82,7 +83,7 @@
                 </div>
             </div>
         </div> 
-        <div class="swipe_comment">
+        <div class="swipe_comment offsetTopIndex" data-scrollTab="scrollTab">
             <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="true" :width="320">
                 <van-swipe-item v-for="(revw,rv) in staticList.reviewList" :key="rv" @click="lookReview(revw)">
                     <div class="block">
@@ -104,8 +105,8 @@
                         <div class="imgList">
                             <img v-for="(img,i) in revw.imgList" :key="i" :src="img" alt="">
                         </div>
-                        <div class="reply">
-                            <i>{{revw.reviewOnly.d_review_reply_name}}</i>{{revw.reviewOnly.d_review_reply_val | sliceString}}
+                        <div class="reply" v-for="(reply,ry) in revw.replyList" :key="ry">
+                            <i>{{reply.name}}：</i>{{reply.val | sliceString}}
                         </div>
                     </div>
                 </van-swipe-item>
@@ -114,9 +115,9 @@
         <div class="comment_all" @click="lookReviewAll">
             <a href="#">更多评论</a>
         </div>    
-        <div class="height_imgListALL">
-            <div class="height_title" v-show="heightImgList.length>0">
-                <span v-for="(hList,hl) in heightImgList" @click="heightIndex=hl" :key="hl+'T'" :class="heightIndex===hl?'active':''">{{hList.name}}</span>
+        <div class="height_imgListALL offsetTopIndex" data-scrollTab="scrollTab">
+            <div :class="['height_title',scrollTop2>=scrollIndexArr[2]?'heightTitleFixed':'']" v-show="heightImgList.length>1">
+                <span v-for="(hList,hl) in heightImgList" @click="selectHeightImgPage(hl)" :key="hl+'T'" :class="heightIndex===hl?'active':''">{{hList.name}}</span>
             </div>
             <div class="heightImgPage" v-for="(hList,hl) in heightImgList" :key="hl" v-show="heightIndex===hl">
                 <div class="heightImgList" v-for="(hBlock,hb) in hList.values" :key="hb">
@@ -185,7 +186,7 @@
                 <div class="header">
                     <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
                     <div class="pro_info">
-                        <div class="src" @click="lookAllImg(inforList.imgsList)"><img :src="details.d_style_src" alt=""></div>
+                        <div class="src" @click="lookDetailImg(inforList.imgsList)"><img :src="details.d_style_src" alt=""></div>
                         <div class="info">
                             <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s></p>
                             <span class="title">{{details.p_info}}</span>
@@ -282,7 +283,7 @@
                 </div>     
             </van-popup>      
             <van-popup
-            v-model="serverListShow"
+            v-model="promiseListShow"
             round
             position="bottom"
             :style="{ height: '80%' }"
@@ -293,10 +294,10 @@
                         <span>服务说明</span>
                     </div>    
                     <div class="content">
-                        <div class="serverBlock" v-for="(serl,sl) in inforList.serviceList" :key="sl">
-                            <p class="name"><van-icon name="passed"/><span>{{serl.d_s_name}}</span></p>
+                        <div class="serverBlock" v-for="(prom,pr) in inforList.promise" :key="pr">
+                            <p class="name"><van-icon name="passed"/><span>{{prom.name}}</span></p>
                             <p class="val">
-                                {{serl.d_s_text}}
+                                {{prom.val}}
                             </p>
                         </div>
                     </div>
@@ -318,9 +319,9 @@ export default {
         return{
             goShoppingList:[],
             show:false,
-            imgLsitShow:false,
             index: 0,
             giftList:[],
+            imgLsitShow:false,
             images: [
             ],   
             zengzhiColor:'color:#ddd',
@@ -335,8 +336,10 @@ export default {
             ],     
             iconListShow:false,
             giftListShow:false,
-            serverListShow:false,
+            promiseListShow:false,
             isSeckill:true,
+            scrollIndexArr:[],
+            scrollIndex:0,
             scrollTop2:0,
             scrollBtn2:true,
             imgList_isMove:true,
@@ -384,13 +387,58 @@ export default {
     },
     mounted(){   
         this.init()
-        this.initStaticData()           
+        this.initStaticData()     
+        this.getOffsetTop()      
     },
     computed:{
       
     },    
-    methods:{        
-        selectServer(a,ai,b,bi){
+    methods:{      
+        ceiling2(){//页面滚动吸顶/吸底按钮
+            var self = this
+            var detail = self.$refs.detail
+            var scrollHeight = detail.scrollHeight
+            if(this.scrollTop2<scrollHeight/2){
+                detail.scrollTop = scrollHeight
+            }else{
+
+                detail.scrollTop = 0
+            }            
+            self.scrollBtn2 = !self.scrollBtn2;
+            
+        },    
+        paperScroll2(e){//页面滚动事件
+            e.target!==undefined?e.stopPropagation():''
+            // e.stopPropagation()
+            let self = this
+            let $this = e.srcElement || e
+            // console.log($this.scrollTop)
+            // console.log($this.scrollHeight)
+            self.scrollTop2 =  $this.scrollTop
+        },      
+        getOffsetTop(){//获得滚动高度
+            // let doms = document.querySelectorAll('[data-scrollTab="scrollTab"]')
+            let doms = document.getElementsByClassName('offsetTopIndex')
+            setTimeout(() => {
+            if(doms){
+                for(let i=0;i<doms.length;i++){
+                    let ot = doms[i].offsetTop
+                    let oh = doms[i].offsetHeight
+                    this.scrollIndexArr.push(ot)
+                }       
+            }                
+            }, 1000);
+        },  
+        selectScrollTab(tab,t){//点击滚动到页面楼层
+            let dom = this.$refs.detail
+            dom.scrollTop = this.scrollIndexArr[t]>0?this.scrollIndexArr[t]-50:this.scrollIndexArr[t]
+            this.scrollIndex = t
+        },
+        selectHeightImgPage(hl){//选择商品详情列表
+            this.$refs.detail.scrollTop = this.scrollIndexArr[2]
+            this.heightIndex = hl
+        },
+        selectServer(a,ai,b,bi){//选择服务
             let adom = this.pi.pi_server[ai].values
             let ale = adom.length
             let s = 0
@@ -451,23 +499,27 @@ export default {
             })             
 
         },      
-        onChange(index) {
+        onChange(index) {//弹出图片轮播下标
             this.index = index;
-        },        
-        lookAllImg(imgList){
+        },    
+        lookTopImg(imgList){//点击顶部轮播图放大
+            this.images = imgList
+            this.imgLsitShow = !this.imgLsitShow            
+        },            
+        lookDetailImg(imgList){//点击弹出框中商品详情左上角图片
             this.images = imgList
             this.imgLsitShow = !this.imgLsitShow            
         },
-        lookReviewAll(){
+        lookReviewAll(){//点击查看更多评论
             ls.setItem('reviewType','B')                   
             this.$router.push({name:'reviewAll',params:this.name})
         },
-        lookReview(data){
+        lookReview(data){//点击查看单条评论
             ls.setItem('reviewItem',data)
             ls.setItem('reviewType','C')       
             this.$router.push({name:'review',params:data})
         },
-        lookIconList(){
+        lookIconList(){//点击查看设备参数信息表
             let iconInfo = this.name+' '+this.version
             let url = this.HOST + '/detail/getDetailIconAllList.php'               
             this.iconListShow = true
@@ -480,15 +532,15 @@ export default {
                 })
             }
         },
-        lookGiftList(gi){
+        lookGiftList(gi){//点击查看赠品列表
             console.log(gi)
             if(this.pi.pi_gift[gi]){
                 this.giftList = this.pi.pi_gift[gi].values
             }
             this.giftListShow = true
         },
-        lookServerList(){
-            this.serverListShow = true
+        lookPromiseList(){//点击查看承诺列表
+            this.promiseListShow = true
         },        
         overTime(){//倒计时结束
             this.isSeckill = false
@@ -515,7 +567,7 @@ export default {
             this.show = false
             this.iconListShow = false
             this.giftListShow = false
-            this.serverListShow = false
+            this.promiseListShow = false
         },
         showPopup(){//展开下拉页面
             this.show = !this.show
@@ -581,27 +633,26 @@ export default {
                     let pi_choose = values.pi_choose.replace(/\s*/g,"")
                     let pi_gift = values.pi_gift.replace(/\s*/g,"")
                     let pi_set_meal = values.pi_set_meal.replace(/\s*/g,"")
-                    // let obj = str.replace(/\s*/g,"")
+
                     values.pi_server= eval("("+pi_server+")")
                     values.pi_choose= eval("("+pi_choose+")")
                     values.pi_gift= eval("("+pi_gift+")")
                     values.pi_set_meal= eval("("+pi_set_meal+")")
                     this.pi = values
-                    console.log(this.pi.pi_gift)
-                    console.log(this.pi.pi_gift.length)
-                    
+
                 }).catch(error=>{
                 })
             }               
         },
         initStaticData(){
             let itemName = ls.getItem('name')
-            console.log(itemName)
+            // console.log(itemName)
             let url = this.HOST + '/detail/getDetailReview.php'                 
             let url2 = this.HOST + '/detail/getDetailHeightImgs.php'                 
             let url3 = this.HOST + '/detail/getShoppingCountAll.php'                 
             if(itemName){
                 this.$axios.post(url,itemName).then(response=> {
+                        console.log(response.data)
 
                         this.staticList.reviewList = response.data.reviewList
                         this.staticList.recommend = response.data.recommend     
@@ -611,23 +662,9 @@ export default {
                 .catch(error=> {
                 });                     
                 this.$axios.post(url2,itemName).then(response=> {
-                    console.log(response.data.heightAll)
                     let values = response.data.heightAll;
                     let heightList = values.heheight_list.replace(/\s*/g,"")
-                    // this.heightCarouselAll = response.data.carouselAll;
-                    this.heightImgList= eval("("+heightList+")")                    
-                    // console.log(this.heightImgList)       
-                    //     this.$nextTick(()=>{
-                    //         let carousel =  this.$refs.carousel
-                    //         let imgBlock =  document.getElementsByClassName('style_carousel')
-                    //         let first_carouse =  document.getElementsByClassName('first_carouse')[0]
-                    //         let height_infoAdd =  document.getElementsByClassName('height_infoAdd')[0]
-                    //         // let div = `<div class="height_infoAdd"  @click.native="zengzhi=!zengzhi,zengzhiIndex=4"></div>`
-                    //         first_carouse.appendChild(height_infoAdd);         
-                    //         for(let s=0;s<carousel.length;s++){
-                    //             imgBlock[s].appendChild(carousel[s])              
-                    //         }
-                    // })                
+                    this.heightImgList= eval("("+heightList+")")                                   
                 })
                 .catch(error=> {
                 });  
@@ -637,26 +674,6 @@ export default {
 
                 })              
             }
-        },
-        ceiling2(){
-            var self = this
-            var detail = self.$refs.detail
-            var scrollHeight = detail.scrollHeight
-            if(self.scrollBtn2===true){
-                detail.scrollTop = scrollHeight
-            }else{
-
-                detail.scrollTop = 0
-            }
-            self.scrollBtn2 = !self.scrollBtn2;
-            
-        },    
-        paperScroll2(e){
-            e.target!==undefined?e.stopPropagation():''
-            // e.stopPropagation()
-            let self = this
-            let $this = e.srcElement || e
-            self.scrollTop2 =  $this.scrollTop
         },            
         imgListmove(){
             this.imgList_isMove = false
@@ -675,7 +692,7 @@ export default {
     .product_detail{
         width: 7.5rem;
         margin: 0 auto;
-        height: 2000px;
+        height: 100%;
         overflow-x: hidden;
         // overflow-y: scroll;
         font-size: .24rem;                
@@ -686,27 +703,64 @@ export default {
             z-index: 1000;
             top:0px;
             width: 100%;
+            height: 50px;
             display: flex;
-            padding: 10px 10px;
+            padding: 10px 15px;
+            align-items: center;
             justify-content: space-between;
+            .scrollTab{
+                width: 40%;
+                transition: .5s;
+                display: flex;
+                justify-content: space-between;
+                span{
+                    font-size: .25rem;
+                    position: relative;
+
+                }
+                .scrollTabActive{
+                    color: #f56600;
+                }
+                .scrollTabActive:before{
+                    content: '';
+                    position: absolute;
+                    width: 100%;
+                    bottom: -5px;
+                    border-bottom: 2px solid #f56600;
+                }
+            }
             a{
                 i{
-                    width: 32px;
-                    height: 31px;
+                    transition: .5s;
+                    vertical-align: bottom;
+                    width: 28px;
+                    height: 27px;
+                    display: inline-block;
                     overflow: hidden;
-                    background: rgba(0, 0, 0, .65);
+                    background: rgba(0, 0, 0, .6);
                     opacity: .9;
-                    font-size: .36rem;
-                    font-weight: 100;
-                    padding-top: 6px;
+                    font-size: .32rem;
                     color: #fff;
                     border-radius: 50%;
                 }
+                i::before{
+                    font-weight: 100;
+                    vertical-align: middle;      
+                }
+                .topBtnHeheight{
+                    background: transparent;
+                    color: #000;
+                }
+            }
+            .left{
+                i::before{
+                    padding-right: 2px;
+                    padding-top: 2px;
+                }
             }
             .right{
-                i{
-                    padding-top: 4px;                  
-                    font-size: .48rem;        
+                i{                 
+                    font-size: .38rem;        
                 }
             }
         }
@@ -1015,15 +1069,15 @@ export default {
                 font-size: .33rem;
             }
             a:after{
-                content: "\25BA";
-                font-size: 3.2px;
-                font-size: .2rem;
-                vertical-align: 2px;
-                padding-left: 2px;
                 display: inline-block;
-                -webkit-transform: scale(.8,1.5);
-                transform: scale(.8,1.5);
-                font-family: Times New Roman;
+                content: '';
+                vertical-align: middle;
+                margin-left: 2px;
+                transform: rotate(135deg);
+                border-top:3.5px solid #4e72a5;
+                border-left:3.5px solid #4e72a5;
+                border-bottom:3.5px solid transparent;
+                border-right: 3.5px solid transparent;
             }
         }
         .height_imgListALL{
@@ -1036,15 +1090,24 @@ export default {
                 width: 100%;
                 justify-content: space-around;
                 font-size: .29rem;
+                transition: .3s;
                 border-top: 1px solid #ddd;
                 border-bottom: 1px solid #ddd;
                 span{
                     display: inline-block;
-                    line-height: 50px;
+                    line-height: 48px;
                 }
                 .active{
                     color:#f56600;
                 }
+            }
+            .heightTitleFixed{
+                position: fixed;
+                top:50px;
+                z-index: 1;
+                background: #fff;
+                border-top: 0px solid #ddd;                
+                box-shadow: 0 1px 4px 2px rgba(0, 0, 0, .2);
             }
             .heightImgPage{
                 .heightImgList{   

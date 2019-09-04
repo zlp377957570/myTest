@@ -11,6 +11,121 @@ export default {
     },
     created(){
         //分期公式  价格* 费率/分期数    2899*0.0222/3 = 21.45元
+            // review = [
+            //     {
+            //         p_name:'小米9',
+            //         name:'シ华灯初上ミ旧人可安°',
+            //         src:'https://s1.mi-img.com/mfsv2/avatar/fdsc3/p01Byfmf3rk9/6NbsupoljsIpDD.jpg',
+            //         time:'2019-06-21',
+            //         zan:'65',
+            //         val:'画质太清晰了，玩和平精英下面的书一目了然',
+            //         imgList:[
+            //             'https://i1.mifile.cn/a2/1561084401_2972019_s750_1000wh!240x241.jpg'
+            //         ],
+            //         values:[
+            //             {
+            //                 name:'官方回复',
+            //                 src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+            //                 val:'越过山林，穿过薄雾，我愿意陪你等在湖海之畔，看月亮升起~感谢您对小米的支持 *★,°*:.☆(￣▽￣)/$:*.°★* '
+            //             }
+            //         ]
+            //     }
+            // ]
+            review = [
+                {
+                    name:'官方回复',
+                    src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+                    val:'越过山林，穿过薄雾，我愿意陪你等在湖海之畔，看月亮升起~感谢您对小米的支持 *★,°*:.☆(￣▽￣)/$:*.°★* '
+                }
+            ] 
+            review = [
+                {
+                    name:'官方回复',
+                    src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+                    val:'以前喜欢一个女生她对我说，她喜欢会打游戏的男生，于是我发愤图强苦练游戏，过了两个月，我把那女孩忘得一-干二净了~感谢您对小米的支持。'
+                }
+            ]
+            review = [
+                {
+                    name:'官方回复',
+                    src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+                    val:'啊啊啊啊，好可爱啊，这是要骗大汉去你家看猫猫吗？好的，你成功了~感谢您对小米的支持。  '
+                }
+            ]
+            review = [
+                {
+                    name:'官方回复',
+                    src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+                    val:'只有遇到真心喜爱的东西，才会越看越好看，越看越想看，米是我手心里的宝(づ｡◕ᴗᴗ◕｡)づ~感谢您对小米的支持。'
+                }
+            ]
+
+            review = [
+                {
+                    name:'官方回复',
+                    src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+                    val:'性能，我所欲也，颜值，亦我所欲也，二者均可得兼，小米手机是也。感谢您对小米的支持~'
+                },
+                {
+                    name:'De Zhi⚡',
+                    src:'https://s1.mi-img.com/mfsv2/avatar/fdsc3/p01R2cVz03HI/4fQsiFskB9perv.jpg',
+                    val:'宿迁啊'
+                },
+                {
+                    name:'孤独的马哥',
+                    src:'https://s1.mi-img.com/mfsv2/avatar/fdsc3/p01A63u6StK9/XUhMrjUhk8eJS8.jpg',
+                    val:'贪心而又不失去个性的客服'
+                },    
+                {
+                    name:'熊大',
+                    src:'https://s1.mi-img.com/mfsv2/avatar/s010/p01ogFKafc5u/JgS8yU77gA3HvM.jpg',
+                    val:'俺大宿迁'
+                }                                            
+            ]         
+            review = [
+                {
+                    name:'官方回复',
+                    src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+                    val:'青春无你，何以为青春！记录你的美~感谢您对小米的支持'
+                },
+                {
+                    name:'美丽天使',
+                    src:'https://s1.mi-img.com/mfsv2/avatar/fdsc3/p01cbLI4iWkn/RscnGIve4NJOta.jpg',
+                    val:'跟我一样，我也很喜欢小米手机'
+                }
+            ]  
+            review = [
+                {
+                    name:'官方回复',
+                    src:'http://www.zlpones.com/imgs/mi/icon/小米.png',
+                    val:'从小米4 换小米note2又换到小米6现在又到米9，你没发现你的收集还差了最重要的一个吗？那就是—小米客服。抠脚蜀黍客服愿意做你的优乐美，你愿意吗？感谢您对小米的支持。'
+                },
+            ]                                      
+            
+
+
+
+
+
+            review = [
+                {
+                    name:'',
+                    src:'',
+                    val:''
+                },
+            ]            
+
+
+
+
+
+
+
+
+
+
+
+
             installment = [
                 {
                     name:'小米分期',
@@ -484,13 +599,96 @@ export default {
                 }                
             ]
 
-            d_style_info = {
-                model:'',
-                version:'',
-                color:'',
-                size:''
-            }
- "小米9 全网通 8+64G 白色"
+    heheight_list2 = [
+                {
+                    name:'商品介绍',
+                    type:'a',
+                    p_name:'小米9',
+                    src:'http://www.zlpones.com/imgs/mi/height_imgList/',
+                    values:[
+                        {
+                            type:'a',
+                            index:1,
+                            suffix:'webp',
+                            length:3,
+                            class:'',
+                            style:''                           
+                        },
+                        {
+                            type:'b',
+                            index:2,
+                            suffix:'webp',
+                            length:13,
+                            class:'',
+                            style:''                         
+                        },
+                        {
+                            type:'c',
+                            index:3,
+                            suffix:'webp',
+                            length:6,
+                            class:'carousel1',
+                            style:'width:100%;height:250px;'                                                         
+                        },    
+                        {
+                            type:'a',
+                            index:4,
+                            suffix:'webp',
+                            length:7,
+                            class:'',
+                            style:''                         
+                        }, 
+                        {
+                            type:'c',
+                            index:5,
+                            suffix:'webp',
+                            length:5,
+                            class:'carousel2',                            
+                            style:'width:100%;height:230px;'                           
+                        },     
+                        {
+                            type:'a',
+                            index:6,
+                            suffix:'webp',
+                            length:5,
+                            class:'',
+                            style:''                        
+                        },               
+                        {
+                            type:'c',
+                            index:7,
+                            suffix:'webp',
+                            length:3,
+                            class:'carousel3',                              
+                            style:'width:85%;height:230px;'                           
+                        },    
+                        {
+                            type:'a',
+                            index:8,
+                            suffix:'webp',
+                            length:11,
+                            class:'',
+                            style:''                         
+                        },  
+                        {
+                            type:'c',
+                            index:9,
+                            suffix:'webp',
+                            length:3,
+                            class:'carousel4',                              
+                            style:'width:90%;height:310px;'                           
+                        },         
+                        {
+                            type:'a',
+                            index:10,
+                            suffix:'webp',
+                            length:3,
+                            class:'',
+                            style:''                         
+                        },                                                                                                                                                               
+                    ]
+                }               
+            ]
     }
 }
 </script>

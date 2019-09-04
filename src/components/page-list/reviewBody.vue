@@ -3,7 +3,7 @@
         <div class="block">
             <div class="info">
                 <span class="icon">
-                    <img :src="reviewBody.reviewOnly.d_review_icon" alt="">
+                    <img :src="reviewBody.reviewOnly && reviewBody.reviewOnly.d_review_icon" alt="">
                 </span>
                 <span class="name">
                     <p>{{reviewBody.reviewOnly.d_review_name}}</p>
@@ -16,12 +16,12 @@
             <div class="text">
                 {{reviewBody.reviewOnly.d_review_text | lineFeed}}
             </div>
-            <div class="imgList" :style="reviewBody.imgListAll.length>4?'width:100%':'width:80%'">
-                <img @click="lookMaxPic(reviewBody.imgListAll)" :style="reviewBody.imgListAll.length<2?'width:auto;height:156px;margin:0 auto 10px;':''" v-for="(img,i) in reviewBody.imgListAll" :key="i" :src="img" alt="">
+            <div class="imgList" :style="reviewBody.imgListAll && reviewBody.imgListAll.length>4?'width:100%':'width:80%'">
+                <img @click="lookMaxPic(reviewBody.imgListAll)" :style="reviewBody.imgListAll && reviewBody.imgListAll.length<2?'width:auto;height:156px;margin:0 auto 10px;':''" v-for="(img,i) in reviewBody.imgListAll" :key="i" :src="img" alt="">
             </div>
             <div class="reply">
                 <div class="itemReply" v-for="(rep,re) in reviewBody.replyList" :key="re">
-                    <img :src="rep.icon" alt="">
+                    <img :src="rep.src" alt="">
                     <i>{{rep.name}}</i>
                     {{rep.val}}
                 </div>
@@ -43,6 +43,7 @@
 <script>
 import ls from '../../assets/js/ls.js'
 import { ImagePreview } from 'vant';
+import { setTimeout } from 'timers';
 export default {
     name:'reviewBody',
     props:['reviewVal'],
@@ -62,12 +63,14 @@ export default {
 　　　　}
 　　},     
     created(){
-        // ls.setItem('reviewItem',this.reviewVal)
-        this.reviewBody = ls.getItem('reviewItem')
+        if(this.reviewVal){
+            ls.setItem('reviewItem',this.reviewVal)
+            this.reviewBody = ls.getItem('reviewItem')
+        }
+
     },
     mounted(){
-        // console.log(this.reviewBody)
-        // console.log(ls.getItem('reviewItem'))
+
     },
     methods:{
         onChange(index) {

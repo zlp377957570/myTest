@@ -14,45 +14,16 @@ if($name!=''){
     $result = mysqli_query($conn,$sql);
     $review = mysqli_fetch_all($result,1);
 
-    $reviewList = array();
-    function nameOnlys(&$nn, $record) {
-
-        // echo '********';
-        // return $ids . ',' . $record['id'];
-        return $record;
-    };
-    function valOnlys(&$vv, $record) {
-        return $record;
-    };   
+    $reviewList = array();  
     for($i=0;$i<count($review);$i++){
         $obj = new StdClass;
-
-       $reply = array();
         $img = $review[$i]["d_review_imgList"];
-        $icon = $review[$i]["d_review_reply_icon"];
-        $names = $review[$i]["d_review_reply_name"];
-        $val = $review[$i]["d_review_reply_val"];
         $imgListAll = explode('~~~',$img);
-        $iconList = explode('~~~',$icon);
-        $nameList = explode('|',$names);
-        $valList = explode('|',$val);
-        $names = array_slice($nameList,0,1);
-        $val = array_slice($valList,0,1);
-        $nn = array_reduce($names,'nameOnlys');
-        $vv = array_reduce($val,'valOnlys');
-        $review[$i]["d_review_reply_name"] = $nn;
-        $review[$i]["d_review_reply_val"] = $vv;
 
-        for($j=0;$j<count($nameList);$j++){
-            $vals = new StdClass;
-            $vals->icon = $iconList[$j];
-            $vals->name = $nameList[$j];
-            $vals->val = $valList[$j];
-            array_push($reply,$vals);
-        }
+        $review[$i]["d_review_replyList"] = json_decode($review[$i]["d_review_replyList"],true);
         $obj->reviewOnly = $review[$i];
         $obj->imgListAll = $imgListAll;
-        $obj->replyList = $reply;
+        $obj->replyList = $review[$i]["d_review_replyList"];
 
         array_push($reviewList,$obj);
     }
