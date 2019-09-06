@@ -5,7 +5,7 @@
             <div class="block" ref="block" v-for="(item,is) in list" :key="is">
                 <div :class="`line`+' '+item.p_line"></div>
                 <div :class="`items`+' '+item.style_type" >
-                    <a ref="val" @click.stop="routerSelect(val.p_info,val.p_name)" v-for="(val,vs) in item.values" :key="vs">
+                    <a ref="val" @click.stop="routerSelect(val.p_info,val.p_name,val.p_set_meal)" v-for="(val,vs) in item.values" :key="vs">
                         <img ref="imgs" isLoad="false" :style="val.img_style" :data-src="val.p_src+val.p_name+val.img_type" 
                         src="http://www.zlpones.com/imgs/mi/img/默认背景.png" alt="">
                         <div class="info" v-show="val.p_title!==''">
@@ -77,14 +77,17 @@ export default {
         // }
     },
     methods:{
-        routerSelect(info,name){
-            name = '小米9'
-            info = '小米9 全网通版 6GB+128GB 全息幻彩紫'
+        routerSelect(info,name,set_meal){
+            // name = '小米9'
+            // info = '小米9 全网通版 6GB+128GB 全息幻彩紫'
+            console.log(name)
             console.log(info)
+            console.log(set_meal)
             if(info!==''){
-                this.$router.push({name:'product_detail',params:{info:info,name:name}})
+                this.$router.push({name:'product_detail',params:{info:info,name:name,set_meal:set_meal}})
                 ls.setItem('info',info)
                 ls.setItem('name',name)
+                ls.setItem('set_meal',set_meal)
                 ls.setItem('routerName','product_detail')
 
             }else{

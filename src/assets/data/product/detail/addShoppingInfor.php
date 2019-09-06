@@ -30,12 +30,28 @@ $sql = "select sum(si_count) from mimi_shopping_info where si_info = '$p_info'";
 $result=mysqli_query($conn,$sql);
 $val = mysqli_fetch_row($result)[0];
 // print_r($val);
-if($val>=$only["d_style_MaxCount"]){
+// print_r($val);
+// print_r($val);
+// print_r($val);
+// print_r($val);
+// print_r($val);
+// print_r($val);
+// print_r($val);
+if($count+$val>$only["d_style_MaxCount"]){
     $output["hint"] = '最大数量';
+    // print_r('aaaaaaaaaaaaaaaaaaaaaaaa');
 }else{
-    $sql="insert into mimi_shopping_info values (null,'$p_info','$p_only','$pi_set_meal','$pi_server','$pi_gift','$pi_choose','$count','1')";
-    mysqli_query($conn,$sql);
-    $output["hint"] = 'ok';
+    if($val){
+        $vals = $val+$count;
+        $sql="UPDATE mimi_shopping_info set si_count = '$vals' where si_info = '$p_info'";
+        mysqli_query($conn,$sql);
+        // print_r('ssssssssssssssssssssssss');        
+    }else{
+        $sql="insert into mimi_shopping_info values (null,'$p_info','$p_only','$pi_set_meal','$pi_server','$pi_gift','$pi_choose','$count','1')";
+        mysqli_query($conn,$sql);
+        // print_r('vvvvvvvvvvvvvvvvvvvvvvvv');            
+    }
+    $output["hint"] = 'ok';    
 }
 $sql = "select sum(si_count) from mimi_shopping_info";
 $result=mysqli_query($conn,$sql);

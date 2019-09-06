@@ -10,7 +10,7 @@ $getData = file_get_contents('php://input');
 // $getData = "小米9 全网通版 8GB+256GB 全息幻彩紫";
 // $getData = "小米9 全网通版 6GB+128GB";
 // $getData = "小米9 全网通版 8GB+128GB 全息幻彩紫";
-$getDataList = explode(" ",$getData);
+$getDataList = explode(",",$getData);
 // print_r($getDataList);
 $oname = $getDataList[0];
 $omodel = $getDataList[1];
@@ -40,7 +40,7 @@ if($getData!=''){
 
     // 获取手机图片组
     $imgs = $only["d_style_imgs"];
-    $imgsList = explode("~~~",$imgs);
+    $imgsList = json_decode($imgs,true);
 
     // //获取赠品组
     // $gifts = $only["d_style_is_gift"];

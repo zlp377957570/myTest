@@ -116,7 +116,7 @@
                                     <span>已符合满赠条件，可选以下任一赠品</span>
                                 </div>    
                                 <div class="content">
-                                    <div class="giftBlock" v-for="(gift,gf) in cpl[sIndex].si_gift" :key="gf" v-show="gf===giftIndex">
+                                    <div class="giftBlock" v-for="(gift,gf) in cpl[sIndex].si_gift" :key="gf" v-show="gift && gf===giftIndex">
                                         <div class="block" v-for="(gis,gs) in gift.values" :key="gs" @click="selectGift(sp,gf,gs,gis.checked)">
                                             <div class="src">
                                                 <img :src="gis.src" alt="">
@@ -195,11 +195,11 @@ export default {
     }, 
     created(){
         this.init()
-    },
-    mounted(){
         setTimeout(()=>{//暂时使用timeout,得用pormeise优化
             this.sumAllChecked()    
         },500)
+    },
+    mounted(){
     },
     updated(){
     },
@@ -249,6 +249,7 @@ export default {
             this.sumAllChecked()             
         },
         selectGift(sp,gf,gs,checked){//选择赠品
+            sp = this.sIndex
             let adom = this.cpl[sp].si_gift[gf].values
             let ale = adom.length            
             if(ale && ale>1){
@@ -373,7 +374,7 @@ export default {
             this.sumAllChecked()               
         },
         sumAllChecked(){//全部商品选中
-            let obj = this.sl
+            let obj = this.sl      
             let n = 0
             let p = 0
             let arr = []
@@ -385,10 +386,11 @@ export default {
                 if(obj[a].si_checked){
                     arr.push(Number(obj[a].si_count))
                     for(let b in obj[a]){
-                        if(obj[a][b].constructor === Array && obj[a][b].length>0){//同上      
+                        if(obj[a][b].constructor === Array || Object && obj[a][b].length>0){//同上      
                             for(let k in obj[a][b]){
                                 for(let j in obj[a][b][k].values){
                                     if(obj[a][b][k].values[j].checked){
+                                        obj[a][b][k].count = obj[a].si_count
                                         num.push(1)
                                         price.push(obj[a][b][k].values[j].price)
                                     }
@@ -402,6 +404,9 @@ export default {
                 }
             } 
             if(arr.length>0){
+                // console.log(arr)
+                // console.log(sum)
+                // console.log(sumPrice)
                 for(let v in arr){
                     for(let s in sum[v]){
                         n += arr[v]*sum[v][s]
@@ -416,6 +421,7 @@ export default {
             }      
         },          
         minusCount(sp){//购买数量--
+        // console.log(sp)
             this.sl[sp].si_count>1?this.sl[sp].si_count--:1
             let count = this.sl[sp].si_count
             let obj = this.sl[sp]
@@ -448,8 +454,9 @@ export default {
         init(){
             let url = this.HOST + '/detail/goShopping.php'
             this.$axios.post(url,{}).then(response=> {
-                console.log(response.data)
+                // console.log(response.data)
                 this.sl = response.data.shoppingList    
+                // console.log(this.sl)
                 this.cpl = JSON.parse(JSON.stringify(response.data.shoppingList))      
             }).catch(error=>{
 
@@ -469,8 +476,11 @@ export default {
             width: 100%;
             font-size: .25rem;         
             .shopp{
-                background: red;
-                height: 1000px;
+                // background: red;
+                // height: 100%;
+                height: 2000px;
+                margin-bottom: 50px;
+                // overflow-y: auto;
                 .content:not(:first-child){
                     border-top: 1px solid #eee;
                 }

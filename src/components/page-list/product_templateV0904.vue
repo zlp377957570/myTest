@@ -16,10 +16,10 @@ export default {
             //         "p_name":"小米9",
             //         "name":"シ华灯初上ミ旧人可安°",
             //         "src":"https://s1.mi-img.com/mfsv2/avatar/fdsc3/p01Byfmf3rk9/6NbsupoljsIpDD.jpg",
-            //         time:"2019-06-21",
-            //         zan:"65",
+            //         "time":"2019-06-21",
+            //         "zan":"65",
             //         "val":"画质太清晰了，玩和平精英下面的书一目了然",
-            //         imgList:[
+            //         "imgList":[
             //             "https://i1.mifile.cn/a2/1561084401_2972019_s750_1000wh!240x241.jpg"
             //         ],
             //         "values":[
@@ -125,7 +125,7 @@ export default {
 
 
 
-
+        //分期公式  价格* 费率/分期数    2899*0.0222/3 = 21.45元
             installment = [
                 {
                     "name":"小米分期",
@@ -133,7 +133,7 @@ export default {
                     "values":[
                         {
                             "name":3,
-                            "rate":0.022,
+                            "rate":0.0222,
                             "checked":true,
                             "val":true
                         },
@@ -271,137 +271,98 @@ export default {
 
             set_meal = [
                 {
-                    "name":"标配",
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 6GB+128GB",
-                            "price":2599,
-                            "original_price":2999,                                  
-                            "src":"https://i8.mifile.cn/a1/pms_1550642240.48638886.jpg",
-                            "color":"全息幻彩蓝",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
-            ]
-            set_meal = [
-                {
-                    "name":"标配",                    
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 6GB+128GB",
-                            "price":2599,
-                            "original_price":2999,                                    
-                            "src":"https://i8.mifile.cn/a1/pms_1565339466.57314633.jpg",
-                            "color":"全息幻彩紫",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
+                    "name":"小米9 全网通版 6GB+128GB 深空灰",
+                    "price":2599,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642167.03594225.jpg",
+                    "count":1,
+                    "index":0,                            
+                    "checked":true,
+                    "valList":[]                         
+                }                    
             ]
 
             set_meal = [
                 {
-                    "name":"标配",                    
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 6GB+128GB",
-                            "price":2599,
-                            "original_price":2999,                                     
-                            "src":"https://i8.mifile.cn/a1/pms_1565339450.93196576.jpg",
-                            "color":"深空灰",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
+                    "name":"小米9 全网通版 6GB+128GB 全息幻彩紫",
+                    "price":2599,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1565339466.57314633.jpg",
+                    "count":1,
+                    "index":0,                            
+                    "checked":true,
+                    "valList":[]                         
+                }                    
+            ]
+
+
+            set_meal = [
+                {
+                    "name":"小米9 全网通版 6GB+128GB 全息幻彩蓝",
+                    "price":2599,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642182.7527088.jpg",
+                    "count":1,
+                    "index":0,                            
+                    "checked":true,
+                    "valList":[]                         
+                }                    
+            ]
+
+
+            set_meal = [
+                {
+                    "name":"小米9 全网通版 8GB+128GB 深空灰",
+                    "price":2999,
+                    "original_price":3299,                                      
+                    "src":"https://i8.mifile.cn/a1/pms_1550642167.03594225.jpg",
+                    "count":1,
+                    "index":0,                            
+                    "checked":true,
+                    "valList":[]                         
+                }                    
             ]
 
             set_meal = [
                 {
-                    "name":"标配",                    
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 8GB+128GB",
-                            "price":2999,
-                            "original_price":3299,                                  
-                            "src":"https://i8.mifile.cn/a1/pms_1550642240.48638886.jpg",
-                            "color":"全息幻彩蓝",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
-            ]
-            set_meal = [
-                {
-                    "name":"标配",                    
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 8GB+128GB",
-                            "price":2999,
-                            "original_price":3299,                                  
-                            "src":"https://i8.mifile.cn/a1/pms_1565339466.57314633.jpg",
-                            "color":"全息幻彩紫",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
+                    "name":"小米9 全网通版 8GB+128GB 全息幻彩紫",
+                    "price":2999,
+                    "original_price":3299,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642185.33171962.jpg",
+                    "count":1,
+                    "index":0,                            
+                    "checked":true,
+                    "valList":[]                         
+                }                    
             ]
 
             set_meal = [
                 {
-                    "name":"标配",                    
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 8GB+128GB",
-                            "price":2999,
-                            "original_price":3299,                                  
-                            "src":"https://i8.mifile.cn/a1/pms_1565339450.93196576.jpg",
-                            "color":"深空灰",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
+                    "name":"小米9 全网通版 8GB+128GB 全息幻彩蓝",
+                    "price":3299,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642182.7527088.jpg",
+                    "count":1,
+                    "index":0,                            
+                    "checked":true,
+                    "valList":[]                         
+                }                    
             ]
+
 
             set_meal = [
                 {
-                    "name":"标配",                    
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 8GB+256GB",
-                            "price":3699,
-                            "original_price":0,                                  
-                            "src":"https://i1.mifile.cn/a1/pms_1553001921.97126644.jpg",
-                            "color":"透明",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
+                    "name":"小米9 全网通版 8GB+256GB 透明版",
+                    "price":3699,
+                    "original_price":3699,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1553001921.97126644.jpg",
+                    "count":1,
+                    "index":0,                            
+                    "checked":true,
+                    "valList":[]                         
+                }                    
             ]
 
-            set_meal = [
-                {
-                    "name":"标配",                    
-                    "values":[
-                        {
-                            "name":"小米9 全网通版 8GB+128GB",
-                            "price":2999,
-                            "original_price":3299,                                  
-                            "src":"https://i8.mifile.cn/a1/pms_1550642240.48638886.jpg",
-                            "color":"全息幻彩蓝",
-                            "count":1,
-                            "checked":true                             
-                        }                    
-                    ]
-                }         
-            ]            
 
 
 

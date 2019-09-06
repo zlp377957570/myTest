@@ -1,18 +1,22 @@
 <template>
     <div ref="detail" class="product_detail" @scroll="paperScroll2($event)">  
+        <!--~~~~~~~~~~~~~~ 吸顶 ~~~~~~~~~~~~~~~~~~-->
         <div v-show="scrollTop2>=300" class="ceiling2"><a href="javascript:void(0);" @click="ceiling2"><img src="@/assets/image/icon/吸顶.png" alt=""></a></div>               
-        <div class="ceiling" :style="{pointerEvents:scrollTop2>=200?'auto':'none',boxShadow:scrollTop2<scrollIndexArr[2]?'0 1px 4px 2px rgba(0,0,0,'+(scrollTop2/500<=0.3?scrollTop2/500:0.3)+')':'',background:'rgba(255,255,255,'+(scrollTop2/500<=1?scrollTop2/500:1)+')'}">
+        <!--~~~~~~~~~~~~~~ 顶部导航 ~~~~~~~~~~~~~~~~~~-->
+        <div class="ceiling" :style="{boxShadow:scrollTop2<scrollIndexArr[2]?'0 1px 4px 2px rgba(0,0,0,'+(scrollTop2/500<=0.3?scrollTop2/500:0.3)+')':'',background:'rgba(255,255,255,'+(scrollTop2/500<=1?scrollTop2/500:1)+')'}">
             <a class="left" @click="routerGo"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="arrow-left" /></a>
-            <div class="scrollTab" v-show="scrollTop2>=200">
+            <div :style="{pointerEvents:scrollTop2>=200?'auto':'none'}" class="scrollTab" v-show="scrollTop2>=200">
                 <span :class="scrollIndex===st?'scrollTabActive':''" @click="selectScrollTab(scrollTab,st)" v-for="(scrollTab,st) in ['商品','评价','详情']" :key="st">{{scrollTab}}</span>
             </div>
             <a class="right"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="ellipsis" /></a>
         </div>
+        <!--~~~~~~~~~~~~~~ 顶部轮播图 ~~~~~~~~~~~~~~~~~~-->        
         <div class="swipe_top offsetTopIndex" data-scrollTab="scrollTab" @click="lookTopImg(inforList.imgsList)">
             <van-swipe :autoplay="10000">
                 <van-swipe-item v-for="(imgs,im) in inforList.imgsList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
             </van-swipe>               
         </div>
+        <!--~~~~~~~~~~~~~~ 商品详情信息 ~~~~~~~~~~~~~~~~~~-->        
         <div class="details_info">
             <div v-show="isSeckill" class="detail_seckill">
                 <span class="seckill_price">
@@ -33,6 +37,7 @@
                 <s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s>
             </div>
         </div>
+        <!--~~~~~~~~~~~~~~ 设备配置列表 ~~~~~~~~~~~~~~~~~~-->        
         <div class="detail_icon_list" style="touch-action: pan-x">
             <div v-for="(icons,ic) in inforList.iconList" :key="ic" @click="lookIconList">
                 <img :src="icons.src" alt="">
@@ -40,6 +45,17 @@
                 <span>{{icons.val}}</span>
             </div>
         </div>
+        <!--~~~~~~~~~~~~~~ 分期栏 ~~~~~~~~~~~~~~~~~~-->        
+        <div class="detail_installment detail_options" @click="lookInstallmentList" v-show="inforList.installment && inforList.installment.length>0">
+            <div class="name">分期</div>
+            <div class="content">
+                <span v-for="(instal,il) in inforList.installment" :key="il">
+                    {{instal.name}}
+                </span>
+            </div>
+            <div class="btn"><i></i></div>
+        </div>
+        <!--~~~~~~~~~~~~~~ 赠品栏 ~~~~~~~~~~~~~~~~~~-->        
         <div class="detail_promotion detail_options" v-if="pi.pi_gift !== undefined && pi.pi_gift.length >0">
             <div class="name">促销</div>
             <div class="content">
@@ -49,7 +65,8 @@
             </div>
             <div class="btn"><i></i></div>
         </div>
-        <div class="detail_options detail_option_item" @click="showPopup">
+        <!--~~~~~~~~~~~~~~ 选择商品 ~~~~~~~~~~~~~~~~~~-->        
+        <div class="detail_options" @click="showPopup">
             <div class="name">已选</div>
             <div class="content">
                 <div>
@@ -58,7 +75,8 @@
             </div>
             <div class="btn"><i></i></div>
         </div>
-        <div class="detail_options detail_option_item">
+        <!--~~~~~~~~~~~~~~ 地址栏 ~~~~~~~~~~~~~~~~~~-->        
+        <div class="detail_options" style="borderTop:none">
             <div class="name">送至</div>
             <div class="content">
                 <div>
@@ -67,12 +85,14 @@
             </div>
             <div class="btn"><i></i></div>
         </div>    
-        <div class="detail_options detail_option_item" @click="lookPromiseList">
+        <!--~~~~~~~~~~~~~~ 承诺栏 ~~~~~~~~~~~~~~~~~~-->        
+        <div class="detail_options" style="borderTop:none" @click="lookPromiseList">
             <div class="service">    
                 <span v-show="pm<3" v-for="(prom,pm) in inforList.promise" :key="pm"><i>✔</i>{{prom.name}}</span>     
             </div>
             <div class="btn"><i></i></div>
         </div> 
+        <!--~~~~~~~~~~~~~~ 相关推荐 ~~~~~~~~~~~~~~~~~~-->        
         <div class="detail_recommend">
             <div class="title">相关推荐</div>
             <div class="content">
@@ -83,6 +103,7 @@
                 </div>
             </div>
         </div> 
+        <!--~~~~~~~~~~~~~~ 评论区 ~~~~~~~~~~~~~~~~~~-->        
         <div class="swipe_comment offsetTopIndex" data-scrollTab="scrollTab">
             <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="true" :width="320">
                 <van-swipe-item v-for="(revw,rv) in staticList.reviewList" :key="rv" @click="lookReview(revw)">
@@ -115,6 +136,7 @@
         <div class="comment_all" @click="lookReviewAll">
             <a href="#">更多评论</a>
         </div>    
+        <!--~~~~~~~~~~~~~~ 商品详情图片展示 ~~~~~~~~~~~~~~~~~~-->        
         <div class="height_imgListALL offsetTopIndex" data-scrollTab="scrollTab">
             <div :class="['height_title',scrollTop2>=scrollIndexArr[2]?'heightTitleFixed':'']" v-show="heightImgList.length>1">
                 <span v-for="(hList,hl) in heightImgList" @click="selectHeightImgPage(hl)" :key="hl+'T'" :class="heightIndex===hl?'active':''">{{hList.name}}</span>
@@ -136,7 +158,8 @@
                     </div>
                 </div>
             </div>
-        </div>         
+        </div>    
+        <!--~~~~~~~~~~~~~~ 为你推荐列表 ~~~~~~~~~~~~~~~~~~-->             
         <div class="forYouRecommend">
             <div class="title">
                 <span>为你推荐</span>
@@ -152,6 +175,7 @@
                 </div>
             </div>
         </div>
+        <!--~~~~~~~~~~~~~~ 详情页底部 ~~~~~~~~~~~~~~~~~~-->        
         <div class="detailFoot">
             <div class="detailFootBar">
                 <div class="home">
@@ -168,6 +192,7 @@
                 </div>                        
             </div>            
         </div>
+        <!--~~~~~~~~~~~~~~ 承诺&商品面板 ~~~~~~~~~~~~~~~~~~-->        
         <div class="showPage">
             <van-image-preview
                 :startPosition="0"
@@ -193,19 +218,23 @@
                         </div>
                     </div>
                 </div>
-                <div class="content">
+                <!--~~~~~~~~~~~~~~ 商品列表 ~~~~~~~~~~~~~~~~~~-->                
+                <div class="content" v-show="productListShow">
+                    <!--~~~~~~~~~~~~~~ 版本选择 ~~~~~~~~~~~~~~~~~~-->                           
                     <div class="blocks">
                         <p class="name">版本</p>
                         <div class="val">
                             <span @click="selectVersion(ver.d_style_version)" :v-model="ver.d_style_version" :class="ver.d_style_version==version?'selectActive':''" v-for="(ver,vi) in inforList.versionList" :key="vi">{{ver.d_style_version}}</span>
                         </div>
                     </div>
+                    <!--~~~~~~~~~~~~~~ 颜色选择 ~~~~~~~~~~~~~~~~~~-->                           
                     <div class="blocks">
                         <p class="name">颜色</p>
                         <div class="val">
                             <span @click="selectColor(col.d_style_color)" :v-model="col.d_style_color" :class="col.d_style_color==color?'selectActive':''" v-for="(col,ci) in inforList.colorList" :key="ci">{{col.d_style_color}}</span>
                         </div>
                     </div> 
+                    <!--~~~~~~~~~~~~~~ 添加商品 ~~~~~~~~~~~~~~~~~~-->                           
                     <div class="addCount">
                         <span>购买数量</span>
                         <div class="compute">
@@ -214,7 +243,7 @@
                             <span @click="add" :class="['add',count>=details.d_style_MaxCount?'disabled':'']">＋</span>
                         </div>
                     </div>
-
+                    <!--~~~~~~~~~~~~~~ 服务选择 ~~~~~~~~~~~~~~~~~~-->       
                     <div class="accident_protection" v-for="(pis,pi) in pi.pi_server" :key="pi">
                         <div class="title">
                             <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=pis.a_srcIndex">{{pis.name}}<van-icon name="question-o" /></span>
@@ -230,15 +259,38 @@
                             <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=pis.c_srcIndex">常见问题</span>
                         </div>                  
                     </div> 
-
                 </div> 
+                <!--~~~~~~~~~~~~~~ 承诺列表 ~~~~~~~~~~~~~~~~~~-->
+                <div class="installmentList" v-show="installmentListShow">
+                    <div class="title">
+                        <span :class="installmentIndex===is?'installmentActive':''" @click="selectInstallmentTitle(is)" v-for="(install,is) in inforList.installment" :key="is+'t'">
+                            {{install.name}}
+                        </span>
+                    </div>
+                    <div class="block" v-for="(inst,it) in inforList.installment" :key="it+'t'">
+                        <div :class="['item',installmentItemIndex===i?'itemActive':'']" @click="installmentItemIndex=i" v-for="(ins,i) in inst.values" :key="i+'n'" v-show="installmentIndex===it">
+                            <span>{{installmentFilterA(details.d_style_price,ins.name,ins.rate)}}</span>
+                            <p>{{installmentFilterB(details.d_style_price,ins.name,ins.rate)}}</p>
+                            <i></i>
+                        </div>
+                    </div>
+                </div>    
+                <!--~~~~~~~~~~~~~~ 确认添加商品 ~~~~~~~~~~~~~~~~~~-->                                   
                 <div class="footer" @click="getProductShopping">
                     <div class="addShopp">加入购物车</div>
                 </div>                        
             </van-popup>            
-        </div>                                                                  
-        <van-popup v-model="zengzhi"><div class="zengzhi"><van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/><img v-for="(zzimg,zi) in zengzhiImgList[zengzhiIndex]" :key="zi" @click="zengzhi=!zengzhi" :src="zzimg" alt=""></div></van-popup>                                 
+        </div>        
+        <!--~~~~~~~~~~~~~~ 统一查看面板 ~~~~~~~~~~~~~~~~~~-->                                                          
+        <van-popup v-model="zengzhi">
+            <div class="zengzhi">
+                <van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/>
+                <img v-for="(zzimg,zi) in zengzhiImgList[zengzhiIndex]" :key="zi" @click="zengzhi=!zengzhi" :src="zzimg" alt="">
+            </div>
+        </van-popup>                                 
+        <!--~~~~~~~~~~~~~~ 面板信息列表 ~~~~~~~~~~~~~~~~~~-->       
         <div class="showPageList">
+            <!--~~~~~~~~~~~~~~ 设备配置内容展示 ~~~~~~~~~~~~~~~~~~-->       
             <van-popup
             v-model="iconListShow"
             round
@@ -261,6 +313,7 @@
                     </div>
                 </div>     
             </van-popup>
+            <!--~~~~~~~~~~~~~~ 赠品内容展示 ~~~~~~~~~~~~~~~~~~-->                   
             <van-popup
             v-model="giftListShow"
             round
@@ -281,7 +334,8 @@
                         </div>
                     </div>
                 </div>     
-            </van-popup>      
+            </van-popup>  
+            <!--~~~~~~~~~~~~~~ 承诺服务内容展示 ~~~~~~~~~~~~~~~~~~-->                       
             <van-popup
             v-model="promiseListShow"
             round
@@ -337,6 +391,10 @@ export default {
             iconListShow:false,
             giftListShow:false,
             promiseListShow:false,
+            productListShow:false,
+            installmentListShow:false,
+            installmentIndex:0,
+            installmentItemIndex:0,
             isSeckill:true,
             scrollIndexArr:[],
             scrollIndex:0,
@@ -354,13 +412,14 @@ export default {
             version:'',
             color:'',
             name:'',
+            set_meal:'',
             model:'',
             shoppingCount:0,
             shoppingCountAll:0,
             count:1
         }
     },
-　　filters: {
+    filters: {
 　　　　sliceString(value) {
             if(value.length<35){
                 return value
@@ -393,7 +452,31 @@ export default {
     computed:{
       
     },    
-    methods:{      
+    methods:{ 
+        fomatFloat(num,n){   
+            var f = parseFloat(num);
+            if(isNaN(f)){
+                return false;
+            }   
+            f = Math.round(num*Math.pow(10, n))/Math.pow(10, n); // n 幂   
+            var s = f.toString();
+            var rs = s.indexOf('.');
+            //判定如果是整数，增加小数点再补0
+            if(rs < 0){
+                rs = s.length;
+                s += '.'; 
+            }
+            while(s.length <= rs + n){
+                s += '0';
+            }
+            return s;
+        },        
+        installmentFilterA(p,n,r){
+            return (Number(p) / n + Number(p) * r / n).toFixed(2) + '元x' + n + '期'
+        }, 
+        installmentFilterB(p,n,r){
+            return '手续费' + (Number(p) * r / n).toFixed(2) + '元/期起，费率' + (r * 100).toFixed(2) + '%起'
+        },    
         ceiling2(){//页面滚动吸顶/吸底按钮
             var self = this
             var detail = self.$refs.detail
@@ -412,8 +495,6 @@ export default {
             // e.stopPropagation()
             let self = this
             let $this = e.srcElement || e
-            // console.log($this.scrollTop)
-            // console.log($this.scrollHeight)
             self.scrollTop2 =  $this.scrollTop
         },      
         getOffsetTop(){//获得滚动高度
@@ -462,26 +543,23 @@ export default {
                 this.pi.pi_server[ai].isSelect = !a                   
                 this.pi.pi_server[ai].values[bi].checked = !b                    
             }
-            console.log(adom)
         },
         openProductShopping(){//打开商品选择面板
-            this.show = !this.show
+            this.show = true
+            this.productListShow = true            
         },
         goShopping(){//跳转至购物车
             this.$router.push({name:'goShopping',params:{}})
             // let sss = shopp(111111111)
-            // console.log(sss.params)
         },
         getProductShopping(){//加入购物车
             // ls.setItem('shoppCount',)
             let count = this.count
             let p_info = this.details.p_info
             let pi = this.pi
-            console.log(pi)
             let url = this.HOST + '/detail/addShoppingInfor.php'
             this.$axios.post(url,{p_info,count,pi}).then(response=> {
                 console.log(response.data)
-                // console.log(response.data.hint)
                 let hint = response.data.hint
                 if(hint === 'ok'){
                     this.shoppingCountAll = response.data.shoppCountAll
@@ -525,7 +603,6 @@ export default {
             this.iconListShow = true
             if(iconInfo){
                 this.$axios.post(url,iconInfo).then(response=> {
-                    // console.log(response.data.iconAllList)
                     this.iconAllList = response.data.iconAllList
                 }).catch(error=>{
 
@@ -533,7 +610,6 @@ export default {
             }
         },
         lookGiftList(gi){//点击查看赠品列表
-            console.log(gi)
             if(this.pi.pi_gift[gi]){
                 this.giftList = this.pi.pi_gift[gi].values
             }
@@ -545,16 +621,22 @@ export default {
         overTime(){//倒计时结束
             this.isSeckill = false
         },
+        lookInstallmentList(){//点击查看分期列表
+            this.show = !this.show          
+            this.installmentListShow = true
+        },
+        selectInstallmentTitle(is){//选择不同分期
+            this.installmentIndex = is
+            this.installmentItemIndex = 0
+        },
         selectVersion(newVersion){//选择规格款式
             this.version = newVersion
-            let newItemInfo = this.name+' '+this.model+' '+this.version+' '+this.color
-            console.log(newItemInfo)
+            let newItemInfo = this.name+','+this.model+','+this.version+','+this.color
             this.init(newItemInfo)
         },
         selectColor(newColor){//选择颜色款式
             this.color = newColor  
-            let newItemInfo = this.name+' '+this.model+' '+this.version+' '+this.color
-            console.log(newItemInfo)
+            let newItemInfo = this.name+','+this.model+','+this.version+','+this.color
             this.init(newItemInfo)                      
         },
         minus(){//购买数量--
@@ -568,9 +650,12 @@ export default {
             this.iconListShow = false
             this.giftListShow = false
             this.promiseListShow = false
+            this.productListShow = false
+            this.installmentListShow = false            
         },
         showPopup(){//展开下拉页面
-            this.show = !this.show
+            this.show = true
+            this.productListShow = true
         },      
         lookAddHeightImgList(src,length,suffix){//查看更多参数
             this.zengzhi=!this.zengzhi
@@ -584,26 +669,32 @@ export default {
         },  
         init(newItemInfo){
             let itemInfo = null
-            if(newItemInfo){
+            let set_meal = null
+
+            if(newItemInfo && this.set_meal){
                 itemInfo = newItemInfo
+                set_meal = this.set_meal
             }else{
                 itemInfo = ls.getItem('info')
+                set_meal = ls.getItem('set_meal')
             }
+            // 黑鲨游戏手机2 Pro 12GB+128GB 电鸣黑
+                        console.log(set_meal)
             // let itemInfo = ls.getItem('info') || newItemInfo
-            console.log(itemInfo)
             let routerName = ls.getItem('routerName')       
             let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
             if(itemInfo){
-                this.$axios.post(url2,itemInfo).then(response=> {
+                this.$axios.post(url2,itemInfo+','+set_meal).then(response=> {
                     // let valuesList = response.data
                     if(response.data){
-                        console.log(response.data)
+   console.log(response.data)                        
                         let values = response.data                      
                         this.details = values.detail
                         this.count = this.details.d_style_MaxCount>this.count?this.count:this.details.d_style_MaxCount
                         this.version = values.detail.d_style_version
                         this.color = values.detail.d_style_color
                         this.name = values.detail.p_name
+                        this.set_meal = values.detail.p_set_meal
                         this.model = values.detail.d_style_model
                         let stime = values.detail.d_seckill_time
                         this.time = Number(stime)
@@ -619,15 +710,12 @@ export default {
                         this.inforList.installment = eval("("+installment+")")
                         this.inforList.promise = eval("("+promise+")")
 
-                        console.log(this.inforList)
                     }
                 }).catch(error=> {
                 });    
 
-                console.log(itemInfo)
                 let url = this.HOST + '/detail/getProductInfo.php'                 
                 this.$axios.post(url,itemInfo).then(response=> {
-                    console.log(response.data.product_info)
                     let values = response.data.product_info
                     let pi_server = values.pi_server.replace(/\s*/g,"")
                     let pi_choose = values.pi_choose.replace(/\s*/g,"")
@@ -646,18 +734,14 @@ export default {
         },
         initStaticData(){
             let itemName = ls.getItem('name')
-            // console.log(itemName)
             let url = this.HOST + '/detail/getDetailReview.php'                 
             let url2 = this.HOST + '/detail/getDetailHeightImgs.php'                 
             let url3 = this.HOST + '/detail/getShoppingCountAll.php'                 
             if(itemName){
                 this.$axios.post(url,itemName).then(response=> {
-                        console.log(response.data)
-
                         this.staticList.reviewList = response.data.reviewList
                         this.staticList.recommend = response.data.recommend     
-                        this.staticList.foryouRecommend = response.data.foryouRecommend     
-                        // console.log(this.staticList)               
+                        this.staticList.foryouRecommend = response.data.foryouRecommend                 
                 })
                 .catch(error=> {
                 });                     
@@ -865,20 +949,22 @@ export default {
                 border-left: 1px solid #e0e0e0;
             }
         }
-        .detail_options{
+        .detail_options{         
             width: 90%;
             display: flex;
-            justify-content: space-between;
+            position: relative;
+            justify-content: flex-start;
             background: #fafafa;
+            overflow: hidden;
             margin: 0 auto;
             line-height: 36px;
             color: rgba(0,0,0,.87);
             border: 1px solid #eee;
             border-radius: 5px;
-            padding: 0px 10px;
+            padding: 0px 0px;
             font-size: .24rem;            
             .name{
-                padding-left:10px;
+                padding:0 15px;
                 color: rgba(0,0,0,.54);  
             }
             .content{
@@ -909,7 +995,7 @@ export default {
                     vertical-align: middle;
                     font-size: .20rem;                       
                     color: rgba(0,0,0,.54);
-                    padding-left: 10px;
+                    padding-left: 15px;
                     i{
                         display: inline-block;
                         width: 10px;
@@ -924,6 +1010,10 @@ export default {
             }            
             .btn{
                 display: inline-flex;
+                pointer-events: none;
+                position: absolute;
+                right: 15px;
+                top:12px;
                 align-items: center;
                 i{
                     display: inline-block;
@@ -934,14 +1024,18 @@ export default {
                     border-top: 1px solid #bbb;                   
                 }
             }
-        }
+        }         
         .detail_promotion{
             margin-bottom: 10px;
         }
-        .detail_option_item:not(:first-child){
-            // border-bottom:none;        
-            border-top:none;        
-        }
+        .detail_installment{
+            margin-bottom: 10px;
+            .content{
+                span:last-child::before{
+                    content: ' / '
+                }
+            }
+        }        
         .detail_recommend{
             width: 90%;    
             margin: 0 auto;   
@@ -1447,6 +1541,79 @@ export default {
                         }   
                     }
                 }                
+            }
+            .installmentList{
+                margin-top: 160px;
+                margin-bottom: 55px;
+                padding: 0px 20px;                
+                overflow-y: auto;                
+                .title{
+                    font-size: .25rem;
+                    display: flex;
+                    justify-content: space-around;
+                    span{
+                        width: 50%;
+                        border:1px solid #eee;
+                        display: inline-block;
+                        line-height: 32px;
+                    }
+                    span:first-child{
+                        border-top-left-radius: 16px;
+                        border-bottom-left-radius: 16px;
+                    }
+                    span:last-child{
+                        border-left: 0px solid #eee;
+                        border-top-right-radius: 16px;
+                        border-bottom-right-radius: 16px;                        
+                    }
+                    .installmentActive{
+                        color:#f56600;
+                        background: #fafafa;
+                    }
+
+                }
+                .block{
+                    padding: 0px 5px;                    
+                    .item{
+                        position: relative;
+                        text-align: left;
+                        padding: 15px 0px;
+                        border-bottom: 1px solid #eee;
+                        line-height: 25px;
+                        span{
+                            font-size: .29rem;
+                        }
+                        p{
+                            font-size: .25rem;
+                        }
+                        i{
+                            position: absolute;
+                            border-radius: 49%;
+                            top:30px;
+                            right: 0;
+                            width: 18px;
+                            height: 17.5px;
+                            border:1px solid #aaa;
+                            display: flex;
+                            justify-content: space-around;
+                            align-items: center;
+                        } 
+                        i:before{
+                            content: '';
+                            position: absolute;
+                            border-radius: 50%;
+                            width: 12px;
+                            height: 12px;
+                            background: transparent;                        
+                        }                     
+                    }
+                    .itemActive{
+                        color: #f56600;       
+                        i:before{
+                            background: #f56600;                               
+                        }                 
+                    }
+                }
             }
             .footer{
                 position: fixed;

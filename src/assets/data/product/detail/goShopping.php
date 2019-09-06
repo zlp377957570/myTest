@@ -26,10 +26,14 @@ $output=[];
 $sql = "SELECT si_info FROM `mimi_shopping_info` a WHERE (a.si_info) IN (SELECT si_info FROM `mimi_shopping_info` GROUP BY si_info HAVING COUNT(*) > 1)";
 $result = mysqli_query($conn,$sql);
 $val = mysqli_fetch_all($result,1);
-for($i=0;$i<count($val);$i++){
+for($i=0;$i<count($val);$i++){  //暂时没用
     $info = $val[$i]["si_info"];
-    // print_r($info);
-    $sql = "update mimi_shopping_info set si_count = 2 where si_info = '$info'";
+
+    $sql = "select sum(si_count) from mimi_shopping_info where si_info = '$info'";
+    $result=mysqli_query($conn,$sql);
+    $valAll = mysqli_fetch_row($result)[0];
+
+    $sql = "update mimi_shopping_info set si_count = '$valAll' where si_info = '$info'";
     mysqli_query($conn,$sql);
 
     
@@ -65,4 +69,5 @@ for($l=0;$l<count($valList);$l++){
 $output["shoppingList"] = $valList;
 
 echo json_encode($output);
+// echo json_encode($val);
 ?>
