@@ -4,6 +4,7 @@
         <div class="shopping">
             <div class="shopp">
                 <div class="content" v-for="(spb,sp) in sl" :key="sp">
+                    <!--~~~~~~~~~~~~~~ 商品信息 ~~~~~~~~~~~~~~~~~~-->   
                     <div class="only">
                         <div class="select" @click="itemShoppingSelect(sp,spb.si_checked)">
                             <van-icon name="checked" :class="spb.si_checked?'':'selectCheck'"/>
@@ -12,9 +13,27 @@
                             <img :src="spb.si_only.d_style_src" alt="">
                         </div>
                         <div class="info">
-                            <div class="title"><span>{{spb.si_only.p_name+' '+spb.si_only.d_style_version}}</span></div>
-                            <div class="subTitle"><span>{{spb.si_only.d_style_color+'&nbsp;&nbsp;'+spb.si_only.d_style_disk}}</span></div>
-                            <div class="price"><span>{{spb.si_only.d_style_price}}</span><s v-if="spb.si_only.d_style_original_price!=0">{{spb.si_only.d_style_original_price}}</s></div>
+                            <div class="title">
+                                <span>
+                                    {{spb.si_only.p_name+' '+spb.si_only.d_style_version}}
+                                </span>
+                            </div>
+                            <div class="subTitle">
+                                <span v-if="spb.si_only.set_meal==='标配'">
+                                    {{spb.si_only.d_style_color+'&nbsp;&nbsp;'+spb.si_only.d_style_disk}}
+                                </span>
+                                <span :else="spb.si_only.set_meal==='标配'">
+                                    套装
+                                </span>                                
+                            </div>
+                            <div class="price">
+                                <span>
+                                    {{spb.si_only.d_style_price}}
+                                </span>
+                                <s v-if="spb.si_only.d_style_original_price!=spb.si_only.d_style_price">
+                                    {{spb.si_only.d_style_original_price}}
+                                </s>
+                            </div>
                         </div>
                         <div class="addCount">
                             <div class="compute">
@@ -23,9 +42,26 @@
                                 <span @click="addCount(sp)" :class="[spb.si_count<spb.si_only.d_style_MaxCount&&spb.si_count>=1?'':'disabled']">＋</span>
                             </div>
                         </div>
-                    </div>  
+                    </div>
+                    <!--~~~~~~~~~~~~~~ 套餐区域 ~~~~~~~~~~~~~~~~~~-->   
+                    <div class="set_meal" v-for="(stml,stl) in spb.si_set_meal" :key="stl">
+                        <div class="itemSetMeal" v-for="(stmlvs,ss) in stml.values" :key="ss" v-show="stml.checked">
+                            <div class="src">
+                                <img :src="stmlvs.src" alt="">
+                            </div>
+                            <div class="title">
+                                {{stmlvs.name+'&nbsp;&nbsp; x'}}{{stmlvs.count}}
+                            </div>
+                            <!-- <div class="setSelect" @click="lookGiftShow(sp,gi,ig)" v-show="gif.values.length>1">
+                                修改
+                            </div>                                 -->
+                        </div>
+                    </div>                    
+                  
+                    <!--~~~~~~~~~~~~~~ 服务 & 赠品 ~~~~~~~~~~~~~~~~~~-->       
                     <div class="subjoin" v-show="spb.si_checked">
                         <div class="addBuy"></div>
+                        <!--~~~~~~~~~~~~~~ 服务选购 ~~~~~~~~~~~~~~~~~~-->                           
                         <div class="server"  @click="lookServerShow(sp)" v-for="(ser,s) in spb.si_server" :key="'ser-'+ s" v-show="!ser.isSelect">
                             <div class="title">
                                 服务
@@ -40,6 +76,7 @@
                                 选购
                             </div>
                         </div>
+                        <!--~~~~~~~~~~~~~~ 服务已选择 ~~~~~~~~~~~~~~~~~~-->                          
                         <div class="serverChecked" v-for="(ser,s) in spb.si_server" :key="'ser+'+ s" v-show="ser.isSelect">
                             <div class="serverItem" @touchstart="serverTouchStart($event,sp,s,d,sed.checked)" v-for="(sed,d) in ser.values" :key="'sed+'+ d" v-show="sed.checked">
                                 <div class="src">
@@ -54,6 +91,7 @@
                                 </div>                            
                             </div>                               
                         </div>
+                        <!--~~~~~~~~~~~~~~ 赠品区域 ~~~~~~~~~~~~~~~~~~-->                          
                         <div class="gift" v-for="(gif,gi) in spb.si_gift" :key="gi">
                             <div class="itemGift" v-for="(itmgif,ig) in gif.values" :key="ig" v-show="itmgif.checked">
                                 <div class="src">
@@ -68,12 +106,14 @@
                             </div>
                         </div>
                     </div>
+                    <!--~~~~~~~~~~~~~~ 选择内容面板列表 ~~~~~~~~~~~~~~~~~~-->  
                     <div class="showPageList">
                         <van-popup
                         v-model="serverListShow"
                         position="bottom"
                         :style="{ height: '60%' }"
                         >       
+                            <!--~~~~~~~~~~~~~~ 选择服务面板 ~~~~~~~~~~~~~~~~~~-->                          
                             <div class="serverList showPopupPage">
                                 <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
                                 <div class="header">
@@ -110,6 +150,7 @@
                         position="bottom"
                         :style="{ height: '48%' }"
                         >       
+                            <!--~~~~~~~~~~~~~~ 选择赠品面板 ~~~~~~~~~~~~~~~~~~-->                           
                             <div class="giftPageShow showPopupPage">
                                 <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
                                 <div class="header">
@@ -140,8 +181,10 @@
                         </van-popup>                        
                     </div>
                 </div>
+                <!--~~~~~~~~~~~~~~ 增值展示 ~~~~~~~~~~~~~~~~~~-->   
                 <van-popup v-model="zengzhi"><div class="zengzhi"><van-icon name="cross" :style="zengzhiColor" @click="zengzhi=!zengzhi"/><img @click="zengzhi=!zengzhi" :src="zengzhiImgList[zengzhiIndex]" alt=""></div></van-popup>
             </div>
+            <!--~~~~~~~~~~~~~~ 底部 ~~~~~~~~~~~~~~~~~~-->               
             <div class="footerBar">
                 <div class="select" @click="selectCheckedAll">
                     <van-icon name="checked" :class="checkedAll?'':'selectCheck'"/>
@@ -335,12 +378,14 @@ export default {
             this.giftListShow = false
         },    
         itemShoppingSelect(sp,selected){//单选商品
+            // console.log(sp)
             this.sl[sp].si_checked = !this.sl[sp].si_checked
+            // console.log(this.sl[sp].si_checked)
             // this.sumOnlyCheck(this.sl[sp])
             this.sumAllChecked()       
         },
         sumOnlyCheck(obj){//单件商品的选中状态
-            console.log(obj)
+            // console.log(obj)
             let n = 0
             for(let i in obj){
                 if(obj[i].constructor === Array && obj[i].length>0){    
@@ -374,7 +419,9 @@ export default {
             this.sumAllChecked()               
         },
         sumAllChecked(){//全部商品选中
+        // itemShoppingSelect
             let obj = this.sl      
+            // console.log(obj)
             let n = 0
             let p = 0
             let arr = []
@@ -383,7 +430,7 @@ export default {
             for(let a in obj){
                 let num = []
                 let price = []
-                if(obj[a].si_checked){
+                if(Number(obj[a].si_checked)){
                     arr.push(Number(obj[a].si_count))
                     for(let b in obj[a]){
                         if(obj[a][b].constructor === Array || Object && obj[a][b].length>0){//同上      
@@ -456,7 +503,7 @@ export default {
             this.$axios.post(url,{}).then(response=> {
                 // console.log(response.data)
                 this.sl = response.data.shoppingList    
-                // console.log(this.sl)
+                console.log(this.sl)
                 this.cpl = JSON.parse(JSON.stringify(response.data.shoppingList))      
             }).catch(error=>{
 
@@ -579,6 +626,33 @@ export default {
                             }
                         }
                     }
+                    .set_meal{
+                        .itemSetMeal{
+                            position: relative;
+                            display: flex;
+                            align-items: center;
+                            padding: 10px 20px 10px 35px;
+                            // background: #fafafa;
+                            .src{
+                                padding: 0 15px;
+                                img{
+                                    border-radius: 6px;
+                                    border: 1px solid #ccc;
+                                    width: 45px;
+                                    height: 45px;
+                                    display: block;
+                                }
+                            }
+                            .title{
+                                font-size: .22rem;
+                            }
+                            .setSelect{
+                                position: absolute;
+                                right: 15px;
+                                color: #777;
+                            }                     
+                        }
+                    }                    
                     .subjoin{
                         font-size: .1rem;
                         .addBuy{

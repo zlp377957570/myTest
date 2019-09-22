@@ -19,167 +19,192 @@ export default {
             "",
             "",
         ]
-        [
-            {
-                "name":"视频",               
-                "srcList":{
-                    "poster":"https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c2e9a7fc809f7aeac30bf538baf8f156.jpg",
-                    "src":"https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/5f51a274a73db915a9623ccdfd35f678.mp4",
-                }
-            },
-            {
-                "name":"图片",              
-                "srcList":[
-                    "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/56e26d8a4d08ee4710dbd7b892420c85.jpg",
-                    "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/2cc38dd9ea850f6ebc034eab38ae5536.jpg",
-                    "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c3009bfc669f90a767244a239c6b3ee8.jpg",
-                    "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/81f902831594dd974e6c0c1497ec9910.jpg",
-                    "https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/ba995e6bb6fb1000c6efb8cb28d79793.jpg"
-                ]                
-            }
+        imgList = [
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
         ]
+
             set_meal = [
                 {
-                    "name":"黑鲨游戏手机2 Pro 12GB+256GB 冰魄灰",
-                    "price":3499,
-                    "original_price":3499,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1564309745.17776332.jpg",
+                    "name":"小米9 全网通版 6GB+128GB 全息幻彩紫",
+                    "price":2599,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1565339466.57314633.jpg",
                     "count":1,
+                    "color":"全息幻彩紫",                            
                     "index":0,                            
-                    "checked":true,
-                    "valList":[]                         
+                    "checked":true,  
+                    "values":[
+                        {
+                            "name":"小米9 全网通版 6GB+128GB 全息幻彩紫",
+                            "price":2599,
+                            "original_price":2999,                                  
+                            "src":"https://i8.mifile.cn/a1/pms_1565339466.57314633.jpg",
+                            "count":1,
+                            "color":"全息幻彩紫",                            
+                            "index":0,                            
+                            "checked":true                            
+                        }
+                    ]                         
                 }                    
             ]
 
             set_meal = [
                 {
-                    "name":"黑鲨游戏手机2 Pro 12GB/256GB+黑鲨移动电源套装",
-                    "price":3499,
-                    "original_price":3499,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1564309745.17776332.jpg",
+                    "name":"小米9 全网通版 6GB+128GB 全息幻彩蓝",
+                    "price":2599,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642182.7527088.jpg",
                     "count":1,
+                    "color":"全息幻彩蓝",                       
                     "index":0,                            
-                    "checked":true,
-                    "valList":[]                         
-                },    
-                {
-                    "name":"黑鲨双向快充移动电源 黑色",
-                    "price":199,
-                    "original_price":199,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1566870223.32241409.jpg",
-                    "count":1,
-                    "index":0,                            
-                    "checked":true,
-                    "valList":[]                                                            
-                }                    
+                    "checked":true,  
+                    "values":[
+                        {
+                            "name":"小米9 全网通版 6GB+128GB 全息幻彩蓝",
+                            "price":2599,
+                            "original_price":2999,                                  
+                            "src":"https://i8.mifile.cn/a1/pms_1550642182.7527088.jpg",
+                            "count":1,
+                            "color":"全息幻彩蓝",                       
+                            "index":0,                            
+                            "checked":true                         
+                        }
+                    ]                         
+                }                                  
             ]
 
-            set_meal = [
+            set_meal = [               
                 {
-                    "name":"黑鲨2 Pro 12GB/256GB+黑鲨双翼左手柄套装",
-                    "price":3499,
-                    "original_price":3499,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1564309745.17776332.jpg",
+                    "name":"小米9 全网通版 6GB+128GB 深空灰",
+                    "price":2599,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642167.03594225.jpg",
                     "count":1,
+                    "color":"深空灰",                       
                     "index":0,                            
-                    "checked":true,
-                    "valList":[]                         
-                },    
-                {
-                    "name":"黑鲨双翼手柄-左手 黑色",
-                    "price":90.1,
-                    "original_price":179,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1538124791.92791755.jpg",
-                    "count":1,
-                    "index":0,                            
-                    "checked":true,
-                    "valList":[]                                                            
-                },    
-                {
-                    "name":"黑鲨双翼手柄 左手支架 黑色",
-                    "price":9.9,
-                    "original_price":9.9,                                  
-                    "src":"https://i8.mifile.cn/v1/a1/b1cea450-4f99-b685-aab2-147e8ce6e31d.webp",
-                    "count":1,
-                    "index":0,                            
-                    "checked":true,
-                    "valList":[]                                                            
-                }                   
+                    "checked":true,  
+                    "values":[
+                        {
+                            "name":"小米9 全网通版 6GB+128GB 深空灰",
+                            "price":2599,
+                            "original_price":2999,                                  
+                            "src":"https://i8.mifile.cn/a1/pms_1550642167.03594225.jpg",
+                            "count":1,
+                            "color":"深空灰",                       
+                            "index":0,                            
+                            "checked":true                        
+                        }
+                    ]                         
+                }                                  
             ]
 
 
             // --------------------------------------------------------------------------
             // --------------------------------------------------------------------------
-            set_meal = [
+            set_meal = [          
                 {
-                    "name":"黑鲨游戏手机2 Pro 12GB+256GB 电鸣黑",
-                    "price":3499,
-                    "original_price":3499,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1564309721.25069397.jpg",
+                    "name":"小米9 全网通版 8GB+128GB 全息幻彩紫",
+                    "price":2999,
+                    "original_price":3299,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642185.33171962.jpg",
                     "count":1,
-                    "index":0,                            
-                    "checked":true,
-                    "valList":[]                         
+                    "color":"全息幻彩紫",                                                 
+                    "index":0,   
+                    "checked":true,  
+                    "values":[
+                        {
+                            "name":"小米9 全网通版 8GB+128GB 全息幻彩紫",
+                            "price":2999,
+                            "original_price":3299,                                  
+                            "src":"https://i8.mifile.cn/a1/pms_1550642185.33171962.jpg",
+                            "count":1,
+                            "color":"全息幻彩紫",                                                 
+                            "index":0,   
+                            "checked":true                       
+                        }
+                    ]                         
                 }                    
             ]
 
-            set_meal = [
+            set_meal = [              
                 {
-                    "name":"黑鲨游戏手机2 Pro 12GB/256GB+黑鲨移动电源套装",
-                    "price":3499,
-                    "original_price":3499,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1564309721.25069397.jpg",
+                    "name":"小米9 全网通版 8GB+128GB 全息幻彩蓝",
+                    "price":3299,
+                    "original_price":2999,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1550642182.7527088.jpg",
                     "count":1,
+                    "color":"全息幻彩蓝",                       
                     "index":0,                            
-                    "checked":true,
-                    "valList":[]                         
-                },    
-                {
-                    "name":"黑鲨双向快充移动电源 黑色",
-                    "price":199,
-                    "original_price":199,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1566870223.32241409.jpg",
-                    "count":1,
-                    "index":0,                            
-                    "checked":true,
-                    "valList":[]                                                            
+                    "checked":true,  
+                    "values":[
+                        {
+                            "name":"小米9 全网通版 8GB+128GB 全息幻彩蓝",
+                            "price":3299,
+                            "original_price":2999,                                  
+                            "src":"https://i8.mifile.cn/a1/pms_1550642182.7527088.jpg",
+                            "count":1,
+                            "color":"全息幻彩蓝",                       
+                            "index":0,                            
+                            "checked":true                       
+                        }
+                    ]                         
                 }                    
             ]
 
-            set_meal = [
+            set_meal = [            
                 {
-                    "name":"黑鲨2 Pro 12GB/256GB+黑鲨双翼左手柄套装",
-                    "price":3499,
-                    "original_price":3499,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1564309721.25069397.jpg",
+                    "name":"小米9 全网通版 8GB+128GB 深空灰",
+                    "price":2999,
+                    "original_price":3299,                                      
+                    "src":"https://i8.mifile.cn/a1/pms_1550642167.03594225.jpg",
                     "count":1,
+                    "color":"深空灰",                      
                     "index":0,                            
                     "checked":true,
-                    "valList":[]                         
-                },    
-                {
-                    "name":"黑鲨双翼手柄-左手 黑色",
-                    "price":90.1,
-                    "original_price":179,                                  
-                    "src":"https://i8.mifile.cn/a1/pms_1538124791.92791755.jpg",
-                    "count":1,
-                    "index":0,                            
-                    "checked":true,
-                    "valList":[]                                                            
-                },    
-                {
-                    "name":"黑鲨双翼手柄 左手支架 黑色",
-                    "price":9.9,
-                    "original_price":9.9,                                  
-                    "src":"https://i8.mifile.cn/v1/a1/b1cea450-4f99-b685-aab2-147e8ce6e31d.webp",
-                    "count":1,
-                    "index":0,                            
-                    "checked":true,
-                    "valList":[]                                                            
-                }                   
+                    "values":[
+                        {
+                            "name":"小米9 全网通版 8GB+128GB 深空灰",
+                            "price":2999,
+                            "original_price":3299,                                      
+                            "src":"https://i8.mifile.cn/a1/pms_1550642167.03594225.jpg",
+                            "count":1,
+                            "color":"深空灰",                      
+                            "index":0,                            
+                            "checked":true                     
+                        }
+                    ]                         
+                }                  
             ]
 
-
+            set_meal = [                        
+                {
+                    "name":"小米9 全网通版 8GB+256GB 透明版",
+                    "price":3699,
+                    "original_price":3699,                                  
+                    "src":"https://i8.mifile.cn/a1/pms_1553001921.97126644.jpg",
+                    "count":1,
+                    "color":"透明版",                      
+                    "index":0,                            
+                    "checked":true,
+                    "values":[
+                        {
+                            "name":"小米9 全网通版 8GB+256GB 透明版",
+                            "price":3699,
+                            "original_price":3699,                                  
+                            "src":"https://i8.mifile.cn/a1/pms_1553001921.97126644.jpg",
+                            "count":1,
+                            "color":"透明版",                      
+                            "index":0,                            
+                            "checked":true                    
+                        }
+                    ]                         
+                }                  
+            ]
 
 
 
@@ -413,100 +438,7 @@ installment = [
                     name:'运费说明',
                     val:'由小米发货的商品，单笔满150元免运费;由第三方商家发货的商品，免运费;特殊商品需要单独收取运费，具体以实际结算金额为准；优惠券等不能抵扣运费金额;'
                 }                                                
-            ]     
-            
-            
-// a1a1->> a:商品展示/b:详细参数，
-         //1:第一种套图/类型下标，
-         //a:普通图片/b:查看全部参数/c:轮播图，
-         //1:第一种套图下每张图片下标
-            [
-                {
-                    name:'商品介绍',
-                    type:'a',
-                    p_name:'小米9',
-                    src:'http://www.zlpones.com/imgs/mi/height_imgList/',
-                    values:[
-                        {
-                            type:'a',
-                            index:1,
-                            suffix:'webp',
-                            length:3,
-                            class:'',
-                            style:''                           
-                        },
-                        {
-                            type:'b',
-                            index:2,
-                            suffix:'webp',
-                            length:13,
-                            class:'',
-                            style:''                         
-                        },
-                        {
-                            type:'c',
-                            index:3,
-                            suffix:'webp',
-                            length:6,
-                            class:'carousel1',
-                            style:'width:100%;height:250px;'                                                         
-                        },    
-                        {
-                            type:'a',
-                            index:4,
-                            suffix:'webp',
-                            length:7,
-                            class:'',
-                            style:''                         
-                        }                                                                                                                                                            
-                    ]
-                }               
-            ]
-
-            heheight_list = [
-                {
-                    name:'商品介绍',
-                    type:'a',
-                    p_name:'黑鲨手机_Pro',
-                    src:'http://www.zlpones.com/imgs/mi/height_imgList/',
-                    values:[
-                        {
-                            type:'a',
-                            index:1,
-                            suffix:'webp',
-                            length:3,
-                            class:'',                            
-                            style:''                           
-                        },
-                        {
-                            type:'b',
-                            index:2,
-                            suffix:'webp',
-                            length:12,
-                            class:'',                            
-                            style:''                           
-                        },
-                        {
-                            type:'c',
-                            index:3,
-                            suffix:'webp',
-                            length:3,
-                            class:'',                            
-                            style:'width:100%;height:100%;'                           
-                        },    
-                        {
-                            type:'a',
-                            index:4,
-                            suffix:'webp',
-                            length:36,
-                            class:'',                            
-                            style:''                           
-                        }                                                                                                                                                            
-                    ]
-                }
-            ]
-
-
+            ]            
     }
 }
 </script>

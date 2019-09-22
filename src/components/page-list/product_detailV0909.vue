@@ -11,23 +11,10 @@
             <a class="right"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="ellipsis" /></a>
         </div>
         <!--~~~~~~~~~~~~~~ 顶部轮播图 ~~~~~~~~~~~~~~~~~~-->        
-        <div class="top_showing" v-if="topShowName===imgsLs.name" v-for="(imgsLs,ils) in inforList.imgsList" :key="ils">
-            <div class="video_top" v-show="topShowName==='视频'">
-                <video width="100%" height="100%" autoplay loop controls="controls" data-v-e073abaa="" id="miPlayerVideo" poster="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c2e9a7fc809f7aeac30bf538baf8f156.jpg" :src="imgsLs.srcList" preload="none"></video>                
-            </div>
-            <div class="swipe_top offsetTopIndex" v-show="topShowName==='图片'" data-scrollTab="scrollTab" @click="lookTopImg(imgsLs.srcList)">
-                <van-swipe @change="onChange" :autoplay="10000">
-                    <van-swipe-item v-for="(imgs,im) in imgsLs.srcList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
-                    <div class="custom-indicator" slot="indicator">
-                        {{ (current + 1)+'/'+imgsLs.srcList.length }}
-                    </div>
-                </van-swipe>               
-            </div>      
-            <div class="switcher">
-                <span :class="topShowName===iil.name?'active':''" @click="selectTopShowing(iil.name)" v-for="(iil,il) in inforList.imgsList" :key="il">
-                    <i v-show="iil.name==='视频'"></i>{{iil.name}}
-                </span>
-            </div>      
+        <div class="swipe_top offsetTopIndex" data-scrollTab="scrollTab" @click="lookTopImg(inforList.imgsList)">
+            <van-swipe :autoplay="10000">
+                <van-swipe-item v-for="(imgs,im) in inforList.imgsList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
+            </van-swipe>               
         </div>
         <!--~~~~~~~~~~~~~~ 商品详情信息 ~~~~~~~~~~~~~~~~~~-->        
         <div class="details_info">
@@ -47,7 +34,7 @@
             </div>
             <div class="detail_price">
                 <span><i>￥</i>{{details.d_style_price}}</span>
-                <s v-show="details.d_style_original_price!=details.d_style_original_price">{{details.d_style_original_price}}</s>
+                <s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s>
             </div>
         </div>
         <!--~~~~~~~~~~~~~~ 设备配置列表 ~~~~~~~~~~~~~~~~~~-->        
@@ -224,9 +211,9 @@
                 <div class="header">
                     <div class="close" @click="closeShowPage"><van-icon name="cross"/></div>
                     <div class="pro_info">
-                        <div class="src" @click="lookDetailImg"><img :src="details.d_style_src" alt=""></div>
+                        <div class="src" @click="lookDetailImg(inforList.imgsList)"><img :src="details.d_style_src" alt=""></div>
                         <div class="info">
-                            <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_original_price!=details.d_style_original_price">{{details.d_style_original_price}}</s></p>
+                            <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_original_price!=0">{{details.d_style_original_price}}</s></p>
                             <span class="title">{{details.p_info}}</span>
                         </div>
                     </div>
@@ -272,38 +259,6 @@
                             <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=pis.c_srcIndex">常见问题</span>
                         </div>                  
                     </div> 
-
-                    <!--~~~~~~~~~~~~~~ 套餐选择 ~~~~~~~~~~~~~~~~~~-->     
-                    <div class="set_meal_list">
-                        <div class="title">
-                            套餐
-                        </div>
-                        <div class="heads">
-                            <span class="item" :class="ifsml.p_set_meal===set_meal?'active':''" @click="selectSet_mealList(ifsml.p_set_meal)" v-for="(ifsml,ifs) in inforList.set_mealList" :key="ifs">{{ifsml.p_set_meal}}</span>
-                        </div>  
-                        <div class="bodys" v-show="set_meal!=='标配'">
-                            <div class="block" v-for="(psml,psl) in pi.pi_set_meal" :key="psl">
-                                <div class="src">
-                                    <img :src="psml.src" alt="">
-                                </div>
-                                <div class="info">
-                                    <div>
-                                        {{psml.name}}
-                                    </div>
-                                    <p v-show="psml.values.length>1">
-                                        <span v-for="(plvs,ps) in psml.values" :key="ps">
-                                            {{plvs.color}}
-                                        </span>
-                                    </p>
-                                </div>
-                            </div>
-                        </div>                      
-                        <div class="cmputed">
-                            <span class="price">套餐价￥{{details.d_style_price}}</span>
-                            <span class="original_price" v-show="details.d_style_original_price-details.d_style_price">, 节省<i>￥{{(Number(details.d_style_original_price)-Number(details.d_style_price)).toFixed(1)}}</i>
-                            </span>
-                        </div>
-                    </div>                       
                 </div> 
                 <!--~~~~~~~~~~~~~~ 承诺列表 ~~~~~~~~~~~~~~~~~~-->
                 <div class="installmentList" v-show="installmentListShow">
@@ -349,8 +304,8 @@
                     </div>    
                     <div class="content">
                         <p class="itemLine" v-for="(iconl,il) in iconAllList" :key="il">
-                            <span class="name">{{iconl.name}}</span>
-                            <span class="val">{{iconl.val}}</span>
+                            <span class="name">{{iconl.d_icon_min_name}}</span>
+                            <span class="val">{{iconl.d_icon_min_title}}</span>
                         </p>
                     </div>
                     <div class="footer">
@@ -419,8 +374,6 @@ export default {
             goShoppingList:[],
             show:false,
             index: 0,
-            current:0,
-            topShowName:'视频',
             giftList:[],
             imgLsitShow:false,
             images: [
@@ -459,7 +412,6 @@ export default {
             version:'',
             color:'',
             name:'',
-            size:'',
             set_meal:'',
             model:'',
             shoppingCount:0,
@@ -495,54 +447,12 @@ export default {
     mounted(){   
         this.init()
         this.initStaticData()     
-        this.getOffsetTop()   
-        this.setVideo()   
+        this.getOffsetTop()      
     },
     computed:{
       
     },    
     methods:{ 
-        setVideo(){
-            setTimeout(()=>{            
-            var v = {
-                video: document.getElementById("miPlayerVideo"),//容器框
-                // play: document.getElementById("play"),//播放按钮
-                // pause: document.getElementById("pause"),//暂停按钮
-                // duration: document.getElementById("duration"),//总时长
-                // currentTime: document.getElementById("currentTime"),//当前播放时间
-                // progress: document.getElementsByClassName("progress")[0],//进度条容器
-                // timrBar: document.getElementsByClassName("timrBar")[0], //进度条
-
-                // sound: document.getElementsByClassName("video-sound")[0], //音量容器    
-                // soundBar: document.getElementsByClassName("soundBar")[0],//音量
-                // playSpeed: document.getElementById("playSpeed"),//播放速率
-                // warp: document.getElementById("video-warp"), //视频区域距离左边距离
-                // soundPercent:0 ,//音量百分比
-                // fullScreen:document.getElementById("screen")/*全屏按钮*/
-            };    
-
-            console.log(v.video)    
-            v.video.onloadedmetadata = function() {                
-                //播放
-                // v.play.onclick = function() {
-                //     console.log(3333333333333)
-                //     if(v.video.paused || v.video.ended) {
-                //         v.video.play();
-                //         this.style.display = "none";
-                //         v.pause.style.display = "inline-block";
-                //     }
-                // }
-                // //暂停
-                // v.pause.onclick = function() {
-                //     if(!v.video.paused || !v.video.ended) {
-                //         v.video.pause();
-                //         v.pause.style.display = "none";
-                //         v.play.style.display = "inline-block";
-                //     }
-                // }
-            }                  
-            },100)
-        },
         fomatFloat(num,n){   
             var f = parseFloat(num);
             if(isNaN(f)){
@@ -600,9 +510,6 @@ export default {
             }                
             }, 1000);
         },  
-        selectTopShowing(name){//查看顶部视频/图片展示
-            this.topShowName = name
-        },
         selectScrollTab(tab,t){//点击滚动到页面楼层
             let dom = this.$refs.detail
             dom.scrollTop = this.scrollIndexArr[t]>0?this.scrollIndexArr[t]-50:this.scrollIndexArr[t]
@@ -647,17 +554,11 @@ export default {
         },
         getProductShopping(){//加入购物车
             // ls.setItem('shoppCount',)
-            console.log(this.details.p_info)
             let count = this.count
             let p_info = this.details.p_info
-            let name = this.name
-            let version = this.version
-            let color = this.color
-            let size = this.size
-            let set_meal = this.set_meal
             let pi = this.pi
             let url = this.HOST + '/detail/addShoppingInfor.php'
-            this.$axios.post(url,{name,version,color,size,set_meal,p_info,count,pi}).then(response=> {
+            this.$axios.post(url,{p_info,count,pi}).then(response=> {
                 console.log(response.data)
                 let hint = response.data.hint
                 if(hint === 'ok'){
@@ -677,18 +578,14 @@ export default {
 
         },      
         onChange(index) {//弹出图片轮播下标
-            this.current = index;
+            this.index = index;
         },    
         lookTopImg(imgList){//点击顶部轮播图放大
             this.images = imgList
             this.imgLsitShow = !this.imgLsitShow            
         },            
-        lookDetailImg(){//点击弹出框中商品详情左上角图片
-            if(this.inforList.imgsList && this.inforList.imgsList.length>1){
-                this.images = this.inforList.imgsList[1].srcList
-            }else{
-                this.images = this.inforList.imgsList[0].srcList
-            }
+        lookDetailImg(imgList){//点击弹出框中商品详情左上角图片
+            this.images = imgList
             this.imgLsitShow = !this.imgLsitShow            
         },
         lookReviewAll(){//点击查看更多评论
@@ -701,15 +598,12 @@ export default {
             this.$router.push({name:'review',params:data})
         },
         lookIconList(){//点击查看设备参数信息表
-            let obj = {}
-            obj.name = this.name
-            obj.version = this.version
+            let iconInfo = this.name+' '+this.version
             let url = this.HOST + '/detail/getDetailIconAllList.php'               
             this.iconListShow = true
-            if(obj){
-                this.$axios.post(url,obj).then(response=> {
-                    let iconList = response.data.iconAllList.d_icon_min_list.replace(/\s*/g,"")
-                    this.iconAllList = eval("("+iconList+")")      
+            if(iconInfo){
+                this.$axios.post(url,iconInfo).then(response=> {
+                    this.iconAllList = response.data.iconAllList
                 }).catch(error=>{
 
                 })
@@ -736,22 +630,14 @@ export default {
             this.installmentItemIndex = 0
         },
         selectVersion(newVersion){//选择规格款式
-            if(this.version!==newVersion){
-                this.version = newVersion
-                this.init('set')                
-            }
+            this.version = newVersion
+            let newItemInfo = this.name+','+this.model+','+this.version+','+this.color
+            this.init(newItemInfo)
         },
         selectColor(newColor){//选择颜色款式
-            if(this.color!==newColor){
-                this.color = newColor  
-                this.init('set')                   
-            }                   
-        },
-        selectSet_mealList(setMealName){//选择套餐
-            if(this.set_meal!==setMealName){
-                this.set_meal = setMealName
-                this.init('set')                    
-            }              
+            this.color = newColor  
+            let newItemInfo = this.name+','+this.model+','+this.version+','+this.color
+            this.init(newItemInfo)                      
         },
         minus(){//购买数量--
             this.count>1?this.count--:1
@@ -765,9 +651,7 @@ export default {
             this.giftListShow = false
             this.promiseListShow = false
             this.productListShow = false
-            this.installmentListShow = false       
-            // this.set_meal = name
-            // this.init('set')                  
+            this.installmentListShow = false            
         },
         showPopup(){//展开下拉页面
             this.show = true
@@ -783,108 +667,67 @@ export default {
             this.zengzhiImgList[this.zengzhiIndex] = imgArr
 
         },  
-        init(type){
+        init(newItemInfo){
             let itemInfo = null
             let set_meal = null
-            let name = null
-            let version = this.version
-            let color = this.color
-            let size = this.size
-            let selectArr1 = []
-            let selectArr2 = []
-            let arr1 = ["d_style_version","d_style_color","d_style_size","p_set_meal"]
-            let arr2 = []
-            // let arr2 = ["12GB+256GB","电鸣黑","","标配"]
-          
-            let obj = {}
-            if(type && type==='set'){
-                name = this.name
-                set_meal = this.set_meal     
-                console.log(type)
-                console.log(name)
-                console.log(set_meal)
-                arr2.push(version,color,size,set_meal)
-                for(let i=0;i<arr2.length;i++){
-                    if(arr2[i]){
-                        selectArr1.push(arr1[i])
-                        selectArr2.push(arr2[i])
-                        console.log(arr2[i])
-                        console.log(i)
-                    }
-                }
-                console.log(selectArr1)            
-                console.log(selectArr2)  
+
+            if(newItemInfo && this.set_meal){
+                itemInfo = newItemInfo
+                set_meal = this.set_meal
             }else{
-                type = 'get'
-                name = ls.getItem('name')
                 itemInfo = ls.getItem('info')
                 set_meal = ls.getItem('set_meal')
             }
             // 黑鲨游戏手机2 Pro 12GB+128GB 电鸣黑
                         console.log(set_meal)
             // let itemInfo = ls.getItem('info') || newItemInfo
-
-            obj.type = type
-            obj.name = name
-            obj.selectArr1 = selectArr1
-            obj.selectArr2 = selectArr2
-            obj.set_meal = set_meal
-            obj.itemInfo = itemInfo
-            console.log(obj)
             let routerName = ls.getItem('routerName')       
             let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
-            console.log(itemInfo)
-            if(obj.type){
-                this.$axios.post(url2,obj).then(response=> {
-                    // let valuesList = response.data                   
+            if(itemInfo){
+                this.$axios.post(url2,itemInfo+','+set_meal).then(response=> {
+                    // let valuesList = response.data
                     if(response.data){
-                console.log(response.data)                        
+   console.log(response.data)                        
                         let values = response.data                      
                         this.details = values.detail
                         this.count = this.details.d_style_MaxCount>this.count?this.count:this.details.d_style_MaxCount
-                        this.name = values.detail.p_name
                         this.version = values.detail.d_style_version
                         this.color = values.detail.d_style_color
+                        this.name = values.detail.p_name
                         this.set_meal = values.detail.p_set_meal
-                        
                         this.model = values.detail.d_style_model
                         let stime = values.detail.d_seckill_time
                         this.time = Number(stime)
                         // this.time = 10000
-                        let iconList = values.detail.d_style_iconList.replace(/\s*/g,"")       
+                        let iconList = values.detail.d_style_iconList.replace(/\s*/g,"")                
                         let installment = values.detail.d_style_installment.replace(/\s*/g,"")                
                         let promise = values.detail.d_style_promise.replace(/\s*/g,"")    
 
                         this.inforList.colorList = values.colorList
                         this.inforList.imgsList = values.imgsList
                         this.inforList.versionList = values.versionList  
-                        this.inforList.sizeList = values.sizeList  
-                        this.inforList.set_mealList = values.set_mealList  
-     
                         this.inforList.iconList = eval("("+iconList+")")
                         this.inforList.installment = eval("("+installment+")")
                         this.inforList.promise = eval("("+promise+")")
-  
+
                     }
                 }).catch(error=> {
                 });    
-    console.log(obj)
-                let url = this.HOST + '/detail/getProductInfo.php'                 
-                this.$axios.post(url,obj).then(response=> {
 
+                let url = this.HOST + '/detail/getProductInfo.php'                 
+                this.$axios.post(url,itemInfo).then(response=> {
                     let values = response.data.product_info
                     let pi_server = values.pi_server.replace(/\s*/g,"")
                     let pi_choose = values.pi_choose.replace(/\s*/g,"")
                     let pi_gift = values.pi_gift.replace(/\s*/g,"")
-                    // let pi_set_meal = values.pi_set_meal.replace(/\s*/g,"")
-                    let pi_set_meal = response.data.product_set_meal.pi_set_meal
-                   console.log(pi_set_meal)
+                    let pi_set_meal = values.pi_set_meal.replace(/\s*/g,"")
+
                     values.pi_server= eval("("+pi_server+")")
                     values.pi_choose= eval("("+pi_choose+")")
                     values.pi_gift= eval("("+pi_gift+")")
-                    values.pi_set_meal= pi_set_meal
+                    values.pi_set_meal= eval("("+pi_set_meal+")")
                     this.pi = values
-                    console.log(this.pi)
+
                 }).catch(error=>{
                 })
             }               
@@ -1005,82 +848,13 @@ export default {
                 }
             }
         }
-        .top_showing{
-            width: 100%;            
-            position: relative;
-            top:0;
-            left: 0;
-            .video_top{
+        .swipe_top{
+            width: 100%;
+            img{
+                display: block;
                 width: 100%;
                 height: 412px;
-                background:rgba(0, 0, 0, 1);
-               #miPlayerVideo{
-                z-index: -1;
-                width: 100%;
-                height: 100%;
-               } 
-                video::-webkit-media-controls{
-                    display:none !important;
-                }
-            }
-            .swipe_top{
-                width: 100%;
-                img{
-                    display: block;
-                    width: 100%;
-                    height: 412px;
-                }    
-                .custom-indicator{
-                    position: absolute;
-                    padding: 3px 6px;
-                    background: rgba(0, 0, 0, .6);
-                    border-radius: 10px;
-                    text-align: center;
-                    color: #fff;
-                    right: 15px;
-                    top:90%;
-                }                    
-            }
-            .switcher{
-                position: absolute;
-                left: 50%;
-                top:90%;
-                margin-left: -60px;                    
-                span{
-                    color: #555;
-                    display: inline-block;
-                    width: 46px;
-                    line-height: 20px;
-                    text-align: center;
-                    padding: 0px 0px;
-                    border-radius: 10px;
-                    font-size: 10px!important;
-                    background: #fff;
-                    margin-left: 10px;
-                    // border: 1px solid #fff;     
-                    i{
-                        display: inline-block;
-                        content: '';
-                        vertical-align: 1px;
-                        margin-right: 4px;
-                        // position: absolute;
-                        -webkit-transform: rotate(135deg);
-                        transform: rotate(135deg);
-                        border-top: 0.07rem solid #555;
-                        border-left: 0.07rem solid #555;
-                        border-bottom: 0.07rem solid transparent;
-                        border-right: 0.07rem solid transparent;                        
-                    }               
-                }
-                .active{
-                    color: #fff;
-                    background: #f56600;     
-                    i{
-                        border-top: 0.07rem solid #fff;
-                        border-left: 0.07rem solid #fff;                            
-                    }          
-                }
-            }
+            }                        
         }
         .details_info{
             width: 100%;
@@ -1612,7 +1386,6 @@ export default {
                         height: 104px;          
                         border: 1px solid #f0f0f0;               
                         display: inline-block;
-                            box-shadow: 0px 0px 6px 1px #eee;                                
                         img{
                             width: 100%;
                             height: 100%;                  
@@ -1668,17 +1441,11 @@ export default {
                         font-size: .23rem;
                         span{
                             display: inline-block;
-                            padding: 0px 3px;
-                            line-height: 34px;
-                            min-width: 80px;
+                            padding: 9.5px 0px;
                             text-align: center;
+                            width: 76.5px;
                             border: 1px solid #f0f0f0;
-                            margin-right: 8px;
-                            box-shadow: 0px 0px 6px 1px #eee;                                 
-                        }
-                        span:active{
-                            background: rgba(0, 0, 0, .1);
-                            color: #f56600;
+                            margin-left: 8px;
                         }
                     }
                 }
@@ -1694,7 +1461,6 @@ export default {
                     .compute{
                         border: 1px solid #f0f0f0;
                         overflow: hidden;
-                        box-shadow: 0px 0px 6px 1px #eee;     
                         span{
                             display: inline-block;
                             font-size: .48rem;
@@ -1716,10 +1482,6 @@ export default {
                             background: #fafafa;
                             color: #ccc;
                         }
-                        span:active{
-                            background: rgba(0, 0, 0, .1);
-                            color: #f56600;
-                        }                        
                     }
                 }
                 .accident_protection{
@@ -1752,12 +1514,12 @@ export default {
                         display: flex;
                         justify-content: space-between;
                         padding: 9.5px 10px;
-                        box-shadow: 0px 0px 6px 1px #eee;     
                         .name{
                             text-align: left;
                         }
                         .val{
                             text-align: right;
+
                         }
                     }
                     .info{
@@ -1778,100 +1540,7 @@ export default {
                             color:#f56600;
                         }   
                     }
-                } 
-                .set_meal_list{
-                    width: 100%;
-                    text-align: left;
-                    padding: 20px 0;
-                    .title{
-                        border-top:1px solid #f8f8f8;                      
-                        font-size: 0.25rem;
-                        padding: 15px 0;                        
-                    }
-                    .heads{
-                        width: 100%;
-                        display: flex;
-                        flex-wrap: wrap;
-                        justify-content: flex-start;
-                        font-size: 0.23rem;
-                        span{
-                            padding: 0px 3px;
-                            display: inline-block;
-                            line-height: 34px;
-                            min-width: 80px;
-                            text-align: center;
-                            border: 1px solid #f0f0f0;
-                            margin-right: 8px;
-                            margin-bottom: 8px;
-                            box-shadow: 0px 0px 6px 1px #eee;                            
-                        }
-                        span:active{
-                            background: rgba(0, 0, 0, .1);
-                            color: #f56600;
-                        }                        
-                        .active{
-                            border-color: #f566009d;
-                            color: #f56600;                             
-                        }
-
-                    }                    
-                    .bodys{
-                            width: 100%;
-                            margin-top: 10px;
-                            padding-left: 10px;
-                            border-radius: 8px;
-                            background: rgba(0, 0, 0, .1);                            
-                        .block{
-                            display: flex; 
-                            width: 100%;
-                            min-height: 80px;                     
-                            align-items: center;                          
-                            .src{
-                                img{
-                                    display: inline-block;
-                                    width: 57px;
-                                    height: 57px;
-                                }
-                            }
-                            .info{
-                                padding-left: 10px;
-                                div{
-                                    padding: 8px 0;
-                                }
-                                p{
-                                    text-align: center;
-                                    span{
-                                        display: inline-block;
-                                        min-width: 44px;
-                                        padding: 0 2px;
-                                        line-height: 20px;
-                                        border:1px solid #aaa;
-                                        box-shadow: 0px 0px 6px 1px #eee;     
-                                    }
-                                    span:active{
-                                        background: rgba(0, 0, 0, .1);
-                                        color: #f56600;
-                                    }                                    
-                                    .active{
-                                       border-color: #f566009d;
-                                       color: #f56600; 
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    .cmputed{
-                        padding: 10px 0;
-                        .price{
-
-                        }
-                        .original_price{
-                            i{
-                                color: #f56600;
-                            }
-                        }
-                    }
-                }               
+                }                
             }
             .installmentList{
                 margin-top: 160px;

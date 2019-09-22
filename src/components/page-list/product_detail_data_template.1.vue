@@ -209,7 +209,22 @@ export default {
 
 
 
-
+{
+    "XY":"通讯学院",
+    "NJ":"大一",
+    "YIYUE":51,
+    "ERYUE":52,
+    "SANYUE":53,
+    "SIYUE":54,
+    "WUYUE":65,
+    "LIUYUE":66,
+    "QIYUE":67,
+    "BAYUE":78,
+    "JIUYUE":79,
+    "SHIYUE":80,
+    "SHIYIYUE":91,
+    "SHIERYUE":92
+}
 
 
 
