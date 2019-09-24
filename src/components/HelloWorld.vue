@@ -139,6 +139,7 @@ export default {
       var bodys = document.getElementsByClassName('main_bodyer')[0]
             bodys.style.height = deviceHeight + 'px'
             bodys.style.width = deviceWidth * 7 + 'px'
+            // console.log(bodys.style.width)
       // document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';        
     },  
     isTouch(){
@@ -238,21 +239,21 @@ export default {
         }
       } 
     },
-    add(){
-      let url = this.HOST + '/getMaindata.php'
-      Dialog.alert({
-        title: '标题',
-        message: '代码是写出来给人看的，附带能在机器上运行'
-      }).then(() => {
-          this.$axios.get(url, {})
-          .then(response=> {
-            console.log(response.data.products)
-            let list = response.data.products;
-          })
-          .catch(error=> {
-          });   
-      }); 
-    },
+    // add(){
+    //   let url = this.HOST + '/getMaindata.php'
+    //   Dialog.alert({
+    //     title: '标题',
+    //     message: '代码是写出来给人看的，附带能在机器上运行'
+    //   }).then(() => {
+    //       this.$axios.get(url, {})
+    //       .then(response=> {
+    //         console.log(response.data.products)
+    //         let list = response.data.products;
+    //       })
+    //       .catch(error=> {
+    //       });   
+    //   }); 
+    // },
     openBar(){
       this.show = !this.show
     },
@@ -309,6 +310,29 @@ export default {
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style lang="less" scoped>
+
+::-webkit-scrollbar  
+{  
+    width: 0px;  
+    height: 0px;  
+    background-color: #F5F5F5;  
+}  
+  
+/*定义滚动条轨道 内阴影+圆角*/  
+::-webkit-scrollbar-track  
+{  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);  
+    border-radius: 10px;  
+    background-color: #FFF;  
+}  
+  
+/*定义滑块 内阴影+圆角*/  
+::-webkit-scrollbar-thumb  
+{  
+    border-radius: 10px;  
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);  
+    background-color: #AAA;  
+} 
 .hello{
   margin:0 auto;
   color: #333333;

@@ -8,17 +8,18 @@ module.exports = {
   dev: {
 
     // Paths
-    assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
-    proxyTable: {
+    assetsSubDirectory: 'static',//静态资源子目录
+    assetsPublicPath: '/',//资源公共路径
+    proxyTable: {//代理表
       // portal:{
       //   target:'http://localhost/src/assets/data/product',
       //   changeOrigin:ture
       // }
       "/api": {
-        target: "http://localhost/src/assets/data/product",
-        changeOrigin: true,
-        pathRewrite: {
+        target: "http://localhost/static/data/product",
+        // target:'http://localhost/src/assets/data/product',
+        changeOrigin: true,//改变同源 
+        pathRewrite: {//路径重写
             '^/api': ''
         } 
       }     
@@ -53,15 +54,15 @@ module.exports = {
     index: path.resolve(__dirname, '../dist/index.html'),
 
     // Paths
-    assetsRoot: path.resolve(__dirname, '../dist'),
-    assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsRoot: path.resolve(__dirname, '../dist'),//资源根
+    assetsSubDirectory: 'static',//静态资源子目录
+    assetsPublicPath: './',//资源公共路径
 
     /**
      * Source Maps
      */
 
-    productionSourceMap: true,
+    productionSourceMap: true,//生产源图
     // https://webpack.js.org/configuration/devtool/#production
     devtool: '#source-map',
 

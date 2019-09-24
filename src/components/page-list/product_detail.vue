@@ -11,23 +11,25 @@
             <a class="right"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="ellipsis" /></a>
         </div>
         <!--~~~~~~~~~~~~~~ 顶部轮播图 ~~~~~~~~~~~~~~~~~~-->        
-        <div class="top_showing" v-if="topShowName===imgsLs.name" v-for="(imgsLs,ils) in inforList.imgsList" :key="ils">
-            <div class="video_top" v-show="topShowName==='视频'">
-                <video width="100%" height="100%" autoplay loop controls="controls" data-v-e073abaa="" id="miPlayerVideo" poster="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c2e9a7fc809f7aeac30bf538baf8f156.jpg" :src="imgsLs.srcList" preload="none"></video>                
+        <div class="top_showing" v-for="(imgsLs,ils) in inforList.imgsList" :key="ils">
+            <div v-if="topShowIndex===ils">
+                <div class="video_top" v-if="imgsLs.name==='视频'">
+                    <video width="100%" height="100%" autoplay loop controls="controls" data-v-e073abaa="" id="miPlayerVideo" poster="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c2e9a7fc809f7aeac30bf538baf8f156.jpg" :src="imgsLs.srcList" preload="none"></video>                
+                </div>
+                <div class="swipe_top offsetTopIndex" v-if="imgsLs.name==='图片'" data-scrollTab="scrollTab" @click="lookTopImg(imgsLs.srcList)">
+                    <van-swipe @change="onChange" :autoplay="10000">
+                        <van-swipe-item v-for="(imgs,im) in imgsLs.srcList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
+                        <div class="custom-indicator" slot="indicator">
+                            {{ (current + 1)+'/'+imgsLs.srcList.length }}
+                        </div>
+                    </van-swipe>               
+                </div>      
+                <div class="switcher">
+                    <span v-show="inforList.imgsList.length>1" :class="topShowIndex===il?'active':''" @click="selectTopShowing(il)" v-for="(iil,il) in inforList.imgsList" :key="il">
+                        <i></i>{{iil.name}}
+                    </span>
+                </div>                   
             </div>
-            <div class="swipe_top offsetTopIndex" v-show="topShowName==='图片'" data-scrollTab="scrollTab" @click="lookTopImg(imgsLs.srcList)">
-                <van-swipe @change="onChange" :autoplay="10000">
-                    <van-swipe-item v-for="(imgs,im) in imgsLs.srcList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
-                    <div class="custom-indicator" slot="indicator">
-                        {{ (current + 1)+'/'+imgsLs.srcList.length }}
-                    </div>
-                </van-swipe>               
-            </div>      
-            <div class="switcher">
-                <span :class="topShowName===iil.name?'active':''" @click="selectTopShowing(iil.name)" v-for="(iil,il) in inforList.imgsList" :key="il">
-                    <i v-show="iil.name==='视频'"></i>{{iil.name}}
-                </span>
-            </div>      
         </div>
         <!--~~~~~~~~~~~~~~ 商品详情信息 ~~~~~~~~~~~~~~~~~~-->        
         <div class="details_info">
@@ -205,7 +207,7 @@
                 </div>                        
             </div>            
         </div>
-        <!--~~~~~~~~~~~~~~ 承诺&商品面板 ~~~~~~~~~~~~~~~~~~-->        
+        <!--~~~~~~~~~~~~~~ 承诺 & 商品 ~~~~~~~~~~~~~~~~~~-->        
         <div class="showPage">
             <van-image-preview
                 :startPosition="0"
@@ -226,7 +228,7 @@
                     <div class="pro_info">
                         <div class="src" @click="lookDetailImg"><img :src="details.d_style_src" alt=""></div>
                         <div class="info">
-                            <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_original_price!=details.d_style_original_price">{{details.d_style_original_price}}</s></p>
+                            <p class="price"><span>{{details.d_style_price}}</span><s v-show="details.d_style_price!==details.d_style_original_price && details.p_set_meal==='标配'">{{details.d_style_original_price}}</s></p>
                             <span class="title">{{details.p_info}}</span>
                         </div>
                     </div>
@@ -256,22 +258,6 @@
                             <span @click="add" :class="['add',count>=details.d_style_MaxCount?'disabled':'']">＋</span>
                         </div>
                     </div>
-                    <!--~~~~~~~~~~~~~~ 服务选择 ~~~~~~~~~~~~~~~~~~-->       
-                    <div class="accident_protection" v-for="(pis,pi) in pi.pi_server" :key="pi">
-                        <div class="title">
-                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=pis.a_srcIndex">{{pis.name}}<van-icon name="question-o" /></span>
-                            <span v-for="(vss,vi) in pis.values" :key="vi" class="val" v-show="pis.isSelect" v-if="vss.checked">{{vss.text}}</span>
-                        </div>
-                        <div v-for="(vss,vi) in pis.values" :key="vi" :class="['block',vss.checked?'selectActive':'']" @click="selectServer(pis.isSelect,pi,vss.checked,vi)">
-                            <span class="name">{{vss.name}}</span>
-                            <span class="val">{{vss.price}}元</span>
-                        </div>
-                        <div class="info" v-show="pis.isSelect">
-                            <span class="affirm"><van-icon name="checked" />我已阅读</span>
-                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=pis.b_srcIndex">服务条款 | </span>
-                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=pis.c_srcIndex">常见问题</span>
-                        </div>                  
-                    </div> 
 
                     <!--~~~~~~~~~~~~~~ 套餐选择 ~~~~~~~~~~~~~~~~~~-->     
                     <div class="set_meal_list">
@@ -291,19 +277,35 @@
                                         {{psml.name}}
                                     </div>
                                     <p v-show="psml.values.length>1">
-                                        <span v-for="(plvs,ps) in psml.values" :key="ps">
+                                        <span :class="plvs.checked?'active':''" @click="selectSetMealItemVal(psl,ps,plvs.checked)" v-for="(plvs,ps) in psml.values" :key="ps">
                                             {{plvs.color}}
                                         </span>
                                     </p>
                                 </div>
                             </div>
                         </div>                      
-                        <div class="cmputed">
+                        <div class="cmputed" v-show="details.p_set_meal!=='标配'">
                             <span class="price">套餐价￥{{details.d_style_price}}</span>
-                            <span class="original_price" v-show="details.d_style_original_price-details.d_style_price">, 节省<i>￥{{(Number(details.d_style_original_price)-Number(details.d_style_price)).toFixed(1)}}</i>
+                            <span class="original_price" v-show="details.d_style_original_price!==details.d_style_price">, 节省<i>￥{{(Number(details.d_style_original_price)-Number(details.d_style_price)).toFixed(1)}}</i>
                             </span>
                         </div>
-                    </div>                       
+                    </div> 
+                    <!--~~~~~~~~~~~~~~ 服务选择 ~~~~~~~~~~~~~~~~~~-->       
+                    <div class="accident_protection" v-for="(pis,pi) in pi.pi_server" :key="pi">
+                        <div class="title">
+                            <span class="name" @click="zengzhi=!zengzhi,zengzhiIndex=pis.a_srcIndex">{{pis.name}}<van-icon name="question-o" /></span>
+                            <span v-for="(vss,vi) in pis.values" :key="vi" class="val" v-show="pis.isSelect" v-if="vss.checked">{{vss.text}}</span>
+                        </div>
+                        <div v-for="(vss,vi) in pis.values" :key="vi" :class="['block',vss.checked?'selectActive':'']" @click="selectServer(pis.isSelect,pi,vss.checked,vi)">
+                            <span class="name">{{vss.name}}</span>
+                            <span class="val">{{vss.price}}元</span>
+                        </div>
+                        <div class="info" v-show="pis.isSelect">
+                            <span class="affirm"><van-icon name="checked" />我已阅读</span>
+                            <span class="clause" @click="zengzhi=!zengzhi,zengzhiIndex=pis.b_srcIndex">服务条款 | </span>
+                            <span class="issue" @click="zengzhi=!zengzhi,zengzhiIndex=pis.c_srcIndex">常见问题</span>
+                        </div>                  
+                    </div>                                           
                 </div> 
                 <!--~~~~~~~~~~~~~~ 承诺列表 ~~~~~~~~~~~~~~~~~~-->
                 <div class="installmentList" v-show="installmentListShow">
@@ -420,7 +422,7 @@ export default {
             show:false,
             index: 0,
             current:0,
-            topShowName:'视频',
+            topShowIndex:0,
             giftList:[],
             imgLsitShow:false,
             images: [
@@ -502,8 +504,7 @@ export default {
       
     },    
     methods:{ 
-        setVideo(){
-            setTimeout(()=>{            
+        setVideo(){        
             var v = {
                 video: document.getElementById("miPlayerVideo"),//容器框
                 // play: document.getElementById("play"),//播放按钮
@@ -520,28 +521,30 @@ export default {
                 // soundPercent:0 ,//音量百分比
                 // fullScreen:document.getElementById("screen")/*全屏按钮*/
             };    
-
-            console.log(v.video)    
-            v.video.onloadedmetadata = function() {                
-                //播放
-                // v.play.onclick = function() {
-                //     console.log(3333333333333)
-                //     if(v.video.paused || v.video.ended) {
-                //         v.video.play();
-                //         this.style.display = "none";
-                //         v.pause.style.display = "inline-block";
-                //     }
-                // }
-                // //暂停
-                // v.pause.onclick = function() {
-                //     if(!v.video.paused || !v.video.ended) {
-                //         v.video.pause();
-                //         v.pause.style.display = "none";
-                //         v.play.style.display = "inline-block";
-                //     }
-                // }
-            }                  
-            },100)
+            setTimeout(()=>{    
+                if(v.video){
+                    // console.log(v.video)    
+                    v.video.onloadedmetadata = function() {                
+                        //播放
+                        // v.play.onclick = function() {
+                        //     console.log(3333333333333)
+                        //     if(v.video.paused || v.video.ended) {
+                        //         v.video.play();
+                        //         this.style.display = "none";
+                        //         v.pause.style.display = "inline-block";
+                        //     }
+                        // }
+                        // //暂停
+                        // v.pause.onclick = function() {
+                        //     if(!v.video.paused || !v.video.ended) {
+                        //         v.video.pause();
+                        //         v.pause.style.display = "none";
+                        //         v.play.style.display = "inline-block";
+                        //     }
+                        // }
+                    }                  
+                }
+            },100)                
         },
         fomatFloat(num,n){   
             var f = parseFloat(num);
@@ -600,8 +603,8 @@ export default {
             }                
             }, 1000);
         },  
-        selectTopShowing(name){//查看顶部视频/图片展示
-            this.topShowName = name
+        selectTopShowing(index){//查看顶部视频/图片展示
+            this.topShowIndex = index
         },
         selectScrollTab(tab,t){//点击滚动到页面楼层
             let dom = this.$refs.detail
@@ -647,7 +650,13 @@ export default {
         },
         getProductShopping(){//加入购物车
             // ls.setItem('shoppCount',)
-            console.log(this.details.p_info)
+            // console.log(this.details.p_info)
+            // console.log(this.count)
+            // console.log(this.name)
+            // console.log(this.version)
+            // console.log(this.color)
+            // console.log(this.set_meal)
+            // console.log(this.pi)
             let count = this.count
             let p_info = this.details.p_info
             let name = this.name
@@ -746,6 +755,19 @@ export default {
                 this.color = newColor  
                 this.init('set')                   
             }                   
+        },
+        selectSetMealItemVal(a,b,check){//选择套餐子款式
+            if(!check){
+                let list = this.pi.pi_set_meal[a].values
+                if(list && list.length>0){
+                    for(let i in list){
+                        list[i].checked = false
+                    }
+                    list[b].checked = true
+                    this.pi.pi_set_meal[a].src = list[b].src
+                    this.pi.pi_set_meal[a].name = list[b].name
+                }                
+            }
         },
         selectSet_mealList(setMealName){//选择套餐
             if(this.set_meal!==setMealName){
@@ -846,8 +868,6 @@ export default {
                         this.version = values.detail.d_style_version
                         this.color = values.detail.d_style_color
                         this.set_meal = values.detail.p_set_meal
-                        
-                        this.model = values.detail.d_style_model
                         let stime = values.detail.d_seckill_time
                         this.time = Number(stime)
                         // this.time = 10000
@@ -856,11 +876,13 @@ export default {
                         let promise = values.detail.d_style_promise.replace(/\s*/g,"")    
 
                         this.inforList.colorList = values.colorList
+                        console.log(values)
+                        console.log(values.imgsList)
                         this.inforList.imgsList = values.imgsList
                         this.inforList.versionList = values.versionList  
                         this.inforList.sizeList = values.sizeList  
                         this.inforList.set_mealList = values.set_mealList  
-     
+                        console.log(values.set_mealList)
                         this.inforList.iconList = eval("("+iconList+")")
                         this.inforList.installment = eval("("+installment+")")
                         this.inforList.promise = eval("("+promise+")")
@@ -1593,6 +1615,7 @@ export default {
             }                
             .header{
                 position: fixed;
+                width: 100%;
                 background: #fff;
                 .close{
                     padding: 10px 15px 0px 0px;       
@@ -1612,7 +1635,7 @@ export default {
                         height: 104px;          
                         border: 1px solid #f0f0f0;               
                         display: inline-block;
-                            box-shadow: 0px 0px 6px 1px #eee;                                
+                            box-shadow: 0px 0px 6px 1px rgba(255, 229, 109, .1);                                
                         img{
                             width: 100%;
                             height: 100%;                  
@@ -1658,7 +1681,7 @@ export default {
                 overflow-y: auto;
                 .blocks{
                     border-top:1px solid #f8f8f8;                    
-                    padding: 0px 0px 20px;
+                    padding: 0px 0px 10px;
                     text-align: left;
                     .name{
                         font-size: .25rem;
@@ -1670,11 +1693,15 @@ export default {
                             display: inline-block;
                             padding: 0px 3px;
                             line-height: 34px;
-                            min-width: 80px;
+                            min-width: 90px;
                             text-align: center;
                             border: 1px solid #f0f0f0;
-                            margin-right: 8px;
-                            box-shadow: 0px 0px 6px 1px #eee;                                 
+                            margin-right: 12px;
+                            margin-bottom: 11px;
+                            // box-shadow: 0px 0px 6px 1px rgba(255, 229, 109, .1);                                 
+                            // box-shadow: 0px 0px 6px 1px rgba(254, 123, 150, .1);                                 
+                            box-shadow: 0px 0px 6px 1px rgba(255, 229, 109, .1);                                 
+                            // box-shadow: 0px 0px 6px 1px rgba(28, 162, 229, .1);                                 
                         }
                         span:active{
                             background: rgba(0, 0, 0, .1);
@@ -1694,11 +1721,12 @@ export default {
                     .compute{
                         border: 1px solid #f0f0f0;
                         overflow: hidden;
-                        box-shadow: 0px 0px 6px 1px #eee;     
+                        box-shadow: 0px 0px 6px 1px rgba(255, 229, 109, .1);     
                         span{
                             display: inline-block;
                             font-size: .48rem;
                             background: #f0f0f0;
+                            background: rgba(252, 252, 252, 1);      
                             color: #676767;
                             width: 28px;
                             margin-left: -2.5px;
@@ -1725,7 +1753,7 @@ export default {
                 .accident_protection{
                     font-size: .25rem;
                     display: flex;
-                    padding: 20px 0;
+                    padding: 15px 0;
                     justify-content: space-between;
                     flex-wrap: wrap;
                     text-align: left;                
@@ -1752,7 +1780,7 @@ export default {
                         display: flex;
                         justify-content: space-between;
                         padding: 9.5px 10px;
-                        box-shadow: 0px 0px 6px 1px #eee;     
+                        box-shadow: 0px 0px 6px 1px rgba(255, 229, 109, .1);     
                         .name{
                             text-align: left;
                         }
@@ -1761,7 +1789,7 @@ export default {
                         }
                     }
                     .info{
-                        padding: 10px 0; 
+                        padding: 10px 0 0; 
                         .affirm{
                             i::before{
                                 font-size: .32rem;
@@ -1782,7 +1810,7 @@ export default {
                 .set_meal_list{
                     width: 100%;
                     text-align: left;
-                    padding: 20px 0;
+                    padding: 20px 0 0px;
                     .title{
                         border-top:1px solid #f8f8f8;                      
                         font-size: 0.25rem;
@@ -1798,12 +1826,14 @@ export default {
                             padding: 0px 3px;
                             display: inline-block;
                             line-height: 34px;
-                            min-width: 80px;
+                            min-width: 90px;
                             text-align: center;
                             border: 1px solid #f0f0f0;
-                            margin-right: 8px;
                             margin-bottom: 8px;
-                            box-shadow: 0px 0px 6px 1px #eee;                            
+                            box-shadow: 0px 0px 6px 1px rgba(255, 229, 109, .1);                            
+                        }
+                        span:not(:last-child){
+                            margin-right: 12px;
                         }
                         span:active{
                             background: rgba(0, 0, 0, .1);
@@ -1820,7 +1850,7 @@ export default {
                             margin-top: 10px;
                             padding-left: 10px;
                             border-radius: 8px;
-                            background: rgba(0, 0, 0, .1);                            
+                            background: rgba(252, 252, 252, 1);                            
                         .block{
                             display: flex; 
                             width: 100%;
@@ -1844,9 +1874,10 @@ export default {
                                         display: inline-block;
                                         min-width: 44px;
                                         padding: 0 2px;
+                                        margin-right: 10px;
                                         line-height: 20px;
-                                        border:1px solid #aaa;
-                                        box-shadow: 0px 0px 6px 1px #eee;     
+                                        border:1px solid #ddd;
+                                        box-shadow: 0px 0px 6px 1px rgba(255, 229, 109, .1);     
                                     }
                                     span:active{
                                         background: rgba(0, 0, 0, .1);

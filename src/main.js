@@ -29,7 +29,11 @@ Vue.use(ActionSheet );
 Vue.use(ImagePreview );
 Vue.use(Toast );
 Vue.config.productionTip = false
-Vue.prototype.HOST = "/api"
+if (process.env.NODE_ENV === 'production') {
+  Vue.prototype.HOST = "./data/product"
+}else{
+  Vue.prototype.HOST = "/api"
+}
 /* eslint-disable no-new */
 window.addEventListener('popstate', function (e) {
   router.isBack = true

@@ -12,7 +12,7 @@
                         <div class="image">
                             <img :src="spb.si_only.d_style_src" alt="">
                         </div>
-                        <div class="info">
+                        <div class="info" @touchstart="itemProductTouchStart($event,sp,spb.checked)">
                             <div class="title">
                                 <span>
                                     {{spb.si_only.p_name+' '+spb.si_only.d_style_version}}
@@ -45,7 +45,7 @@
                     </div>
                     <!--~~~~~~~~~~~~~~ 套餐区域 ~~~~~~~~~~~~~~~~~~-->   
                     <div class="set_meal" v-for="(stml,stl) in spb.si_set_meal" :key="stl">
-                        <div class="itemSetMeal" v-for="(stmlvs,ss) in stml.values" :key="ss" v-show="stml.checked">
+                        <div class="itemSetMeal" v-for="(stmlvs,ss) in stml.values" :key="ss" v-show="stmlvs.checked">
                             <div class="src">
                                 <img :src="stmlvs.src" alt="">
                             </div>
@@ -247,7 +247,52 @@ export default {
     updated(){
     },
     methods:{
-        serverTouchStart(a,sp,ai,bi,status){//手指长按服务
+        deleteProduct(obj){//删除商品
+            let  url = this.HOST + '/detail/deleteShoppingInfor.php'
+            this.$axios.post(url,{obj}).then(response=> {
+                this.init()
+            }).catch(error=>{
+            })
+        },
+        setProductData(obj){//修改数据
+            let  url = this.HOST + '/detail/setShoppingInfor.php'
+            this.$axios.post(url,{obj}).then(response=> {
+            }).catch(error=>{
+            })
+        },
+        itemProductTouchStart(e,sp,status){//手指长按选中商品
+            e.stopPropagation()
+            let $this = e.currentTarget
+            let touchEvent = setTimeout(()=>{
+                touchEvent = 0
+                clearTimeout(touchEvent)
+                Dialog.confirm({
+                // title: '标题',
+                closeOnClickOverlay:true,
+                className:'affirmDelectProduct',
+                cancelButtonText:'删除',
+                confirmButtonText:'移入收藏',
+                message: '将商品移入收藏或删除？'
+                }).then(() => {
+                    // this.sl[sp].si_checked = false
+                    // console.log(this.sl[sp])  
+                    // this.setProductData(this.sl[sp])    
+                    this.deleteProduct(this.sl[sp])
+                    this.sumAllChecked()                    
+                }).catch(()=>{
+                    this.deleteProduct(this.sl[sp])
+                    this.sumAllChecked()                        
+                })         
+
+            },500)
+            $this.ontouchend = function(){
+                clearTimeout(touchEvent)
+                // console.log(touchEvent)
+                if(touchEvent!=0){
+                }
+            }            
+        },
+        serverTouchStart(a,sp,ai,bi,status){//手指长按选中服务
             a.stopPropagation()
             let $this = a.currentTarget
             let touchEvent = setTimeout(()=>{
@@ -514,16 +559,17 @@ export default {
 }
 </script>
 
-<style lang="less" scoped>
+<style lang="less" scoped> 
     .goShopping{
         width:7.5rem;
         .shopping{
             position: relative;
             top:50px;
             width: 100%;
-            font-size: .25rem;         
+            font-size: .25rem;     
+                //vant确认删除商品按钮class
+               
             .shopp{
-                // background: red;
                 // height: 100%;
                 height: 2000px;
                 margin-bottom: 50px;
@@ -565,7 +611,7 @@ export default {
                         .info{
                             text-align: left;
                             padding: 0px 7px;
-                            line-height: 18px;
+                            line-height: 18px;                           
                             .title{
                                color: #333;
                                font-size: .29rem;

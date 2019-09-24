@@ -10,9 +10,31 @@
         function setRemUnit(){
           var deviceWidth = document.documentElement.clientWidth;
           var deviceHeight = document.documentElement.clientHeight;
-
+          // console.log(55555555555)
           // if(deviceWidth > 750) deviceWidth = 750;
           document.documentElement.style.fontSize = deviceWidth / 7.5 + 'px';
+        }
+        function IsPC() {
+          var userAgentInfo = navigator.userAgent;
+          var Agents = ["Android", "iPhone",
+                      "SymbianOS", "Windows Phone",
+                      "iPad", "iPod"];
+          var flag = true;
+          for (var v = 0; v < Agents.length; v++) {
+              if (userAgentInfo.indexOf(Agents[v]) > 0) {
+                  flag = false;
+                  break;
+              }
+          }
+          return flag;
+        }
+        var flag = IsPC(); //true为PC端，false为手机端
+        // navigator 对象包含有关浏览器的信息。
+        // userAgent 返回由客户机发送服务器的 user-agent（用户代理） 头部的值        
+        if(!flag){
+          console.log(flag)
+        }else{
+          console.log(flag)        
         }
         setRemUnit()
         window.addEventListener('resize',setRemUnit)

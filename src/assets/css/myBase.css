@@ -166,7 +166,44 @@ img{
 	margin-right: 0px;
 }
 .van_all .van-icon{
-	/* margin: 40px 0 20px; */
 	color: #323233;
 	font-size: 64px;
+}
+
+.van-overlay{
+	background-color: rgba(0,0,0,.5);
+}
+.affirmDelectProduct{
+	width: 88%;
+	height: 130px;
+	box-shadow: 0 1px 4px 2px rgba(0, 0, 0, .2);
+}
+.affirmDelectProduct .van-dialog__content{
+	border: none;	
+	height: 55px;
+}
+
+.affirmDelectProduct .van-dialog__footer{
+	display: flex;
+	overflow: auto;
+	justify-content: space-around;
+	padding: 15px 10px;
+	height: 100%;
+	border: none;
+}
+.affirmDelectProduct .van-dialog__footer>.van-dialog__cancel,.affirmDelectProduct .van-dialog__footer>.van-dialog__confirm{
+
+	font-size: .28rem;
+	flex: none;
+	width: 45%;	
+	height: 40px;	
+	line-height: 40px;
+}
+.affirmDelectProduct .van-dialog__footer .van-dialog__cancel{
+	border: 1px solid #ff6700;
+	color: #ff6700;
+}
+.affirmDelectProduct .van-dialog__footer .van-dialog__confirm{
+	color: #fff;
+	background: #ff6700;
 }
