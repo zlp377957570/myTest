@@ -1,14 +1,24 @@
 <template>
     <div ref="detail" class="product_detail" @scroll="paperScroll2($event)">  
         <!--~~~~~~~~~~~~~~ 吸顶 ~~~~~~~~~~~~~~~~~~-->
-        <div v-show="scrollTop2>=300" class="ceiling2"><a href="javascript:void(0);" @click="ceiling2"><img src="@/assets/image/icon/吸顶.png" alt=""></a></div>               
+        <div v-show="scrollTop2>=300" class="ceiling2">
+            <a href="javascript:void(0);" @click="ceiling2">
+                <img src="@/assets/image/icon/吸顶.png" alt="">
+            </a>
+        </div>               
         <!--~~~~~~~~~~~~~~ 顶部导航 ~~~~~~~~~~~~~~~~~~-->
         <div class="ceiling" :style="{boxShadow:scrollTop2<scrollIndexArr[2]?'0 1px 4px 2px rgba(0,0,0,'+(scrollTop2/500<=0.3?scrollTop2/500:0.3)+')':'',background:'rgba(255,255,255,'+(scrollTop2/500<=1?scrollTop2/500:1)+')'}">
-            <a class="left" @click="routerGo"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="arrow-left" /></a>
+            <a class="left" @click="routerGo">
+                <van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="arrow-left" />
+            </a>
             <div :style="{pointerEvents:scrollTop2>=200?'auto':'none'}" class="scrollTab" v-show="scrollTop2>=200">
-                <span :class="scrollIndex===st?'scrollTabActive':''" @click="selectScrollTab(scrollTab,st)" v-for="(scrollTab,st) in ['商品','评价','详情']" :key="st">{{scrollTab}}</span>
+                <span :class="scrollIndex===st?'scrollTabActive':''" @click="selectScrollTab(scrollTab,st)" v-for="(scrollTab,st) in ['商品','评价','详情']" :key="st">
+                    {{scrollTab}}
+                </span>
             </div>
-            <a class="right"><van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="ellipsis" /></a>
+            <a class="right">
+                <van-icon :class="[scrollTop2>=200?'topBtnHeheight':'']" name="ellipsis" />
+            </a>
         </div>
         <!--~~~~~~~~~~~~~~ 顶部轮播图 ~~~~~~~~~~~~~~~~~~-->        
         <div class="top_showing" v-for="(imgsLs,ils) in inforList.imgsList" :key="ils">
@@ -53,7 +63,7 @@
             </div>
         </div>
         <!--~~~~~~~~~~~~~~ 设备配置列表 ~~~~~~~~~~~~~~~~~~-->        
-        <div class="detail_icon_list" style="touch-action: pan-x">
+        <div class="detail_icon_list" style="touch-action: auto">
             <div v-for="(icons,ic) in inforList.iconList" :key="ic" @click="lookIconList">
                 <img :src="icons.src" alt="">
                 <p>{{icons.name}}</p>
@@ -995,9 +1005,9 @@ export default {
             a{
                 i{
                     transition: .5s;
-                    vertical-align: bottom;
                     width: 28px;
                     height: 27px;
+                    line-height: 27px;
                     display: inline-block;
                     overflow: hidden;
                     background: rgba(0, 0, 0, .6);
@@ -1008,7 +1018,6 @@ export default {
                 }
                 i::before{
                     font-weight: 100;
-                    vertical-align: middle;      
                 }
                 .topBtnHeheight{
                     background: transparent;
@@ -1018,7 +1027,6 @@ export default {
             .left{
                 i::before{
                     padding-right: 2px;
-                    padding-top: 2px;
                 }
             }
             .right{
@@ -1579,9 +1587,9 @@ export default {
                         background: #ed4d41;
                         color: #fff;
                         border-radius: 50%;
-                        font-size: .10rem;
                         width: 15px;
-                        height: 15px;       
+                        height: 15px;  
+                        line-height: 15px;     
                         top:-2px;
                         right: 2px;                  
                     }
@@ -1678,7 +1686,6 @@ export default {
                 margin-top: 155px;
                 margin-bottom: 55px;
                 padding: 0px 20px;                
-                overflow-y: auto;
                 .blocks{
                     border-top:1px solid #f8f8f8;                    
                     padding: 0px 0px 10px;

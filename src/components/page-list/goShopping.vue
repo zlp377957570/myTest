@@ -7,7 +7,7 @@
                     <!--~~~~~~~~~~~~~~ 商品信息 ~~~~~~~~~~~~~~~~~~-->   
                     <div class="only">
                         <div class="select" @click="itemShoppingSelect(sp,spb.si_checked)">
-                            <van-icon name="checked" :class="spb.si_checked?'':'selectCheck'"/>
+                            <van-icon name="checked" :class="Number(spb.si_checked)?'':'selectCheck'"/>
                         </div>
                         <div class="image">
                             <img :src="spb.si_only.d_style_src" alt="">
@@ -238,9 +238,6 @@ export default {
     }, 
     created(){
         this.init()
-        setTimeout(()=>{//暂时使用timeout,得用pormeise优化
-            this.sumAllChecked()    
-        },500)
     },
     mounted(){
     },
@@ -250,17 +247,21 @@ export default {
         deleteProduct(obj){//删除商品
             let  url = this.HOST + '/detail/deleteShoppingInfor.php'
             this.$axios.post(url,{obj}).then(response=> {
-                this.init()
+                if(response.data){
+                    this.init()
+                }
             }).catch(error=>{
             })
         },
-        setProductData(obj){//修改数据
+        setProductData(obj,type,status){//修改数据
+        console.log(type,status)
             let  url = this.HOST + '/detail/setShoppingInfor.php'
-            this.$axios.post(url,{obj}).then(response=> {
+            this.$axios.post(url,{obj,type,status}).then(response=> {
             }).catch(error=>{
             })
         },
         itemProductTouchStart(e,sp,status){//手指长按选中商品
+            this.sIndex = sp
             e.stopPropagation()
             let $this = e.currentTarget
             let touchEvent = setTimeout(()=>{
@@ -274,14 +275,9 @@ export default {
                 confirmButtonText:'移入收藏',
                 message: '将商品移入收藏或删除？'
                 }).then(() => {
-                    // this.sl[sp].si_checked = false
-                    // console.log(this.sl[sp])  
-                    // this.setProductData(this.sl[sp])    
-                    this.deleteProduct(this.sl[sp])
-                    this.sumAllChecked()                    
+                    this.deleteProduct(this.sl[sp])                   
                 }).catch(()=>{
-                    this.deleteProduct(this.sl[sp])
-                    this.sumAllChecked()                        
+                    this.deleteProduct(this.sl[sp])                     
                 })         
 
             },500)
@@ -293,6 +289,7 @@ export default {
             }            
         },
         serverTouchStart(a,sp,ai,bi,status){//手指长按选中服务
+            this.sIndex = sp
             a.stopPropagation()
             let $this = a.currentTarget
             let touchEvent = setTimeout(()=>{
@@ -423,9 +420,14 @@ export default {
             this.giftListShow = false
         },    
         itemShoppingSelect(sp,selected){//单选商品
-            // console.log(sp)
-            this.sl[sp].si_checked = !this.sl[sp].si_checked
-            // console.log(this.sl[sp].si_checked)
+            this.sIndex = sp
+            // this.sl[sp].si_checked = !this.sl[sp].si_checked
+            this.sl[sp].si_checked = !Number(selected)
+            console.log(this.sl[sp].si_checked)
+            console.log(sp)
+            console.log(selected)
+            console.log(!selected)
+            console.log(!Number(selected))
             // this.sumOnlyCheck(this.sl[sp])
             this.sumAllChecked()       
         },
@@ -452,20 +454,24 @@ export default {
                 for(let i in obj){
                     obj[i].si_checked = true
                 }                
-                this.sumAllChecked()                
+                this.sumAllChecked('all','checked')                
             }else{
-                this.sumAllCheck(obj)
+                this.sumAllCheck()
             }
         },     
-        sumAllCheck(obj){//全部取消选中商品      
+        sumAllCheck(){//全部取消选中商品     
+            let obj = this.sl     
             for(let i in obj){
                 obj[i].si_checked = false
             }
-            this.sumAllChecked()               
+            this.sumAllChecked('all','check')               
         },
-        sumAllChecked(){//全部商品选中
+        sumAllChecked(type,status){//全部商品选中
         // itemShoppingSelect
+        console.log(type,status)
             let obj = this.sl      
+            let item = obj[this.sIndex]
+            this.setProductData(item,type,status)
             // console.log(obj)
             let n = 0
             let p = 0
@@ -496,7 +502,12 @@ export default {
                 }
             } 
             if(arr.length>0){
-                // console.log(arr)
+                if(arr.length===obj.length){
+                    this.checkedAll = true
+                }else{
+                    this.checkedAll = false
+                }
+                console.log(arr)
                 // console.log(sum)
                 // console.log(sumPrice)
                 for(let v in arr){
@@ -508,12 +519,14 @@ export default {
                 this.countAll = n 
                 this.priceAll = p 
             }else{
+                this.checkedAll = false
                 this.countAll = 0
                 this.priceAll = 0                 
             }      
         },          
         minusCount(sp){//购买数量--
         // console.log(sp)
+            this.sIndex = sp
             this.sl[sp].si_count>1?this.sl[sp].si_count--:1
             let count = this.sl[sp].si_count
             let obj = this.sl[sp]
@@ -521,6 +534,7 @@ export default {
             this.sumAllChecked()             
         },     
         addCount(sp){//购买数量++
+            this.sIndex = sp
             this.sl[sp].si_count<this.sl[sp].si_only.d_style_MaxCount?this.sl[sp].si_count++:this.sl[sp].si_only.d_style_MaxCount
             let count = this.sl[sp].si_count
             let obj = this.sl[sp]
@@ -549,7 +563,8 @@ export default {
                 // console.log(response.data)
                 this.sl = response.data.shoppingList    
                 console.log(this.sl)
-                this.cpl = JSON.parse(JSON.stringify(response.data.shoppingList))      
+                this.cpl = JSON.parse(JSON.stringify(response.data.shoppingList))     
+                this.sumAllChecked()      
             }).catch(error=>{
 
             })              
@@ -617,7 +632,7 @@ export default {
                                font-size: .29rem;
                             }
                             .subTitle{
-                                font-size: .1rem;                                
+                                font-size: .23rem;                                
                                 color: #aaa;
                             }
                             .price{
@@ -627,18 +642,17 @@ export default {
                                 }
                                 span::before{
                                     content: '\A5';
-                                    font-size: .1rem;
+                                    font-size: .23rem;                                
                                     vertical-align: 3px;
                                 }
                                 s{
                                     padding-left: 10px;
                                     color: #888;
-                                    font-size: .1rem;
+                                    font-size: .23rem;                                
                                 }
                                 s::before{
                                     content: '\A5';
-                                    // vertical-align: 2px;
-                                    font-size: .1rem;
+                                    font-size: .23rem;                                
                                 }
                             }
                         }
@@ -700,7 +714,7 @@ export default {
                         }
                     }                    
                     .subjoin{
-                        font-size: .1rem;
+                        font-size: .23rem;
                         .addBuy{
 
                         }
@@ -723,7 +737,7 @@ export default {
                                 }
                                 span:before{
                                     content:'\A5';
-                                    font-size: .1rem;
+                                    font-size: .23rem;
                                     vertical-align: 1px;
                                 }
                             }
@@ -761,7 +775,7 @@ export default {
                                     }
                                     span:before{
                                         content:'\A5';
-                                        font-size: .1rem;
+                                        font-size: .23rem;
                                         vertical-align: 1px;
                                     }
                                 }
@@ -923,18 +937,18 @@ export default {
                                         }
                                         span::before{
                                             content: '\A5';
-                                            font-size: .1rem;
+                                            font-size: .23rem;
                                             vertical-align: 3px;
                                         }
                                         s{
                                             padding-left: 10px;
                                             color: #888;
-                                            font-size: .1rem;
+                                            font-size: .23rem;
                                         }
                                         s::before{
                                             content: '\A5';
                                             // vertical-align: 2px;
-                                            font-size: .1rem;
+                                            font-size: .23rem;
                                         }
                                     }
                                 }
@@ -1038,17 +1052,17 @@ export default {
                                         }
                                         span::before{
                                             content: '\A5';
-                                            font-size: .1rem;
+                                            font-size: .23rem;
                                             vertical-align: 3px;
                                         }
                                         s{
                                             padding-left: 5px;
                                             color: #888;
-                                            font-size: .1rem;
+                                            font-size: .23rem;
                                         }
                                         s::before{
                                             content: '\A5';
-                                            font-size: .1rem;
+                                            font-size: .23rem;
                                         }
                                     }
                                 }
@@ -1121,7 +1135,7 @@ export default {
                     }
                     span::before{
                         content: '\A5';
-                        font-size: .1rem;
+                        font-size: .23rem;
                         vertical-align: 3px;
                     }                    
                 }
