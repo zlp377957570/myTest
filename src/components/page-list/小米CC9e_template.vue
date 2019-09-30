@@ -1780,17 +1780,19 @@ export default {
             ]
                  //黑鲨手机2 Pro
             iconListAll = [
-                {name:'CPU',val:'骁龙855+'},
-                {name:'CPU主频',val:'最高2.96GHz'},
-                {name:'后置摄像头',val:'4800万+1200万'},
-                {name:'前置摄像头',val:'2000万像素'},
+                {name:'CPU',val:'骁龙665+'},
+                {name:'CPU主频',val:'最高2.0GHz'},
+                {name:'后置摄像头',val:'4800万+800万+200万像素'},
+                {name:'前置摄像头',val:'3200万像素'},
                 {name:'屏幕',val:'三星AMOLED全面屏'},
-                {name:'屏幕尺寸',val:'6.39英寸'},
-                {name:'屏幕分辨率',val:'2340×1080'},
-                {name:'运行内存',val:'12GB'},
-                {name:'存储容量',val:'128GB'},
-                {name:'指纹识别',val:'屏幕指纹'},
-                {name:'电池容量',val:'4000mAh'},
+                {name:'屏幕尺寸',val:'6.088英寸'},
+                {name:'屏幕分辨率',val:'1560×720'},
+                {name:'运行内存',val:'4GB'},
+                {name:'存储容量',val:'64GB'},
+                {name:'红外遥控',val:'支持'},
+                {name:'指纹识别',val:'第七代代屏幕指纹'},
+                {name:'机身厚度',val:'8.475mm'},
+                {name:'电池容量',val:'4030mAh'},
                 {name:'网络类型',val:'4G全网通'},
                 {name:'网络模式',val:'双卡双待'}                                                  
             ]       
@@ -1924,61 +1926,19 @@ installment = [
          //1:第一种套图/类型下标，
          //a:普通图片/b:查看全部参数/c:轮播图，
          //1:第一种套图下每张图片下标
-            [
-                {
-                    name:'商品介绍',
-                    type:'a',
-                    p_name:'小米9',
-                    src:'http://www.zlpones.com/imgs/mi/height_imgList/',
-                    values:[
-                        {
-                            type:'a',
-                            index:1,
-                            suffix:'webp',
-                            length:3,
-                            class:'',
-                            style:''                           
-                        },
-                        {
-                            type:'b',
-                            index:2,
-                            suffix:'webp',
-                            length:13,
-                            class:'',
-                            style:''                         
-                        },
-                        {
-                            type:'c',
-                            index:3,
-                            suffix:'webp',
-                            length:6,
-                            class:'carousel1',
-                            style:'width:100%;height:250px;'                                                         
-                        },    
-                        {
-                            type:'a',
-                            index:4,
-                            suffix:'webp',
-                            length:7,
-                            class:'',
-                            style:''                         
-                        }                                                                                                                                                            
-                    ]
-                }               
-            ]
 
             heheight_list = [
                 {
                     name:'商品介绍',
                     type:'a',
-                    p_name:'黑鲨手机_Pro',
+                    p_name:'小米CC9e',
                     src:'http://www.zlpones.com/imgs/mi/height_imgList/',
                     values:[
                         {
                             type:'a',
                             index:1,
                             suffix:'webp',
-                            length:3,
+                            length:4,
                             class:'',                            
                             style:''                           
                         },
@@ -1986,23 +1946,15 @@ installment = [
                             type:'b',
                             index:2,
                             suffix:'webp',
-                            length:12,
+                            length:15,
                             class:'',                            
                             style:''                           
-                        },
-                        {
-                            type:'c',
-                            index:3,
-                            suffix:'webp',
-                            length:3,
-                            class:'',                            
-                            style:'width:100%;height:100%;'                           
-                        },    
+                        },   
                         {
                             type:'a',
-                            index:4,
+                            index:3,
                             suffix:'webp',
-                            length:36,
+                            length:30,
                             class:'',                            
                             style:''                           
                         }                                                                                                                                                            

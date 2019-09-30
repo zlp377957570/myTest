@@ -21,25 +21,27 @@
             </a>
         </div>
         <!--~~~~~~~~~~~~~~ 顶部轮播图 ~~~~~~~~~~~~~~~~~~-->        
-        <div class="top_showing" v-for="(imgsLs,ils) in inforList.imgsList" :key="ils">
-            <div v-if="topShowIndex===ils">
-                <div class="video_top" v-if="imgsLs.name==='视频'">
-                    <video width="100%" height="100%" autoplay loop controls="controls" data-v-e073abaa="" id="miPlayerVideo" poster="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c2e9a7fc809f7aeac30bf538baf8f156.jpg" :src="imgsLs.srcList" preload="none"></video>                
+        <div class="offsetTopIndex">
+            <div class="top_showing" v-for="(imgsLs,ils) in inforList.imgsList" :key="ils">
+                <div v-if="topShowIndex===ils">
+                    <div class="video_top" v-if="imgsLs.name==='视频'">
+                        <video width="100%" height="100%" autoplay loop controls="controls" data-v-e073abaa="" id="miPlayerVideo" poster="https://cdn.cnbj1.fds.api.mi-img.com/mi-mall/c2e9a7fc809f7aeac30bf538baf8f156.jpg" :src="imgsLs.srcList" preload="none"></video>                
+                    </div>
+                    <div class="swipe_top" v-if="imgsLs.name==='图片'" @click="lookTopImg(imgsLs.srcList)">
+                        <van-swipe @change="onChange" :autoplay="10000">
+                            <van-swipe-item v-for="(imgs,im) in imgsLs.srcList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
+                            <div class="custom-indicator" slot="indicator">
+                                {{ (current + 1)+'/'+imgsLs.srcList.length }}
+                            </div>
+                        </van-swipe>               
+                    </div>      
+                    <div class="switcher">
+                        <span v-show="inforList.imgsList.length>1" :class="topShowIndex===il?'active':''" @click="selectTopShowing(il)" v-for="(iil,il) in inforList.imgsList" :key="il">
+                            <i></i>{{iil.name}}
+                        </span>
+                    </div>                   
                 </div>
-                <div class="swipe_top offsetTopIndex" v-if="imgsLs.name==='图片'" data-scrollTab="scrollTab" @click="lookTopImg(imgsLs.srcList)">
-                    <van-swipe @change="onChange" :autoplay="10000">
-                        <van-swipe-item v-for="(imgs,im) in imgsLs.srcList" :key="im"><img :src="imgs" alt=""></van-swipe-item>
-                        <div class="custom-indicator" slot="indicator">
-                            {{ (current + 1)+'/'+imgsLs.srcList.length }}
-                        </div>
-                    </van-swipe>               
-                </div>      
-                <div class="switcher">
-                    <span v-show="inforList.imgsList.length>1" :class="topShowIndex===il?'active':''" @click="selectTopShowing(il)" v-for="(iil,il) in inforList.imgsList" :key="il">
-                        <i></i>{{iil.name}}
-                    </span>
-                </div>                   
-            </div>
+            </div>            
         </div>
         <!--~~~~~~~~~~~~~~ 商品详情信息 ~~~~~~~~~~~~~~~~~~-->        
         <div class="details_info">
@@ -129,7 +131,7 @@
             </div>
         </div> 
         <!--~~~~~~~~~~~~~~ 评论区 ~~~~~~~~~~~~~~~~~~-->        
-        <div class="swipe_comment offsetTopIndex" data-scrollTab="scrollTab">
+        <div class="swipe_comment offsetTopIndex">
             <van-swipe :touchable="imgList_isMove" :show-indicators="false" :loop="true" :width="320">
                 <van-swipe-item v-for="(revw,rv) in staticList.reviewList" :key="rv" @click="lookReview(revw)">
                     <div class="block">
@@ -149,7 +151,7 @@
                             {{revw.reviewOnly.d_review_text | sliceString | lineFeed}}
                         </div>
                         <div class="imgList">
-                            <img v-for="(img,i) in revw.imgList" :key="i" :src="img" alt="">
+                            <img v-for="(img,i) in revw.imgListAll" :key="i" :src="img" alt="">
                         </div>
                         <div class="reply" v-for="(reply,ry) in revw.replyList" :key="ry">
                             <i>{{reply.name}}：</i>{{reply.val | sliceString}}
@@ -162,27 +164,29 @@
             <a href="#">更多评论</a>
         </div>    
         <!--~~~~~~~~~~~~~~ 商品详情图片展示 ~~~~~~~~~~~~~~~~~~-->        
-        <div class="height_imgListALL offsetTopIndex" data-scrollTab="scrollTab">
-            <div :class="['height_title',scrollTop2>=scrollIndexArr[2]?'heightTitleFixed':'']" v-show="heightImgList.length>1">
-                <span v-for="(hList,hl) in heightImgList" @click="selectHeightImgPage(hl)" :key="hl+'T'" :class="heightIndex===hl?'active':''">{{hList.name}}</span>
-            </div>
-            <div class="heightImgPage" v-for="(hList,hl) in heightImgList" :key="hl" v-show="heightIndex===hl">
-                <div class="heightImgList" v-for="(hBlock,hb) in hList.values" :key="hb">
-                    <div class="itemImg" v-if="hBlock.type==='a'">
-                        <img v-for="(himg,hi) in hBlock.length" :key="hi" :src="hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type+(hi+1)+'.'+hBlock.suffix" alt="">
-                    </div>
-                    <div class="height_infoAdd" v-if="hBlock.type==='b'" @click="lookAddHeightImgList(hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type,hBlock.length,'.'+hBlock.suffix)">
-                        <span>查看全部参数</span>
-                    </div>                    
-                    <div :class="['carousel',hBlock.class]" v-if="hBlock.type==='c'">
-                        <van-swipe :autoplay="5000" indicator-color="#eee">
-                            <van-swipe-item v-for="(himg,hi) in hBlock.length" :key="hi+'sss'">
-                                <img :style="hBlock.style" :src="hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type+(hi+1)+'.'+hBlock.suffix" alt="">
-                            </van-swipe-item>                                        
-                        </van-swipe>                        
+        <div class="offsetTopIndex">
+            <div class="height_imgListALL">
+                <div :class="['height_title',scrollTop2>=scrollIndexArr[2]?'heightTitleFixed':'']" v-show="heightImgList.length>1">
+                    <span v-for="(hList,hl) in heightImgList" @click="selectHeightImgPage(hl)" :key="hl+'T'" :class="heightIndex===hl?'active':''">{{hList.name}}</span>
+                </div>
+                <div class="heightImgPage" v-for="(hList,hl) in heightImgList" :key="hl" v-show="heightIndex===hl">
+                    <div class="heightImgList" v-for="(hBlock,hb) in hList.values" :key="hb">
+                        <div class="itemImg" v-if="hBlock.type==='a'">
+                            <img v-for="(himg,hi) in hBlock.length" :key="hi" :src="hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type+(hi+1)+'.'+hBlock.suffix" alt="">
+                        </div>
+                        <div class="height_infoAdd" v-if="hBlock.type==='b'" @click="lookAddHeightImgList(hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type,hBlock.length,'.'+hBlock.suffix)">
+                            <span>查看全部参数</span>
+                        </div>                    
+                        <div :class="['carousel',hBlock.class]" v-if="hBlock.type==='c'">
+                            <van-swipe :autoplay="5000" indicator-color="#eee">
+                                <van-swipe-item v-for="(himg,hi) in hBlock.length" :key="hi+'sss'">
+                                    <img :style="hBlock.style" :src="hList.src+hList.p_name+'/'+hList.type+'/'+hList.type+hBlock.index+hBlock.type+(hi+1)+'.'+hBlock.suffix" alt="">
+                                </van-swipe-item>                                        
+                            </van-swipe>                        
+                        </div>
                     </div>
                 </div>
-            </div>
+            </div>            
         </div>    
         <!--~~~~~~~~~~~~~~ 为你推荐列表 ~~~~~~~~~~~~~~~~~~-->             
         <div class="forYouRecommend">
@@ -422,7 +426,7 @@ import ls from '../../assets/js/ls.js'
 import shopp from '../../assets/js/shopp.js'
 import { Button,Dialog,Row, Col,Icon,Tab, Tabs ,Tabbar, TabbarItem,Lazyload,PullRefresh,CountDown,Swipe, SwipeItem, Popup,ActionSheet,ImagePreview,Toast } from 'vant';
 import { Server } from 'tls';
-import { setTimeout } from 'timers';
+import { setTimeout, clearInterval } from 'timers';
 export default {
     name:'product_detail',
     props:[],    
@@ -474,6 +478,7 @@ export default {
             size:'',
             set_meal:'',
             model:'',
+            s:0,
             shoppingCount:0,
             shoppingCountAll:0,
             count:1
@@ -497,18 +502,21 @@ export default {
     beforeRouteUpdate (to, from, next) {
     },
 　  watch: {
+        // 'scrollIndexArr':{
+        //     deep:true,
+        //     handler:function(newV,oldV){
+        //          console.log(newV);
+        //          console.log(oldV);
+        //     }
+        // }
 　  },     
     created(){
-
+        this.init()
+        this.initStaticData()      
     },
     updated(){
-
     },
     mounted(){   
-        this.init()
-        this.initStaticData()     
-        this.getOffsetTop()   
-        this.setVideo()   
     },
     computed:{
       
@@ -587,7 +595,6 @@ export default {
             if(this.scrollTop2<scrollHeight/2){
                 detail.scrollTop = scrollHeight
             }else{
-
                 detail.scrollTop = 0
             }            
             self.scrollBtn2 = !self.scrollBtn2;
@@ -599,26 +606,44 @@ export default {
             let self = this
             let $this = e.srcElement || e
             self.scrollTop2 =  $this.scrollTop
+            if($this.scrollTop<this.scrollIndexArr[1]){
+                this.scrollIndex = 0
+            }else if($this.scrollTop>=this.scrollIndexArr[1] && $this.scrollTop<this.scrollIndexArr[2]){
+                this.scrollIndex = 1
+            }else if($this.scrollTop>=this.scrollIndexArr[2]){
+                this.scrollIndex = 2
+            }
         },      
-        getOffsetTop(){//获得滚动高度
-            // let doms = document.querySelectorAll('[data-scrollTab="scrollTab"]')
+        watchScrollArr(){
+            let self = this
+            self.setScrollIntever = setInterval(()=>{
+            let arr = this.scrollIndexArr
+                self.s = self.s+1
+                self.getOffsetTop(arr)
+            },(self.s+1)*300)
+        },        
+        getOffsetTop(arr){//获得滚动高度
+            // let arr = JSON.parse(JSON.stringify(this.scrollIndexArr))
             let doms = document.getElementsByClassName('offsetTopIndex')
-            setTimeout(() => {
             if(doms){
-                for(let i=0;i<doms.length;i++){
+                this.scrollIndexArr = []
+                for(let i=0;i<3;i++){
                     let ot = doms[i].offsetTop
-                    let oh = doms[i].offsetHeight
-                    this.scrollIndexArr.push(ot)
-                }       
-            }                
-            }, 1000);
+                    this.scrollIndexArr.push(ot-50)
+                }   
+                if(arr!==[]){
+                    if(arr!== this.scrollIndexArr && this.scrollIndexArr[1]>arr[1] || this.s>=8){
+                        window.clearInterval(this.setScrollIntever)
+                    }                      
+                }        
+            }      
         },  
         selectTopShowing(index){//查看顶部视频/图片展示
             this.topShowIndex = index
         },
         selectScrollTab(tab,t){//点击滚动到页面楼层
             let dom = this.$refs.detail
-            dom.scrollTop = this.scrollIndexArr[t]>0?this.scrollIndexArr[t]-50:this.scrollIndexArr[t]
+            dom.scrollTop = this.scrollIndexArr[t]>0?this.scrollIndexArr[t]:this.scrollIndexArr[t]
             this.scrollIndex = t
         },
         selectHeightImgPage(hl){//选择商品详情列表
@@ -677,7 +702,6 @@ export default {
             let pi = this.pi
             let url = this.HOST + '/detail/addShoppingInfor.php'
             this.$axios.post(url,{name,version,color,size,set_meal,p_info,count,pi}).then(response=> {
-                console.log(response.data)
                 let hint = response.data.hint
                 if(hint === 'ok'){
                     this.shoppingCountAll = response.data.shoppCountAll
@@ -698,8 +722,8 @@ export default {
         onChange(index) {//弹出图片轮播下标
             this.current = index;
         },    
-        lookTopImg(imgList){//点击顶部轮播图放大
-            this.images = imgList
+        lookTopImg(imgListAll){//点击顶部轮播图放大
+            this.images = imgListAll
             this.imgLsitShow = !this.imgLsitShow            
         },            
         lookDetailImg(){//点击弹出框中商品详情左上角图片
@@ -832,9 +856,6 @@ export default {
             if(type && type==='set'){
                 name = this.name
                 set_meal = this.set_meal     
-                console.log(type)
-                console.log(name)
-                console.log(set_meal)
                 arr2.push(version,color,size,set_meal)
                 for(let i=0;i<arr2.length;i++){
                     if(arr2[i]){
@@ -844,8 +865,6 @@ export default {
                         console.log(i)
                     }
                 }
-                console.log(selectArr1)            
-                console.log(selectArr2)  
             }else{
                 type = 'get'
                 name = ls.getItem('name')
@@ -862,15 +881,14 @@ export default {
             obj.selectArr2 = selectArr2
             obj.set_meal = set_meal
             obj.itemInfo = itemInfo
-            console.log(obj)
             let routerName = ls.getItem('routerName')       
             let url2 = this.HOST + '/detail/getDetailInfoAll.php'            
-            console.log(itemInfo)
+
             if(obj.type){
                 this.$axios.post(url2,obj).then(response=> {
                     // let valuesList = response.data                   
                     if(response.data){
-                console.log(response.data)                        
+                     
                         let values = response.data                      
                         this.details = values.detail
                         this.count = this.details.d_style_MaxCount>this.count?this.count:this.details.d_style_MaxCount
@@ -886,21 +904,20 @@ export default {
                         let promise = values.detail.d_style_promise.replace(/\s*/g,"")    
 
                         this.inforList.colorList = values.colorList
-                        console.log(values)
-                        console.log(values.imgsList)
+    
                         this.inforList.imgsList = values.imgsList
                         this.inforList.versionList = values.versionList  
                         this.inforList.sizeList = values.sizeList  
                         this.inforList.set_mealList = values.set_mealList  
-                        console.log(values.set_mealList)
                         this.inforList.iconList = eval("("+iconList+")")
                         this.inforList.installment = eval("("+installment+")")
                         this.inforList.promise = eval("("+promise+")")
-  
+                        this.watchScrollArr()
+                        this.setVideo()
                     }
                 }).catch(error=> {
                 });    
-    console.log(obj)
+
                 let url = this.HOST + '/detail/getProductInfo.php'                 
                 this.$axios.post(url,obj).then(response=> {
 
@@ -968,6 +985,7 @@ export default {
         height: 100%;
         overflow-x: hidden;
         // overflow-y: scroll;
+        position: relative;
         font-size: .24rem;                
         top:0px;
         left: 0px;
@@ -989,7 +1007,15 @@ export default {
                 span{
                     font-size: .25rem;
                     position: relative;
-
+                    transition: .5s;
+                }
+                span:before{
+                    transition: .5s;
+                    content: '';
+                    position: absolute;
+                    width: 0%;
+                    bottom: -5px;
+                    border-bottom: 2px solid #f56600;
                 }
                 .scrollTabActive{
                     color: #f56600;

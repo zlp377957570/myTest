@@ -33,11 +33,11 @@ if($name!=''){
         $img = $review[$i]["d_review_imgList"];
         $imgListAll = explode('~~~',$img);
 
-        $imgList = array_slice($imgListAll,0,3);
+        // $imgListAll = array_slice($imgListAll,0,3);
 
         $review[$i]["d_review_replyList"] = json_decode($review[$i]["d_review_replyList"],true);
         $obj->reviewOnly = $review[$i];
-        $obj->imgList = $imgList;
+        $obj->imgListAll = $imgListAll;
         $obj->replyList = $review[$i]["d_review_replyList"];
 
         // var_dump("</br>");
