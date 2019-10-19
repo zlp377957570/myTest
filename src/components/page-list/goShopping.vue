@@ -227,6 +227,7 @@ export default {
             count:1,
             countAll:0,
             priceAll:0,
+            touchEvent:0,
             checkedAll:false,
             isA:0,
             isB:0,            
@@ -247,54 +248,52 @@ export default {
         deleteProduct(obj){//删除商品
             let  url = this.HOST + '/detail/deleteShoppingInfor.php'
             this.$axios.post(url,{obj}).then(response=> {
-                if(response.data){
                     this.init()
-                }
             }).catch(error=>{
             })
         },
         setProductData(obj,type,status){//修改数据
-        console.log(type,status)
             let  url = this.HOST + '/detail/setShoppingInfor.php'
             this.$axios.post(url,{obj,type,status}).then(response=> {
             }).catch(error=>{
             })
         },
         itemProductTouchStart(e,sp,status){//手指长按选中商品
-            this.sIndex = sp
+            let self = this
+            self.sIndex = sp
             e.stopPropagation()
             let $this = e.currentTarget
-            let touchEvent = setTimeout(()=>{
-                touchEvent = 0
-                clearTimeout(touchEvent)
-                Dialog.confirm({
-                // title: '标题',
-                closeOnClickOverlay:true,
-                className:'affirmDelectProduct',
-                cancelButtonText:'删除',
-                confirmButtonText:'移入收藏',
-                message: '将商品移入收藏或删除？'
-                }).then(() => {
-                    this.deleteProduct(this.sl[sp])                   
-                }).catch(()=>{
-                    this.deleteProduct(this.sl[sp])                     
-                })         
+            self.touchEvent = setTimeout(()=>{
+                    Dialog.confirm({
+                        // title: '标题',
+                        closeOnClickOverlay:true,
+                        className:'affirmDelectProduct',
+                        cancelButtonText:'取消',
+                        confirmButtonText:'确认',
+                        message: '删除该商品？'
+                        }).then(() => {
+                            self.deleteProduct(self.sl[sp])   
+                            Toast({
+                                message:'删除成功!',
+                                duration:300
+                            });                                            
+                        }).catch(()=>{            
+                    })                                         
 
-            },500)
+            },700)
+            $this.ontouchmove = function(){
+                clearTimeout(self.touchEvent)
+            }                        
             $this.ontouchend = function(){
-                clearTimeout(touchEvent)
-                // console.log(touchEvent)
-                if(touchEvent!=0){
-                }
+                clearTimeout(self.touchEvent)
             }            
         },
         serverTouchStart(a,sp,ai,bi,status){//手指长按选中服务
-            this.sIndex = sp
+            let self = this        
+            self.sIndex = sp
             a.stopPropagation()
             let $this = a.currentTarget
-            let touchEvent = setTimeout(()=>{
-                touchEvent = 0
-                clearTimeout(touchEvent)
+            self.touchEvent = setTimeout(()=>{
                 Dialog.confirm({
                 // title: '标题',
                 message: '是否删除该服务？'
@@ -302,18 +301,21 @@ export default {
                     this.sl[sp].si_server[ai].isSelect = !status
                     this.sl[sp].si_server[ai].values[bi].checked = !status
                     this.cpl[sp].si_server = JSON.parse(JSON.stringify(this.sl[sp].si_server))    
-                    this.sumAllChecked()                    
+                    this.sumAllChecked()          
+                    Toast({
+                        message:'删除成功!',
+                        duration:300
+                    });                              
                 }).catch(()=>{
-                    
                 })               
 
             },500)
+            $this.ontouchmove = function(){
+                clearTimeout(self.touchEvent)
+            }                        
             $this.ontouchend = function(){
-                clearTimeout(touchEvent)
-                // console.log(touchEvent)
-                if(touchEvent!=0){
-                }
-            }            
+                clearTimeout(self.touchEvent)
+            }             
         },
         giftAffirm(){//确认选择赠品
             this.sl[this.sIndex].si_gift = JSON.parse(JSON.stringify(this.cpl[this.sIndex].si_gift))
@@ -563,6 +565,7 @@ export default {
                 // console.log(response.data)
                 this.sl = response.data.shoppingList    
                 console.log(this.sl)
+                this.sIndex = 0
                 this.cpl = JSON.parse(JSON.stringify(response.data.shoppingList))     
                 this.sumAllChecked()      
             }).catch(error=>{

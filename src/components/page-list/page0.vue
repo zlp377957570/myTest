@@ -51,15 +51,15 @@ export default {
     created(){
         this.$axios.get(this.HOST+'./getMaindata.php', {})
         .then(response=> {
-            // console.log(response.data.products)
-            // console.log(response.data)
             let self = this
             self.list = response.data.products;
             self.$nextTick(() => {
                 let _this = this
                 let e = _this.$refs.pages
-                console.log(e)
-                _this.paperScroll(e)
+                setTimeout(()=>{
+                    self.scrollTop = 1
+                    _this.paperScroll(e)
+                },1500)
             })       
         })
         .catch(error=> {
@@ -91,7 +91,8 @@ export default {
                 ls.setItem('routerName','product_detail')
 
             }else{
-                alert('无内容')
+                // alert('无内容')
+                this.$router.push({name:'productList',params:{info:info,name:name,set_meal:set_meal}})
             }
             // this.$router.push({path:'/product_detail',query:{item:item}})
             // this.$router.go({name:'product_detail',params:{item:item}})

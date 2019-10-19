@@ -1,25 +1,24 @@
 <template>
-    <div class="review">
-        <detailHead :title="'评论详情'"></detailHead>
-        <reviewBody :reviewVal="$route.params"></reviewBody>
+    <div class="productList">
+        <detailHead :title="'商品列表'"></detailHead>
+        <h3>抱歉未找到该商品数据，请联系管理员</h3>
     </div>
 </template>
 <script>
 import {mapGetters, mapMutations} from 'vuex'
 // import yinyue1 from '../publicComponent/yinyue1.vue'
+import ls from '../../assets/js/ls.js'
 import detailHead from './detailHead.vue'
-import reviewBody from './reviewBody.vue'
 import { setTimeout } from 'timers';
 export default {
-    name:'review',
+    name:'productList',
     data(){
         return{
             show:true,
         }
     },
     components:{
-        detailHead,
-        reviewBody
+        detailHead
     },
     created(){
          console.log(this.$store.getters.detailHeaderUp)
@@ -41,6 +40,7 @@ export default {
     },
     destroyed(){
         this.show = false
+        this.$loading.hide()
     },
     beforeRouteEnter (to, from, next) {
         next()
@@ -48,9 +48,9 @@ export default {
     beforeRouteLeave (to, from, next) {
         console.log(to)
         console.log(from)          
-        // if(to.name=='reivewAll'){
-        //     ls.setItem('reviewType','B')
-        // } 
+        if(from.name=='productList'){
+            ls.setItem('reviewType','x')
+        } 
         this.$store.commit('chDetailHeaderUp',false)   
         setTimeout(()=>{
             next()
@@ -77,12 +77,12 @@ export default {
             console.log(this.$store.getters.detailHeaderUp)
             this.show = !this.show
             console.log(this.show)
-            // if(this.show == false){
-            //     this.$loading.show()
-            // }else{
-            //     this.$loading.hide()
+            if(this.show == false){
+                this.$loading.show()
+            }else{
+                this.$loading.hide()
 
-            // }
+            }
             // this.$loading.show({
             //     size: 10,
             //     text: '加载中'
@@ -92,13 +92,17 @@ export default {
 }
 </script>
 <style lang="less" scoped>
-    .review{
+    .productList{
         width: 7.5rem;
         height: 100%;
-        background: #fff;    
+        background: #aaa;    
         top:0px;
         left: 0px;
         position: relative;   
+        h3{
+            font-size: .72rem;
+            margin-top: 50px;
+        }
 }
 </style>
 

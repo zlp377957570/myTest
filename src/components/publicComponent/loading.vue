@@ -93,6 +93,7 @@ export default {
     position: absolute;
     top:20%;
     left: 10%;
+    pointer-events: none;
     z-index: 10000;
     .body{
         transform: rotate(0deg);
@@ -100,7 +101,7 @@ export default {
         position: absolute;
         top:0px;
         left: 0px;        
-        animation: bodymove 28s linear 11s infinite;
+        animation: bodymove 18s linear 3s infinite;
         @keyframes bodymove {
             0%{
                 transform: rotate(0deg);

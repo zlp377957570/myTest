@@ -91,7 +91,12 @@ export default new Router({
       path: '/reviewAllBody',
       name: 'reviewAllBody',
       component:() => import('@/components/page-list/reviewAllBody.vue')
-    }      
+    },
+    {
+      path: '/productList',
+      name: 'productList',
+      component:() => import('@/components/page-list/productList.vue')
+    }     
     // {
     //   path: "*",
     //   redirect: "/"

@@ -207,7 +207,7 @@
         <!--~~~~~~~~~~~~~~ 详情页底部 ~~~~~~~~~~~~~~~~~~-->        
         <div class="detailFoot">
             <div class="detailFootBar">
-                <div class="home">
+                <div class="home" @click="routerGo">
                     <img src="@/assets/image/icon/首页.png" alt="">
                     <span>首页</span>
                 </div>
@@ -274,7 +274,7 @@
                     </div>
 
                     <!--~~~~~~~~~~~~~~ 套餐选择 ~~~~~~~~~~~~~~~~~~-->     
-                    <div class="set_meal_list">
+                    <div class="set_meal_list" v-show="inforList.set_mealList && inforList.set_mealList.length>1">
                         <div class="title">
                             套餐
                         </div>
@@ -625,7 +625,7 @@ export default {
         getOffsetTop(arr){//获得滚动高度
             // let arr = JSON.parse(JSON.stringify(this.scrollIndexArr))
             let doms = document.getElementsByClassName('offsetTopIndex')
-            if(doms){
+            if(doms && doms.length>0){
                 this.scrollIndexArr = []
                 for(let i=0;i<3;i++){
                     let ot = doms[i].offsetTop
@@ -642,9 +642,9 @@ export default {
             this.topShowIndex = index
         },
         selectScrollTab(tab,t){//点击滚动到页面楼层
+            this.scrollIndex = t
             let dom = this.$refs.detail
             dom.scrollTop = this.scrollIndexArr[t]>0?this.scrollIndexArr[t]:this.scrollIndexArr[t]
-            this.scrollIndex = t
         },
         selectHeightImgPage(hl){//选择商品详情列表
             this.$refs.detail.scrollTop = this.scrollIndexArr[2]
@@ -914,6 +914,7 @@ export default {
                         this.inforList.promise = eval("("+promise+")")
                         this.watchScrollArr()
                         this.setVideo()
+                        // console.log(this.inforList.set_mealList)
                     }
                 }).catch(error=> {
                 });    
@@ -946,6 +947,7 @@ export default {
             if(itemName){
                 this.$axios.post(url,itemName).then(response=> {
                         this.staticList.reviewList = response.data.reviewList
+                        console.log(response.data.reviewList)
                         this.staticList.recommend = response.data.recommend     
                         this.staticList.foryouRecommend = response.data.foryouRecommend                 
                 })
@@ -1000,12 +1002,16 @@ export default {
             align-items: center;
             justify-content: space-between;
             .scrollTab{
-                width: 40%;
+                width: 60%;
                 transition: .5s;
-                display: flex;
+                // display: flex;
                 justify-content: space-between;
                 span{
                     font-size: .25rem;
+                    width: 50px;
+                    line-height: 30px;
+                    display: inline-block;
+                    // border: 1px solid red;
                     position: relative;
                     transition: .5s;
                 }
@@ -1014,7 +1020,8 @@ export default {
                     content: '';
                     position: absolute;
                     width: 0%;
-                    bottom: -5px;
+                    bottom: 0px;
+                    // top:-60px;
                     border-bottom: 2px solid #f56600;
                 }
                 .scrollTabActive{
@@ -1023,8 +1030,8 @@ export default {
                 .scrollTabActive:before{
                     content: '';
                     position: absolute;
-                    width: 100%;
-                    bottom: -5px;
+                    width: 55%;
+                    bottom: 0px;
                     border-bottom: 2px solid #f56600;
                 }
             }
@@ -2059,7 +2066,7 @@ export default {
                 margin-top: 70px;
                 margin-bottom: 45px;
                 padding: 0px 20px;                
-                overflow-y: scroll;
+                // overflow-y: scroll;
                 text-align: left;
                 font-size: .29rem;
                 .itemLine{

@@ -52,6 +52,10 @@ export default {
             }else if(type=='B'){
                 this.$router.push({name:'product_detail'})
                 // this.$router.go(-1)
+            }else if(type=='x'){
+                console.log(type)
+                // this.$router.push({name:'product_detail'})
+                this.$router.go(-1)
             }else{
                 // this.$router.push({name:'product_detail'})
                 this.$router.go(-1)
