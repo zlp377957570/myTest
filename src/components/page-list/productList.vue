@@ -46,8 +46,8 @@ export default {
         next()
     },
     beforeRouteLeave (to, from, next) {
-        console.log(to)
-        console.log(from)          
+        // console.log(to)
+        // console.log(from)          
         if(from.name=='productList'){
             ls.setItem('reviewType','x')
         } 
